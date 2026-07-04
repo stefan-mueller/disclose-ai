@@ -30,7 +30,7 @@
       "id": "conceptualisation",
       "label": "Conceptualisation",
       "items": [
-        { "id": "idea_generation", "label": "Idea generation" },
+        { "id": "brainstorming", "label": "Brainstorming and generating ideas" },
         { "id": "defining_objectives", "label": "Defining the objective or question" },
         { "id": "structuring_approach", "label": "Helping shape the overall approach or argument" }
       ]
