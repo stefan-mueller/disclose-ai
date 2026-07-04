@@ -1,9 +1,10 @@
 {
   "aiToolGroups": [
     {
-      "label": "Large Language Models",
+      "label": "Chatbots",
       "otherLabel": "Other LLM",
-      "tools": ["ChatGPT", "Claude", "Gemini", "Microsoft Copilot", "Perplexity", "Grok", "Meta AI / Llama", "Mistral / Le Chat", "DeepSeek", "Qwen", "NotebookLM", "Open language models (Ollama, LM Studio etc)"]
+      "visibleCount": 5,
+      "tools": ["ChatGPT", "Claude", "Gemini", "Microsoft Copilot", "Perplexity", "Grok", "Meta AI / Llama", "Mistral / Le Chat", "DeepSeek", "Qwen", "HuggingChat", "NotebookLM", "Local LLMs (Ollama, LM Studio etc)"]
     },
     {
       "label": "Coding agents",
@@ -11,23 +12,19 @@
     },
     {
       "label": "Grammar, proofreading and spelling",
-      "tools": ["Grammarly", "QuillBot"]
+      "tools": ["Grammarly", "QuillBot", "Writefull"]
     },
     {
       "label": "Literature research",
-      "tools": ["Consensus", "Elicit", "Scite"]
+      "tools": ["Semantic Scholar", "Elicit", "Consensus", "Scite"]
     },
     {
       "label": "Image and design generation",
-      "tools": ["Midjourney", "DALL-E", "Stable Diffusion", "Adobe Firefly", "Canva"]
+      "tools": ["Midjourney", "DALL-E", "Stable Diffusion", "Adobe Firefly", "Canva", "Leonardo AI"]
     },
     {
       "label": "Audio and video",
       "tools": ["Runway", "ElevenLabs", "Otter.ai"]
-    },
-    {
-      "label": "Productivity and organisation",
-      "tools": ["Notion AI"]
     }
   ],
   "categories": [
@@ -70,7 +67,7 @@
       "id": "writing_editing",
       "label": "Writing and editing",
       "items": [
-        { "id": "text_generation", "label": "Text generation (e.g. the required AI draft)" },
+        { "id": "text_generation", "label": "Text generation" },
         { "id": "proofreading", "label": "Proofreading" },
         { "id": "summarising_own_text", "label": "Summarising your own draft" },
         { "id": "tone_adjustment", "label": "Tone or style adjustment" },
@@ -88,9 +85,9 @@
     },
     {
       "id": "other_tasks",
-      "label": "Other tasks or components",
+      "label": "Other task (please describe below)",
       "items": [
-        { "id": "other_task", "label": "Not listed above (describe below)", "openEnded": true }
+        { "id": "other_task", "label": "Other task", "openEnded": true, "noCheckbox": true }
       ]
     }
   ]
