@@ -1,4 +1,6 @@
-# AI Task Disclosure Declaration
+# AI Disclosure for University Assignments
+
+Live site: <https://stefan-mueller.github.io/ai-disclosure>
 
 A simplified, coursework-adapted version of the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/), built with Quarto and Observable JS instead of plain HTML and Python.
 
@@ -12,7 +14,7 @@ A simplified, coursework-adapted version of the [GAIDeT Declaration Generator](h
 - Added an optional field to log the exact prompt(s) used per task, for extra transparency.
 - Added a per-tool version/model field (e.g. GPT-5.5, Claude Sonnet 5), since capability varies significantly across versions of the same tool.
 - Added a copy-to-clipboard and download-as-file option for the generated declaration.
-- Every generated declaration now closes with a fixed responsibility statement (final responsibility lies with the authors, AI tools are not listed as authors) and a "Declaration submitted by: [ADD NAME]" line for the student to complete manually.
+- Every generated declaration now closes with a fixed responsibility statement (final responsibility lies with the authors, AI tools are not listed as authors) and a "Declaration submitted by: ..." line, filled in from a "Your name" field on the form.
 - Removed the OWL ontology generation step (`generate_ontology.py` and `gaidet.owl` in the original repository), since stable term identifiers are not needed for a teaching declaration.
 
 ## Running locally

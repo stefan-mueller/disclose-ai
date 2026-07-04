@@ -1,6 +1,7 @@
 :root {
   --gaidet-accent: #3b5bdb;
   --gaidet-accent-dark: #2f49ad;
+  --gaidet-accent-bright: #7b98ff;
   --gaidet-accent-tint: #eef1fd;
   --gaidet-border: #e2e5ea;
   --gaidet-text-muted: #5b6270;
@@ -26,11 +27,24 @@ h2 {
 
 .callout {
   background-color: #fff;
-  font-size: 1.05rem;
 }
 
 .callout > .callout-body-container {
   background-color: #fff;
+}
+
+.callout,
+.callout p,
+.callout-body-container,
+.callout-body-container p {
+  font-size: 1rem !important;
+}
+
+.callout-title,
+.callout-title-container,
+.callout-title-container > * {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
 }
 
 a {
@@ -38,7 +52,7 @@ a {
 }
 
 a:hover {
-  color: var(--gaidet-accent-dark);
+  color: var(--gaidet-accent-bright);
 }
 
 .gaidet-category {
@@ -142,9 +156,39 @@ label.gaidet-tool-option:hover {
   margin-bottom: 0.3rem;
 }
 
+.gaidet-show-more {
+  display: inline-block;
+  background: none;
+  border: none;
+  color: var(--gaidet-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.1rem 0 0.4rem 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.gaidet-show-more:hover {
+  background: none;
+  color: var(--gaidet-accent-bright);
+  text-decoration: underline;
+}
+
 .gaidet-tool-label {
   margin-bottom: 0.2rem;
   font-size: 0.9rem;
+}
+
+.gaidet-prompts-question .gaidet-tool-label {
+  font-size: 1.05rem;
+}
+
+.gaidet-prompts-question .gaidet-tool-instructions {
+  font-size: 0.95rem;
+}
+
+.gaidet-prompts-question .gaidet-tool-option {
+  font-size: 1rem;
 }
 
 .gaidet-divider {
@@ -160,8 +204,11 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-item-details {
-  margin-top: 0.3rem;
-  padding-left: 1.4rem;
+  margin: 0.5rem 0 1rem 1.4rem;
+  padding: 0.8rem 1rem;
+  border-left: 3px solid var(--gaidet-accent);
+  background: #f8f9fc;
+  border-radius: 0 8px 8px 0;
 }
 
 .gaidet-warning {
