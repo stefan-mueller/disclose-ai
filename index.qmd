@@ -9,7 +9,8 @@ This tool generates a plain-text AI Disclosure Declaration that summarises which
 
 Built by [Stefan Müller](https://muellerstefan.net) and Claude Code. This idea is inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)), adapted for university assignments.
 
-Tick every task you delegated to a generative AI tool. For each ticked task, add one sentence describing what you asked the AI to do and how you used its output. When you are finished, copy the declaration at the end of this page and make manual adjustments where needed.
+Select every task you delegated to a generative AI tool. For each one selected, add one sentence describing what you asked the AI to do and how you used its output. When you are finished, copy the declaration at the end of this page and make manual adjustments where needed.
+
 
 ```{ojs}
 //| echo: false
@@ -37,7 +38,7 @@ The following generative AI tasks were delegated as part of this assignment:
     Summary: Ran my final draft through Grammarly to catch grammar and punctuation errors, then manually reviewed and accepted the suggestions I agreed with.
 
 Responsibility for the final manuscript lies entirely with the author.
-Generative AI tools are not listed as authors and do not bear responsibility for the final outcomes.
+Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.
 Declaration submitted by: Jane Doe`
 ```
 
@@ -55,18 +56,17 @@ el("div", { class: "gaidet-example-wrap" }, [
 ])
 ```
 
-::: {.callout-tip}
-## Note on privacy
-
-This tool does not store, transmit or save any data you enter. Everything runs in your browser and disappears when you close or refresh the page. The generated text is provided only so you can copy it into your own assignment appendix.
-:::
 
 
 ::: {.callout-warning}
-Many universities do not have a single institution-wide policy on generative AI — permission to use it varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor, your Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. 
+Many universities do not have a single institution-wide policy on generative AI. Permission to use AI varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor, your Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. 
 
-This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. Many universities also publish general guidelines on using and citing AI — check whether yours does, and consult them for guidance. You are ultimately responsible for complying with your institution's and module's policies; see the full disclaimer at the end of this page for details. 
+Some assignments may prohibit the use of generative AI entirely, or for specific tasks among those listed below; the inclusion of a task or tool in this form does not constitute permission to use it, and this tool provides no means of circumventing, and does not excuse compliance with, any such prohibition imposed by your institution, School, programme, module, or assessment brief.
+
+This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. Many universities also publish general guidelines on using and citing AI. Check whether your institution has published such advice, and consult it for guidance. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#notes-and-disclaimers) at the end of this page for details. 
 :::
+
+${promptsToggle}
 
 ```{ojs}
 //| echo: false
@@ -96,33 +96,12 @@ function el(tag, props = {}, children = []) {
   return node;
 }
 
-function toolCheckbox(tool, checked, onChange) {
-  return el("label", { class: "gaidet-tool-option" }, [
-    el("input", { type: "checkbox", checked, onchange: onChange }),
-    ` ${tool}`
-  ]);
-}
-
 function debounce(fn, delay = 500) {
   let timer;
   return (...args) => {
     clearTimeout(timer);
     timer = setTimeout(() => fn(...args), delay);
   };
-}
-
-function slowScrollTo(target, duration = 1200) {
-  const startY = window.scrollY;
-  const targetY = startY + target.getBoundingClientRect().top - 20;
-  const diff = targetY - startY;
-  const start = performance.now();
-  function step(now) {
-    const t = Math.min((now - start) / duration, 1);
-    const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-    window.scrollTo(0, startY + diff * eased);
-    if (t < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
 }
 
 function preserveFocus(build) {
@@ -157,32 +136,7 @@ mutable selections = ({})
 
 ```{ojs}
 //| echo: false
-mutable overallTools = ({})
-```
-
-```{ojs}
-//| echo: false
-mutable overallOtherTools = ({})
-```
-
-```{ojs}
-//| echo: false
-mutable expandedToolGroups = ({})
-```
-
-```{ojs}
-//| echo: false
-mutable overallToolVersions = ({})
-```
-
-```{ojs}
-//| echo: false
 mutable providePrompts = false
-```
-
-```{ojs}
-//| echo: false
-mutable taskToolWarningCategory = null
 ```
 
 ```{ojs}
@@ -205,27 +159,10 @@ mutable studentName = ""
 //| output: false
 {
   const hasData = studentName.trim().length > 0
-    || Object.keys(overallTools).length > 0
-    || Object.values(overallOtherTools).some(v => v.trim())
     || Object.keys(selections).length > 0;
 
   window.onbeforeunload = hasData ? (e) => { e.preventDefault(); e.returnValue = ""; } : null;
 }
-```
-
-```{ojs}
-//| echo: false
-versionExamples = ({
-  "ChatGPT": "GPT-5.5",
-  "Claude": "Claude Sonnet 5",
-  "Gemini": "Gemini 3.5 Flash",
-  "Grok": "Grok 4.3",
-  "DeepSeek": "DeepSeek V4",
-  "Mistral / Le Chat": "Mistral Medium 3.5",
-  "Meta AI / Llama": "Llama 4",
-  "Qwen": "Qwen 3.7 Max",
-  "Open language models (Ollama, LM Studio etc)": "please specify the model, e.g. Llama 3.1 8B"
-})
 ```
 
 ```{ojs}
@@ -245,240 +182,232 @@ noVersionTools = new Set([
 
 ```{ojs}
 //| echo: false
-aiToolsBox = {
-
-  function overallToolOption(tool) {
-    const isChecked = tool in overallTools;
-    const showVersion = isChecked && !noVersionTools.has(tool);
-    const example = versionExamples[tool] ?? "model/version";
-    return el("div", { class: "gaidet-tool-option" }, [
-      el("label", {}, [
-        el("input", {
-          type: "checkbox",
-          checked: isChecked,
-          onchange: (e) => {
-            const next = { ...overallTools };
-            if (e.target.checked) {
-              next[tool] = true;
-            } else {
-              delete next[tool];
-              const nextVersions = { ...overallToolVersions };
-              delete nextVersions[tool];
-              mutable overallToolVersions = nextVersions;
-            }
-            mutable overallTools = next;
-          }
-        }),
-        ` ${tool}`
-      ]),
-      showVersion ? el("input", {
-        type: "text",
-        class: "gaidet-version-input",
-        "data-field": `version::${tool}`,
-        "aria-label": `${tool} model or version`,
-        placeholder: `e.g. ${example}`,
-        value: overallToolVersions[tool] ?? "",
-        oninput: debounce((e) => {
-          mutable overallToolVersions = { ...overallToolVersions, [tool]: e.target.value };
-        })
-      }) : null
-    ]);
-  }
-
-  const toolGrid = el("div", {}, data.aiToolGroups.map(group => {
-    const visibleCount = group.visibleCount ?? group.tools.length;
-    const isExpanded = expandedToolGroups[group.label] === true || group.tools.length <= visibleCount;
-    const toolsToShow = isExpanded ? group.tools : group.tools.slice(0, visibleCount);
-    const hiddenCount = group.tools.length - visibleCount;
-
-    return el("div", { class: "gaidet-tool-group" }, [
-      el("p", { class: "gaidet-tool-group-label" }, group.label),
-      el("div", { class: "gaidet-tool-grid" }, toolsToShow.map(tool => overallToolOption(tool))),
-      hiddenCount > 0 ? el("button", {
-        class: "gaidet-show-more",
-        onclick: () => {
-          mutable expandedToolGroups = { ...expandedToolGroups, [group.label]: !isExpanded };
-        }
-      }, isExpanded ? "Show fewer" : `Show ${hiddenCount} more`) : null,
-      el("label", { class: "gaidet-tool-other" }, [
-        `${group.otherLabel ?? "Other tool"} (please specify): `,
-        el("input", {
-          type: "text",
-          "data-field": `overallOther::${group.label}`,
-          style: "width:100%;max-width:220px;",
-          value: overallOtherTools[group.label] ?? "",
-          oninput: debounce((e) => {
-            mutable overallOtherTools = { ...overallOtherTools, [group.label]: e.target.value };
-          })
-        })
-      ])
-    ]);
-  }));
-
-  return preserveFocus(() => el("div", { class: "gaidet-category", id: "gaidet-ai-tools-section" }, [
-      (taskToolWarningCategory !== null && Object.keys(overallTools).length === 0 && Object.values(overallOtherTools).every(v => !v.trim()))
-        ? el("div", { class: "gaidet-warning" }, "Please specify the AI tool(s) you have used first, before describing the detailed task breakdown below.")
-        : null,
-      el("div", { class: "gaidet-item" }, [
-        el("p", { class: "gaidet-tool-instructions" }, "Tick every AI tool you used at any stage of this assignment, even for minor tasks — the tools you tick here will appear again further down so you can attribute each one to the specific task(s) it helped with."),
-        el("p", { class: "gaidet-tool-instructions" }, "Please give the exact model or version for each tool (e.g. GPT-5.5, Claude Sonnet 5), since different versions of the same tool can vary considerably in capability and behaviour, and the specific version is needed to properly assess how it was used."),
-        el("p", { class: "gaidet-tool-instructions" }, [
-          "Are any popular tools missing? Please propose tools ",
-          el("a", { href: "https://github.com/stefan-mueller/ai-disclosure/issues/new", target: "_blank", rel: "noopener" }, "here.")
-        ]),
-        el("p", { class: "gaidet-tool-instructions" }, [
-          "This list does not indicate endorsement — it follows the AI tool lists published by ",
-          el("a", { href: "https://libguides.library.universityofgalway.ie/AIforResearch/tools", target: "_blank", rel: "noopener" }, "University of Galway Library"),
-          " and ",
-          el("a", { href: "https://libguides.ucd.ie/GENAI/AITools", target: "_blank", rel: "noopener" }, "University College Dublin Library"),
-          "."
-        ]),
-        toolGrid,
-        el("hr", { class: "gaidet-divider" }),
-        el("div", { class: "gaidet-prompts-question" }, [
-          el("p", { class: "gaidet-tool-label" }, "Provide prompts"),
-          el("p", { class: "gaidet-tool-instructions" }, "If you choose \"Yes\", an extra box will appear under each ticked task where you can copy-paste the exact prompt(s) you used with the AI tool, for extra transparency. This is optional and off by default."),
-          el("div", { class: "gaidet-tool-grid" }, [
-            el("label", { class: "gaidet-tool-option" }, [
-              el("input", {
-                type: "radio",
-                name: "gaidet-provide-prompts",
-                checked: providePrompts === true,
-                onchange: (e) => { if (e.target.checked) mutable providePrompts = true; }
-              }),
-              " Yes"
-            ]),
-            el("label", { class: "gaidet-tool-option" }, [
-              el("input", {
-                type: "radio",
-                name: "gaidet-provide-prompts",
-                checked: providePrompts === false,
-                onchange: (e) => { if (e.target.checked) mutable providePrompts = false; }
-              }),
-              " No"
-            ])
-          ])
-        ])
-      ])
+promptsToggle = el("div", { class: "gaidet-prompts-question" }, [
+  el("p", { class: "gaidet-tool-label" }, "Provide prompts used for each task?"),
+  el("p", { class: "gaidet-tool-instructions" }, "If you choose \"Yes\", an extra box will appear under each ticked task where you can copy-paste the exact prompt(s) you used with the AI tool, for extra transparency. This is optional and off by default, but some lecturers or assignment briefs may require you to include the full prompts."),
+  el("div", { class: "gaidet-tool-grid" }, [
+    el("label", { class: "gaidet-tool-option" }, [
+      el("input", {
+        type: "radio",
+        name: "gaidet-provide-prompts",
+        checked: providePrompts === true,
+        onchange: (e) => { if (e.target.checked) mutable providePrompts = true; }
+      }),
+      " Yes"
+    ]),
+    el("label", { class: "gaidet-tool-option" }, [
+      el("input", {
+        type: "radio",
+        name: "gaidet-provide-prompts",
+        checked: providePrompts === false,
+        onchange: (e) => { if (e.target.checked) mutable providePrompts = false; }
+      }),
+      " No"
     ])
-  );
-}
+  ])
+])
 ```
-
-
-## AI tools used in your assignment
-
-${aiToolsBox}
 
 ```{ojs}
 //| echo: false
 form = {
-  const otherToolNames = Object.values(overallOtherTools).map(v => v.trim()).filter(Boolean);
-  const availableTools = Object.keys(overallTools).concat(otherToolNames);
-  const noToolsSelected = availableTools.length === 0;
-
-  return preserveFocus(() => el("div", {}, data.categories.flatMap(cat => {
-  const warning = (noToolsSelected && taskToolWarningCategory === cat.id)
-    ? el("div", { class: "gaidet-warning" }, "You haven't selected an AI tool yet — scroll up to “AI tool(s) used in assignment” and tick at least one before selecting tasks here.")
-    : null;
-
+  return preserveFocus(() => el("div", {}, data.categories.map(cat => {
   const categoryEl = el("div", { class: "gaidet-category" }, [
     el("h3", {}, cat.label),
     ...cat.items.map(item => {
       const key = `${cat.id}::${item.id}`;
 
-      if (item.noCheckbox) {
-        const sel = selections[key] ?? { customLabel: "", sentence: "", prompts: "", tools: {} };
+      const checked = key in selections;
+      const sel = selections[key];
+      const isComplete = checked
+        && !!(sel.sentence && sel.sentence.trim())
+        && Object.keys(sel.tools ?? {}).length > 0
+        && (!item.openEnded || !!(sel.customLabel && sel.customLabel.trim()));
 
-        function updateOtherTask(patch) {
+      function buildToolPicker() {
+        const toolIndex = data.aiToolGroups.flatMap(group =>
+          group.tools.map(tool => ({ name: tool, category: group.label, needsVersion: !noVersionTools.has(tool) }))
+        );
+
+        function currentSelected() {
+          const entry = selections[key] ?? { tools: {} };
+          return Object.entries(entry.tools ?? {}).map(([name, val]) => ({
+            name,
+            needsVersion: typeof val === "object",
+            version: (val && typeof val === "object" && val.version) || ""
+          }));
+        }
+
+        function isSelected(name) {
+          return currentSelected().some(t => t.name.toLowerCase() === name.toLowerCase());
+        }
+
+        function commit(nextSelected) {
           const next = { ...selections };
-          const existing = next[key] ?? {
-            label: item.label,
-            openEnded: item.openEnded ?? false,
-            customLabel: "",
-            sentence: "",
-            prompts: "",
-            tools: {}
-          };
-          const updated = { ...existing, ...patch };
-          const isEmpty = !(updated.customLabel && updated.customLabel.trim())
-            && !(updated.sentence && updated.sentence.trim())
-            && !(updated.prompts && updated.prompts.trim())
-            && Object.keys(updated.tools ?? {}).length === 0;
-          if (isEmpty) {
-            delete next[key];
-          } else {
-            next[key] = updated;
-          }
+          if (!next[key]) return;
+          const toolsMap = {};
+          nextSelected.forEach(t => {
+            toolsMap[t.name] = t.needsVersion ? { version: t.version || "" } : true;
+          });
+          next[key] = { ...next[key], tools: toolsMap };
           mutable selections = next;
         }
 
-        const details = el("div", { class: "gaidet-item-details" }, [
-          el("input", {
-            type: "text",
-            "data-field": `customLabel::${key}`,
-            "aria-label": "Task or component description",
-            style: "width:100%;max-width:500px;",
-            placeholder: "What was this task or component? (short description)",
-            value: sel.customLabel ?? "",
-            oninput: debounce((e) => updateOtherTask({ customLabel: e.target.value }))
-          }),
-          el("textarea", {
-            class: "gaidet-sentence",
-            "data-field": `sentence::${key}`,
-            "aria-label": "One sentence description of what you asked the AI to do and how you used the output",
-            placeholder: "One sentence: what did you ask the AI to do, and how did you use the output? (about 25–30 words)",
-            maxlength: "220",
-            value: sel.sentence ?? "",
-            oninput: debounce((e) => updateOtherTask({ sentence: e.target.value }))
-          }),
-          providePrompts ? el("textarea", {
-            class: "gaidet-sentence",
-            "data-field": `prompts::${key}`,
-            "aria-label": "Prompts used for this task",
-            placeholder: "If applicable, please copy-paste the prompts you have used",
-            value: sel.prompts ?? "",
-            oninput: debounce((e) => updateOtherTask({ prompts: e.target.value }))
-          }) : null,
-          el("p", { class: "gaidet-tool-label" }, "Tool(s) used for this task:"),
-          availableTools.length > 0
-            ? el("div", { class: "gaidet-tool-grid" },
-                availableTools.map(tool => toolCheckbox(tool, tool in (sel.tools ?? {}), (e) => {
-                  const currentTools = { ...(sel.tools ?? {}) };
-                  if (e.target.checked) {
-                    currentTools[tool] = true;
-                  } else {
-                    delete currentTools[tool];
-                  }
-                  updateOtherTask({ tools: currentTools });
-                }))
-              )
-            : el("p", { class: "gaidet-tool-label" }, "Please pick the AI tool(s) you used in the “AI tool(s) used in assignment” section at the top of the page first."),
-          availableTools.length > 0
-            ? el("p", { class: "gaidet-tool-instructions" }, "If the tool you used for this task is missing, please extend your selection in “AI tool(s) used in assignment” above.")
-            : null
+        function escapeRegExp(s) {
+          return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+
+        function highlight(name, query) {
+          if (!query) return name;
+          const re = new RegExp(`(${escapeRegExp(query)})`, "ig");
+          return name.replace(re, "<mark>$1</mark>");
+        }
+
+        const hasSelection = currentSelected().length > 0;
+
+        const input = el("input", {
+          type: "text",
+          class: hasSelection ? "gaidet-autocomplete-input gaidet-autocomplete-input-more" : "gaidet-autocomplete-input",
+          "data-field": `toolSearch::${key}`,
+          "aria-label": hasSelection ? "Add another AI tool used for this task" : "Search for an AI tool",
+          placeholder: hasSelection ? "+ Add another tool" : "Start typing to search, e.g. “clau”…",
+          autocomplete: "off"
+        });
+
+        const list = el("ul", { class: "gaidet-autocomplete-list" }, []);
+        list.style.display = "none";
+
+        const selectedWrap = el("div", { class: "gaidet-autocomplete-selected" }, []);
+
+        let activeIndex = -1;
+        let currentMatches = [];
+
+        function closeList() {
+          list.style.display = "none";
+          list.innerHTML = "";
+          activeIndex = -1;
+          currentMatches = [];
+        }
+
+        function selectTool(entry) {
+          if (!isSelected(entry.name)) {
+            commit([...currentSelected(), { name: entry.name, needsVersion: entry.needsVersion, version: "" }]);
+          }
+          input.value = "";
+          closeList();
+          input.focus();
+        }
+
+        function renderList(query) {
+          const q = query.trim();
+          if (!q) { closeList(); return; }
+          const ql = q.toLowerCase();
+          const matches = toolIndex.filter(t => t.name.toLowerCase().includes(ql) && !isSelected(t.name));
+          list.innerHTML = "";
+
+          if (matches.length === 0) {
+            currentMatches = [{ name: q, needsVersion: true, isCustom: true }];
+            const li = el("li", { class: "gaidet-autocomplete-item gaidet-autocomplete-add-custom" }, []);
+            li.append("Add “", Object.assign(document.createElement("strong"), { textContent: q }), "” as a tool");
+            li.addEventListener("mousedown", (e) => { e.preventDefault(); selectTool(currentMatches[0]); });
+            list.append(li);
+            list.style.display = "block";
+            activeIndex = -1;
+            return;
+          }
+
+          currentMatches = matches;
+          matches.forEach(entry => {
+            const li = el("li", { class: "gaidet-autocomplete-item" }, []);
+            const nameSpan = el("span", {}, []);
+            nameSpan.innerHTML = highlight(entry.name, q);
+            const catSpan = el("span", { class: "gaidet-autocomplete-item-category" }, entry.category);
+            li.append(nameSpan, catSpan);
+            li.addEventListener("mousedown", (e) => { e.preventDefault(); selectTool(entry); });
+            list.append(li);
+          });
+          activeIndex = -1;
+          list.style.display = "block";
+        }
+
+        function setActive(i) {
+          const items = list.querySelectorAll(".gaidet-autocomplete-item");
+          items.forEach((node, idx) => node.classList.toggle("active", idx === i));
+          if (items[i]) items[i].scrollIntoView({ block: "nearest" });
+        }
+
+        input.addEventListener("input", (e) => renderList(e.target.value));
+        input.addEventListener("keydown", (e) => {
+          const items = list.querySelectorAll(".gaidet-autocomplete-item");
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            if (!items.length) return;
+            activeIndex = (activeIndex + 1) % items.length;
+            setActive(activeIndex);
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            if (!items.length) return;
+            activeIndex = (activeIndex - 1 + items.length) % items.length;
+            setActive(activeIndex);
+          } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (activeIndex >= 0 && currentMatches[activeIndex]) {
+              selectTool(currentMatches[activeIndex]);
+            } else if (currentMatches.length === 1) {
+              selectTool(currentMatches[0]);
+            }
+          } else if (e.key === "Escape") {
+            closeList();
+          }
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!input.parentElement?.contains(e.target)) closeList();
+        });
+
+        function renderSelected() {
+          selectedWrap.innerHTML = "";
+          currentSelected().forEach(entry => {
+            const row = el("div", { class: "gaidet-autocomplete-chip" }, []);
+            row.append(el("span", { class: "gaidet-autocomplete-chip-name" }, entry.name));
+            if (entry.needsVersion) {
+              row.append(el("input", {
+                type: "text",
+                class: "gaidet-autocomplete-version-input",
+                "data-field": `toolVersion::${key}::${entry.name}`,
+                "aria-label": `${entry.name} model or version`,
+                placeholder: "Model or version",
+                value: entry.version,
+                oninput: debounce((e) => {
+                  commit(currentSelected().map(t => t.name === entry.name ? { ...t, version: e.target.value } : t));
+                })
+              }));
+            }
+            row.append(el("button", {
+              type: "button",
+              class: "gaidet-autocomplete-remove",
+              "aria-label": `Remove ${entry.name}`,
+              onclick: () => commit(currentSelected().filter(t => t.name !== entry.name))
+            }, "×"));
+            selectedWrap.append(row);
+          });
+        }
+
+        renderSelected();
+
+        return el("div", { class: "gaidet-autocomplete" }, [
+          el("p", { class: "gaidet-tool-label" }, "AI tool(s) used for this task:"),
+          el("div", { class: "gaidet-autocomplete-wrap" }, [input, list]),
+          selectedWrap,
+          el("p", { class: "gaidet-tool-instructions" }, "Press Enter or click a suggestion to add a tool. If yours isn't listed, type its name and add it as a custom tool.")
         ]);
-
-        return el("div", { class: "gaidet-item" }, [details]);
       }
-
-      const checked = key in selections;
-      const sel = selections[key];
 
       const checkboxLabel = el("label", {}, [
         el("input", {
           type: "checkbox",
           checked,
           onchange: (e) => {
-            if (e.target.checked && noToolsSelected) {
-              e.target.checked = false;
-              mutable taskToolWarningCategory = cat.id;
-              {
-                const target = document.getElementById("gaidet-ai-tools-section");
-                if (target) slowScrollTo(target);
-              }
-              return;
-            }
             const next = { ...selections };
             if (e.target.checked) {
               next[key] = {
@@ -495,7 +424,8 @@ form = {
             mutable selections = next;
           }
         }),
-        el("span", { class: "gaidet-item-label" }, ` ${item.label}`)
+        el("span", { class: "gaidet-item-label" }, ` ${item.label}`),
+        isComplete ? el("span", { class: "gaidet-item-complete", "aria-label": "Sentence and tool provided" }, " ✓") : null
       ]);
 
       const details = checked ? el("div", { class: "gaidet-item-details" }, [
@@ -514,11 +444,12 @@ form = {
             }
           })
         }) : null,
+        buildToolPicker(),
         el("textarea", {
           class: "gaidet-sentence",
           "data-field": `sentence::${key}`,
-          "aria-label": "One sentence description of what you asked the AI to do and how you used the output",
-          placeholder: "One sentence: what did you ask the AI to do, and how did you use the output? (about 25–30 words)",
+          "aria-label": "Description of what you asked the AI to do and how you used the output",
+          placeholder: "What did you ask the AI to do, and how did you use the output? (about 25–30 words)",
           maxlength: "220",
           value: sel.sentence,
           oninput: debounce((e) => {
@@ -542,58 +473,40 @@ form = {
               mutable selections = next;
             }
           })
-        }) : null,
-        el("p", { class: "gaidet-tool-label" }, "Tool(s) used for this task:"),
-        availableTools.length > 0
-          ? el("div", { class: "gaidet-tool-grid" },
-              availableTools.map(tool => toolCheckbox(tool, tool in (sel.tools ?? {}), (e) => {
-                const next = { ...selections };
-                if (!next[key]) return;
-                const currentTools = { ...(next[key].tools ?? {}) };
-                if (e.target.checked) {
-                  currentTools[tool] = true;
-                } else {
-                  delete currentTools[tool];
-                }
-                next[key] = { ...next[key], tools: currentTools };
-                mutable selections = next;
-              }))
-            )
-          : el("p", { class: "gaidet-tool-label" }, "Please pick the AI tool(s) you used in the “AI tool(s) used in assignment” section at the top of the page first."),
-        availableTools.length > 0
-          ? el("p", { class: "gaidet-tool-instructions" }, "If the tool you used for this task is missing, please extend your selection in “AI tool(s) used in assignment” above.")
-          : null
+        }) : null
       ]) : null;
 
       return el("div", { class: "gaidet-item" }, [checkboxLabel, details]);
     })
   ]);
 
-  return [warning, categoryEl].filter(Boolean);
+  return categoryEl;
   })));
 }
 ```
 
 ## Detailed task breakdown
 
-${form}
+Tick a task below, then select the AI tool(s) --  you used for it and add them one at a time — start typing a tool name (e.g. "cha" for ChatGPT). Please give the exact model or version where applicable (e.g. GPT-5.5, Claude Sonnet 5), since capability can vary considerably between versions. If your tool isn't listed, type its name and add it as a custom tool.
+
 
 ```{ojs}
 //| echo: false
 declarationText = {
   const entries = Object.values(selections);
 
-  const overallToolNames = Object.keys(overallTools).map(tool => {
-    const version = (overallToolVersions[tool] ?? "").trim();
-    return version ? `${tool} (${version})` : tool;
-  });
-  overallToolNames.push(...Object.values(overallOtherTools).map(v => v.trim()).filter(Boolean));
+  const overallToolNames = [...new Set(entries.flatMap(e =>
+    Object.entries(e.tools ?? {}).map(([name, val]) => {
+      const version = (val && typeof val === "object" && val.version) ? val.version.trim() : "";
+      return version ? `${name} (${version})` : name;
+    })
+  ))].sort((a, b) => a.localeCompare(b));
   const overallToolsPart = overallToolNames.length > 0 ? overallToolNames.join(", ") : "[no tools ticked]";
 
   const heading = `AI Disclosure Declaration\n\nAI tools used: ${overallToolsPart}\n`;
 
   const signedBy = studentName.trim() || "[ADD NAME]";
-  const closing = `\n\nResponsibility for the final manuscript lies entirely with the author.\nGenerative AI tools are not listed as authors and do not bear responsibility for the final outcomes.\nDeclaration submitted by: ${signedBy}`;
+  const closing = `\n\nResponsibility for the final manuscript lies entirely with the author.\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.\nDeclaration submitted by: ${signedBy}`;
 
   if (entries.length === 0) {
     return `${heading}\nNo tasks have been ticked yet.${closing}`;
@@ -601,7 +514,10 @@ declarationText = {
 
   const lines = entries.map(e => {
     const labelPart = (e.customLabel && e.customLabel.trim()) ? e.customLabel.trim() : e.label;
-    const itemToolNames = Object.keys(e.tools ?? {});
+    const itemToolNames = Object.entries(e.tools ?? {}).map(([name, val]) => {
+      const version = (val && typeof val === "object" && val.version) ? val.version.trim() : "";
+      return version ? `${name} (${version})` : name;
+    });
     const itemToolsPart = itemToolNames.length > 0 ? itemToolNames.join(", ") : "[no tool specified]";
     const toolLabel = itemToolNames.length === 1 ? "Tool" : "Tools";
     const sentencePart = e.sentence.trim() || "[please add a short explainer]";
@@ -632,30 +548,30 @@ nameField = preserveFocus(() => el("div", { class: "gaidet-item" }, [
 ]))
 ```
 
-${nameField}
-
 ```{ojs}
 //| echo: false
-{
-  const noTools = Object.keys(overallTools).length === 0
-    && Object.values(overallOtherTools).every(v => !v.trim());
-  const noTasks = Object.values(selections).length === 0;
-  const taskMissingTool = Object.values(selections).some(sel =>
-    Object.keys(sel.tools ?? {}).length === 0
-  );
-  const taskMissingLabel = Object.values(selections).some(sel =>
-    sel.openEnded && !(sel.customLabel && sel.customLabel.trim())
-  );
-  const incomplete = noTools || noTasks || taskMissingTool || taskMissingLabel;
+outputBox = {
+  const entries = Object.values(selections);
+  const noTasks = entries.length === 0;
 
-  const warningText = (noTools || noTasks)
-    ? "If you have used AI tool(s) in your assignment, please select at least one tool above and tick at least one task before copying the declaration."
-    : taskMissingTool
-    ? "Please select at least one tool for every ticked task before copying the declaration."
-    : "Please add a short description for every “Not listed above” task before copying the declaration.";
+  const incompleteEntries = entries.filter(sel =>
+    !(sel.sentence && sel.sentence.trim())
+    || Object.keys(sel.tools ?? {}).length === 0
+    || (sel.openEnded && !(sel.customLabel && sel.customLabel.trim()))
+  );
+  const incomplete = noTasks || incompleteEntries.length > 0;
 
   const warning = (incomplete && copyWarning)
-    ? el("div", { class: "gaidet-warning" }, warningText)
+    ? el("div", { class: "gaidet-warning" }, noTasks
+        ? "Please tick at least one task below before copying the declaration."
+        : [
+            "Please add a short description and at least one tool before copying the declaration, for:",
+            el("ul", { class: "gaidet-warning-list" },
+              incompleteEntries.map(sel => el("li", {},
+                (sel.customLabel && sel.customLabel.trim()) ? sel.customLabel.trim() : sel.label
+              ))
+            )
+          ])
     : null;
 
   const successText = copySuccess === "download"
@@ -682,10 +598,12 @@ ${nameField}
     el("h3", {}, "Generated declaration"),
     warning,
     success,
-    el("pre", { id: "gaidet-output-text" }, [
-      el("strong", {}, "AI Disclosure Declaration"),
-      declarationText.replace(/^AI Disclosure Declaration/, "")
-    ]),
+    incomplete
+      ? el("p", { class: "gaidet-output-placeholder" }, "Your declaration will appear here once every ticked task has a tool and a one-sentence description.")
+      : el("pre", { id: "gaidet-output-text" }, [
+          el("strong", {}, "AI Disclosure Declaration"),
+          declarationText.replace(/^AI Disclosure Declaration/, "")
+        ]),
     el("div", { class: "gaidet-output-actions" }, [
       el("button", {
         class: "gaidet-btn-primary",
@@ -706,21 +624,86 @@ ${nameField}
           URL.revokeObjectURL(url);
           mutable copySuccess = "download";
         })
-      }, "Download as file")
+      }, "Download as txt file")
     ])
   ]);
 }
 ```
 
+
+
+${form}
+
+${nameField}
+
+${outputBox}
+
 This declaration is a starting point. I recommend reviewing and adjusting the generated wording to fit your own voice, your module's requirements, and your institution's referencing style before submitting. The source code for this website is available on [GitHub](https://github.com/stefan-mueller/ai-disclosure).
 
 
+## Save or resume your progress
+
+Nothing is saved automatically. If you want to continue later, save your progress to a file on your device, then load it again on your next visit — the file never leaves your computer.
+
+```{ojs}
+//| echo: false
+progressBox = {
+  const fileInput = el("input", {
+    type: "file",
+    accept: "application/json",
+    style: "display:none;",
+    onchange: (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          mutable selections = data.selections ?? {};
+          mutable studentName = data.studentName ?? "";
+          mutable providePrompts = data.providePrompts ?? false;
+        } catch (err) {
+          alert("Could not read this file — please make sure it's a progress file saved from this tool.");
+        }
+        e.target.value = "";
+      };
+      reader.readAsText(file);
+    }
+  });
+
+  return el("div", { class: "gaidet-item" }, [
+    el("div", { class: "gaidet-output-actions" }, [
+      el("button", {
+        type: "button",
+        class: "gaidet-btn-secondary",
+        onclick: () => {
+          const payload = { version: 1, studentName, providePrompts, selections };
+          const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "ai-disclosure-progress.json";
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+      }, "Save progress"),
+      el("button", {
+        type: "button",
+        class: "gaidet-btn-secondary",
+        onclick: () => fileInput.click()
+      }, "Load progress"),
+      fileInput
+    ])
+  ]);
+}
+```
+
+${progressBox}
 
 
-# Notes and disclaimers
+## Notes and disclaimers
 
-
-::: {.callout-tip}
+::: {.callout-note}
 Learn more about generaratiive AI declaration generators: Suchikova, Y., Tsybuliak, N., Teixeira da Silva, J. A., & Nazarovets, S. (2026). [GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing](https://doi.org/10.1080/08989621.2025.2544331). *Accountability in Research*, *33*(3). 
 :::
 
@@ -730,4 +713,10 @@ Learn more about generaratiive AI declaration generators: Suchikova, Y., Tsybuli
 This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is **not** legal, academic, or official institutional guidance, and using it does **not** constitute compliance with any university, School, programme, or module policy. The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete and comprehensive account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. **You are solely responsible** for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether — and how — AI tools may be used before you submit any work. The author **cannot be held legally or otherwise accountable** for any reliance placed on this tool.
 
 The selection of AI tools listed in this form does not indicate endorsement of any kind. It follows the most commonly used generative AI tools and the tool lists published by [University of Galway Library](https://libguides.library.universityofgalway.ie/AIforResearch/tools) and [University College Dublin Library](https://libguides.ucd.ie/GENAI/AITools).
+:::
+
+::: {.callout-tip}
+## Note on privacy
+
+This tool does not store, transmit or save any data you enter. Everything runs in your browser and disappears when you close or refresh the page. The generated text is provided only so you can copy it into your own assignment appendix.
 :::

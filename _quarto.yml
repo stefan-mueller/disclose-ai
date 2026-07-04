@@ -6,7 +6,7 @@ website:
   title: "AI Disclosure for University Assignments"
   description: "A simplified, coursework-adapted version of the GAIDeT declaration generator."
   page-footer:
-    center: "Adapted from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) (Suchikova et al. 2026, [paper](https://doi.org/10.1080/08989621.2025.2544331)), [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net) and Claude Code."
+    center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) (Suchikova et al. 2026, [paper](https://doi.org/10.1080/08989621.2025.2544331)), [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net) and Claude Code."
 
 format:
   html:

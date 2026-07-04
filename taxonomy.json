@@ -2,8 +2,6 @@
   "aiToolGroups": [
     {
       "label": "Chatbots",
-      "otherLabel": "Other LLM",
-      "visibleCount": 5,
       "tools": ["ChatGPT", "Claude", "Gemini", "Microsoft Copilot", "Perplexity", "Grok", "Meta AI / Llama", "Mistral / Le Chat", "DeepSeek", "Qwen", "HuggingChat", "NotebookLM", "Local LLMs (Ollama, LM Studio etc)"]
     },
     {
@@ -60,6 +58,7 @@
       "label": "Software development and automation",
       "items": [
         { "id": "code_generation", "label": "Code generation" },
+        { "id": "code_review", "label": "Code review" },
         { "id": "code_optimisation", "label": "Code optimisation or debugging" }
       ]
     },
@@ -85,9 +84,9 @@
     },
     {
       "id": "other_tasks",
-      "label": "Other task (please describe below)",
+      "label": "Other",
       "items": [
-        { "id": "other_task", "label": "Other task", "openEnded": true, "noCheckbox": true }
+        { "id": "other_task", "label": "Not listed above (please describe)", "openEnded": true }
       ]
     }
   ]
