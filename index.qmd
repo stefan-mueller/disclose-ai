@@ -65,7 +65,7 @@ This tool does not store, transmit or save any data you enter. Everything runs i
 ::: {.callout-warning}
 Many universities do not have a single institution-wide policy on generative AI — permission to use it varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor, your Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. 
 
-This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. Many universities also publish general guidelines on using and citing AI — check whether yours does, and consult them for guidance. You are ultimately responsible for complying with your institution's and module's policies; see the full disclaimer at the end of this page for details.
+This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. Many universities also publish general guidelines on using and citing AI — check whether yours does, and consult them for guidance. You are ultimately responsible for complying with your institution's and module's policies; see the full disclaimer at the end of this page for details. 
 :::
 
 ```{ojs}
