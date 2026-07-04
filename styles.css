@@ -251,12 +251,13 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-autocomplete-item {
+  list-style: none;
+  margin: 0;
   padding: 0.4rem 0.55rem;
   font-size: 0.9rem;
   border-radius: 6px;
   cursor: pointer;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
 }
@@ -268,7 +269,13 @@ label.gaidet-tool-option:hover {
   padding: 0 1px;
 }
 
+.gaidet-autocomplete-item > span:first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .gaidet-autocomplete-item-category {
+  flex: 0 0 auto;
   font-size: 0.75rem;
   color: var(--gaidet-text-muted);
   white-space: nowrap;
