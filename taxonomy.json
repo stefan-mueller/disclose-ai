@@ -1,0 +1,97 @@
+{
+  "aiToolGroups": [
+    {
+      "label": "Large Language Models",
+      "otherLabel": "Other LLM",
+      "tools": ["ChatGPT", "Claude", "Gemini", "Microsoft Copilot", "Perplexity", "Grok", "Meta AI / Llama", "Mistral / Le Chat", "DeepSeek", "Qwen", "NotebookLM", "Open language models (Ollama, LM Studio etc)"]
+    },
+    {
+      "label": "Coding agents",
+      "tools": ["GitHub Copilot", "Claude Code", "Codex"]
+    },
+    {
+      "label": "Grammar, proofreading and spelling",
+      "tools": ["Grammarly", "QuillBot"]
+    },
+    {
+      "label": "Literature research",
+      "tools": ["Consensus", "Elicit", "Scite"]
+    },
+    {
+      "label": "Image and design generation",
+      "tools": ["Midjourney", "DALL-E", "Stable Diffusion", "Adobe Firefly", "Canva"]
+    },
+    {
+      "label": "Audio and video",
+      "tools": ["Runway", "ElevenLabs", "Otter.ai"]
+    },
+    {
+      "label": "Productivity and organisation",
+      "tools": ["Notion AI"]
+    }
+  ],
+  "categories": [
+    {
+      "id": "conceptualisation",
+      "label": "Conceptualisation",
+      "items": [
+        { "id": "idea_generation", "label": "Idea generation" },
+        { "id": "defining_objectives", "label": "Defining the objective or question" },
+        { "id": "structuring_approach", "label": "Helping shape the overall approach or argument" }
+      ]
+    },
+    {
+      "id": "literature_review",
+      "label": "Literature review",
+      "items": [
+        { "id": "finding_sources", "label": "Finding sources" },
+        { "id": "summarising_sources", "label": "Summarising sources" },
+        { "id": "identifying_gaps", "label": "Identifying gaps in the argument or literature" },
+        { "id": "clarifying_definitions", "label": "Clarifying definitions or concepts" }
+      ]
+    },
+    {
+      "id": "data_management",
+      "label": "Data management",
+      "items": [
+        { "id": "data_collection", "label": "Data collection" },
+        { "id": "data_visualisation", "label": "Data visualisation" }
+      ]
+    },
+    {
+      "id": "software_development",
+      "label": "Software development and automation",
+      "items": [
+        { "id": "code_generation", "label": "Code generation" },
+        { "id": "code_optimisation", "label": "Code optimisation or debugging" }
+      ]
+    },
+    {
+      "id": "writing_editing",
+      "label": "Writing and editing",
+      "items": [
+        { "id": "text_generation", "label": "Text generation (e.g. the required AI draft)" },
+        { "id": "proofreading", "label": "Proofreading" },
+        { "id": "summarising_own_text", "label": "Summarising your own draft" },
+        { "id": "tone_adjustment", "label": "Tone or style adjustment" },
+        { "id": "translation", "label": "Translation" }
+      ]
+    },
+    {
+      "id": "audiovisual",
+      "label": "Audiovisual and interactive component",
+      "items": [
+        { "id": "ai_visuals", "label": "AI-generated visuals or graphics" },
+        { "id": "ai_narration", "label": "AI-generated voice-over or narration" },
+        { "id": "ai_av_editing", "label": "AI-assisted video or audio editing" }
+      ]
+    },
+    {
+      "id": "other_tasks",
+      "label": "Other tasks or components",
+      "items": [
+        { "id": "other_task", "label": "Not listed above (describe below)", "openEnded": true }
+      ]
+    }
+  ]
+}

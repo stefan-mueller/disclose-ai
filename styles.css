@@ -1,0 +1,302 @@
+:root {
+  --gaidet-accent: #3b5bdb;
+  --gaidet-accent-dark: #2f49ad;
+  --gaidet-accent-tint: #eef1fd;
+  --gaidet-border: #e2e5ea;
+  --gaidet-text-muted: #5b6270;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #fbfbfc;
+}
+
+h2 {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid var(--gaidet-accent);
+  display: inline-block;
+}
+
+.callout {
+  background-color: #fff;
+  font-size: 1.05rem;
+}
+
+.callout > .callout-body-container {
+  background-color: #fff;
+}
+
+a {
+  color: var(--gaidet-accent);
+}
+
+a:hover {
+  color: var(--gaidet-accent-dark);
+}
+
+.gaidet-category {
+  background: #fff;
+  border: 1px solid var(--gaidet-border);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 1.25rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.gaidet-category:hover,
+.gaidet-output:hover {
+  border-color: var(--gaidet-accent);
+  box-shadow: 0 4px 10px rgba(16, 24, 40, 0.08), 0 2px 4px rgba(16, 24, 40, 0.05);
+  transform: translateY(-2px);
+}
+
+.gaidet-category h3 {
+  margin-top: 0;
+  margin-bottom: 0.85rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.gaidet-item {
+  margin-bottom: 0.6rem;
+}
+
+.gaidet-item-label {
+  font-size: 1.05rem;
+  transition: color 0.15s ease;
+}
+
+.gaidet-item > label {
+  cursor: pointer;
+}
+
+.gaidet-item > label:hover .gaidet-item-label {
+  color: var(--gaidet-accent);
+}
+
+.gaidet-tool-group {
+  margin-bottom: 0.85rem;
+}
+
+.gaidet-tool-group-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--gaidet-text-muted);
+  margin: 0 0 0.3rem 0;
+}
+
+.gaidet-sentence {
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.gaidet-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.3rem 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.gaidet-tool-option {
+  font-size: 0.9rem;
+  font-weight: normal;
+  padding: 0.15rem 0;
+}
+
+.gaidet-tool-option label,
+label.gaidet-tool-option {
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.gaidet-tool-option label:hover,
+label.gaidet-tool-option:hover {
+  color: var(--gaidet-accent);
+}
+
+.gaidet-version-input {
+  display: block;
+  box-sizing: border-box;
+  width: calc(100% - 1.4rem);
+  margin: 0.15rem 0 0.3rem 1.4rem;
+  padding: 0.1rem 0.3rem;
+  font-size: 0.8rem;
+}
+
+.gaidet-tool-other {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+}
+
+.gaidet-tool-label {
+  margin-bottom: 0.2rem;
+  font-size: 0.9rem;
+}
+
+.gaidet-divider {
+  border: none;
+  border-top: 2px solid var(--gaidet-border);
+  margin: 1rem 0;
+}
+
+.gaidet-tool-instructions {
+  font-size: 0.85rem;
+  color: var(--gaidet-text-muted);
+  margin: 0.2rem 0 0.5rem 0;
+}
+
+.gaidet-item-details {
+  margin-top: 0.3rem;
+  padding-left: 1.4rem;
+}
+
+.gaidet-warning {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.9rem;
+}
+
+.gaidet-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.9rem;
+}
+
+.gaidet-output {
+  background: #f8fafc;
+  border: 1px solid var(--gaidet-border);
+  border-left: 4px solid var(--gaidet-accent);
+  border-radius: 12px;
+  padding: 1.1rem 1.4rem;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.gaidet-output pre {
+  white-space: pre-wrap;
+  background: #fff;
+  border: 1px solid var(--gaidet-border);
+  border-radius: 8px;
+  padding: 0.9rem;
+  font-size: 0.85rem;
+}
+
+/* Form controls */
+input[type="text"],
+input[type="checkbox"] + input[type="text"],
+textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--gaidet-accent);
+  box-shadow: 0 0 0 3px var(--gaidet-accent-tint);
+}
+
+input[type="checkbox"] {
+  accent-color: var(--gaidet-accent);
+  width: 1.05rem;
+  height: 1.05rem;
+  vertical-align: middle;
+  margin-right: 0.35rem;
+  cursor: pointer;
+}
+
+button {
+  background: var(--gaidet-accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+button:hover {
+  background: var(--gaidet-accent-dark);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.gaidet-output-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.gaidet-btn-primary {
+  background-color: var(--gaidet-accent-dark);
+}
+
+.gaidet-btn-primary:hover {
+  background-color: #24397e;
+}
+
+.gaidet-btn-secondary {
+  background-color: #fff;
+  color: var(--gaidet-accent);
+  border: 1px solid var(--gaidet-accent);
+}
+
+.gaidet-btn-secondary:hover {
+  background-color: var(--gaidet-accent-tint);
+}
+
+.gaidet-example-wrap {
+  margin-bottom: 1rem;
+}
+
+.gaidet-example-toggle {
+  background: #fff;
+  color: var(--gaidet-accent);
+  border: 1px solid var(--gaidet-accent);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+}
+
+.gaidet-example-toggle:hover {
+  background: var(--gaidet-accent-tint);
+}
+
+.gaidet-example {
+  white-space: pre-wrap;
+  background: #f8fafc;
+  border: 1px dashed var(--gaidet-border);
+  border-radius: 8px;
+  padding: 0.9rem;
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--gaidet-text-muted);
+}
