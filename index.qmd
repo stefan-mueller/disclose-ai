@@ -9,15 +9,14 @@ format:
 This tool helps students disclose their use of generative AI in university assignments. It generates a plain-text declaration summarising which AI tools you used and how, ready to paste into your appendix. It is free to use, fully open source, and runs entirely in your browser, so nothing you enter is ever sent to a server. See the [privacy note](#note-on-privacy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
 
 
-## What is this tool for?
+## Why use this tool?
+
 
 Generative AI use among students continues to grow. According to the [Student Generative AI Survey 2026](https://www.hepi.ac.uk/wp-content/uploads/2026/03/HEPI-Report-199-Gen-AI-Survey-2026.pdf), 94% of students use generative AI to help with assessed work. Some assignments prohibit its use; others permit it but require disclosure, and clear guidance on *how* to disclose isn’t always available.
 
-This gap is what the tool below addresses. It offers a structured, task-by-task checklist for recording your AI use, so you can produce a clear disclosure statement even when your institution or module hasn’t provided one of its own. It adapts the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)) for university assignments.
+This website offers a structured, task-by-task checklist for recording your AI use and automatically generates a clear disclosure statement. It adapts the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)) for university assignments.
 
-Before you use it, one point needs to be explicit: this tool does not encourage or endorse the use of generative AI in your assignments. It exists only to help you disclose whatever use you make of it, once you have confirmed that use is permitted.
-
-Select every task a generative AI tool assisted you with. For each task you select, add a short description of what you asked the AI to do and how you used its output. Your answers are automatically formatted into a declaration at the end of this page, ready for you to copy and adjust as needed.
+Select every task a generative AI tool helped you with, then add a short description of what you asked it to do and how you used the output. Your answers are automatically formatted into a declaration at the end of this page, ready to copy and adjust as needed.
 
 ```{ojs}
 //| echo: false
@@ -68,12 +67,10 @@ el("div", { class: "gaidet-example-wrap" }, [
 
 
 ::: {.callout-warning}
-Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or for specific tasks listed below; including a task or tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief.
+Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or for specific tasks listed below; disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief.
 
 This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 :::
-
-${promptsToggle}
 
 ```{ojs}
 //| echo: false
@@ -562,7 +559,7 @@ form = {
         class: "gaidet-sentence",
         "data-field": `prompts::${key}`,
         "aria-label": "Prompts used for this task",
-        placeholder: "If applicable, please copy-paste the prompts you have used",
+        placeholder: "If applicable, please copy-paste the prompts you have used.",
         value: sel?.prompts ?? "",
         oninput: debounce((e) => {
           const next = { ...selections };
@@ -631,6 +628,7 @@ form = {
 ## Detailed task breakdown
 
 Tick every task where you delegated work to AI, then add the tool(s) you used for it. Give the exact model or version where you can (e.g. GPT-5.5), since capability varies a lot between versions.
+
 
 ```{ojs}
 //| echo: false
@@ -826,6 +824,8 @@ ${form}
 
 ${nameField}
 
+${promptsToggle}
+
 ${outputBox}
 
 This declaration is a starting point. I recommend reviewing and adjusting the generated wording to fit your own voice, your module's requirements, and your institution's referencing style before submitting. The source code for this website is available on [GitHub](https://github.com/stefan-mueller/disclose-ai).
@@ -910,7 +910,7 @@ If you use this tool in your teaching, you can cite it as:
 
 Learn more about generative AI declaration generators, the inspiration behind this project:
 
->Suchikova, Yana, Tsybuliak, Natalia, Teixeira da Silva, Jaime A., & Nazarovets, Serhii (2026). [GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing](https://doi.org/10.1080/08989621.2025.2544331). *Accountability in Research*, *33*(3).
+>Suchikova, Yana, Tsybuliak, Natalia, Teixeira da Silva, Jaime A., & Nazarovets, Serhii (2026). “GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing“. *Accountability in Research*, *33*(3). [10.1080/08989621.2025.2544331](https://doi.org/10.1080/08989621.2025.2544331)
 
 ## Disclaimer of responsibility
 

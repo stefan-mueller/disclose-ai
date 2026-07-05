@@ -234,10 +234,6 @@ label.gaidet-tool-option:hover {
   font-weight: 700;
 }
 
-.gaidet-prompts-question .gaidet-tool-instructions {
-  font-size: 0.95rem;
-}
-
 .gaidet-prompts-question .gaidet-tool-grid {
   grid-template-columns: repeat(auto-fill, minmax(90px, max-content));
   gap: 0.6rem 0.8rem;
