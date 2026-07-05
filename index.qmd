@@ -10,7 +10,7 @@ format:
 This tool helps students disclose their use of generative AI in university assignments. It generates a plain-text declaration summarising which AI tools you used and how, ready to paste into your appendix. It is free to use, fully open source, and never leaves your browser. See the [privacy note](#notes-and-disclaimers) at the end of this page for details.
 
 
-Built by [Stefan Müller](https://muellerstefan.net) with the support of Claude Code, this tool adapts the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)) for university assignments.
+Built by [Stefan Müller](https://muellerstefan.net), this tool adapts the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)) for university assignments.
 
 
 
