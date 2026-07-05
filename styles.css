@@ -397,10 +397,14 @@ label.gaidet-tool-option:hover {
   color: var(--gaidet-accent-bright);
 }
 
-.gaidet-divider {
+hr {
   border: none;
-  border-top: 2px solid var(--gaidet-border);
-  margin: 1rem 0;
+  height: 1.5px;
+  width: 140px;
+  margin: 2.5rem auto;
+  background: var(--gaidet-accent);
+  border-radius: 2px;
+  opacity: 0.6;
 }
 
 .gaidet-tool-instructions {
