@@ -90,7 +90,7 @@
     },
     {
       "id": "audiovisual",
-      "label": "Audiovisual and interactive component",
+      "label": "Audiovisual and interactive components",
       "items": [
         { "id": "ai_visuals", "label": "AI-generated visuals or graphics" },
         { "id": "ai_narration", "label": "AI-generated voice-over or narration" },

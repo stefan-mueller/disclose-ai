@@ -570,12 +570,14 @@ hr {
 }
 
 @keyframes gaidet-flash {
-  0% { background-color: var(--gaidet-accent-tint); }
-  100% { background-color: #fff; }
+  0% { background-color: var(--gaidet-accent-tint); color: transparent; }
+  10% { color: transparent; }
+  30% { color: inherit; }
+  100% { background-color: #fff; color: inherit; }
 }
 
 .gaidet-output-flash {
-  animation: gaidet-flash 1.8s ease;
+  animation: gaidet-flash 2.5s ease;
 }
 
 .gaidet-output-placeholder {

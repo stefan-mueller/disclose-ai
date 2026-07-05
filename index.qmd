@@ -745,7 +745,7 @@ outputBox = {
           mutable showConfirmPrompt = false;
           mutable copySuccess = false;
         }
-      }, "Yes, generate declaration"),
+      }, "Yes, create declaration"),
       el("button", {
         class: "gaidet-btn-secondary",
         onclick: () => { mutable showConfirmPrompt = false; }
@@ -773,7 +773,9 @@ outputBox = {
     warning,
     confirmBox,
     success,
-    showDeclaration
+    showConfirmPrompt
+      ? null
+      : showDeclaration
       ? el("pre", { id: "gaidet-output-text", class: justUpdated ? "gaidet-output-flash" : "" }, [
           el("strong", {}, "AI Disclosure Declaration"),
           declarationText.replace(/^AI Disclosure Declaration/, "")
@@ -901,7 +903,7 @@ This tool was built by [Stefan Müller](https://muellerstefan.net), with substan
 
 If you use this tool in your teaching, you can cite it as:
 
->Müller, Stefan (2026). *AI Disclosure Statement Generator*. <https://discloseai.netlify.app>
+>Müller, Stefan (2026). *AI Disclosure Statement Generator*. <https://disclose-ai.netlify.app>
 
 
 ## Related reading
@@ -914,7 +916,6 @@ Learn more about generative AI declaration generators, the inspiration behind th
 
 This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is **not** legal, academic, or official institutional guidance, and using it does **not** constitute compliance with any university, School, programme, or module policy. The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. **You are solely responsible** for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author **cannot be held legally or otherwise accountable** for any reliance placed on this tool.
 
-The selection of AI tools listed in this form does not indicate endorsement of any kind. It follows the most commonly used generative AI tools and the tool lists published by [University of Galway Library](https://libguides.library.universityofgalway.ie/AIforResearch/tools) and [University College Dublin Library](https://libguides.ucd.ie/GENAI/AITools).
 
 ## Note on privacy
 
