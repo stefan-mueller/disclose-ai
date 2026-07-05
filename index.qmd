@@ -433,7 +433,7 @@ form = {
                 class: "gaidet-autocomplete-version-input",
                 "data-field": `toolVersion::${key}::${entry.name}`,
                 "aria-label": `${entry.name} model or version`,
-                placeholder: suggestedVersion ? `e.g., ${suggestedVersion}` : "Model/version (e.g., GPT-5.5)",
+                placeholder: suggestedVersion ? `e.g., ${suggestedVersion}` : "Model/version",
                 value: entry.version,
                 oninput: debounce((e) => {
                   commit(currentSelected().map(t => t.name === entry.name ? { ...t, version: e.target.value } : t));
