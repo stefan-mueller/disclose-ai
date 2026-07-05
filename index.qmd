@@ -7,18 +7,18 @@ format:
 
 
 
-This tool generates a plain-text AI Disclosure Declaration that summarises which generative AI tools you used, and how, so you can paste it into your assignment appendix. It is completely **free to use**, **fully open source**, and **never leaves your browser** — see the [privacy note](#notes-and-disclaimers) at the end of this page for details.
+This tool helps students disclose their use of generative AI in university assignments. It generates a plain-text declaration summarising which AI tools you used and how, ready to paste into your appendix. It is free to use, fully open source, and never leaves your browser. See the [privacy note](#notes-and-disclaimers) at the end of this page for details.
 
 
-Built by [Stefan Müller](https://muellerstefan.net) with the support of Claude Code. This idea is inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)), adapted for university assignments.
+Built by [Stefan Müller](https://muellerstefan.net) with the support of Claude Code, this tool adapts the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)) for university assignments.
 
 
 
 ## What is this tool for?
 
-Generative AI use among students continues to grow: according to the [Student Generative AI Survey 2026](https://www.hepi.ac.uk/wp-content/uploads/2026/03/HEPI-Report-199-Gen-AI-Survey-2026.pdf) (Rose Stephenson and Charlotte Armstrong, HEPI), 94% of students use generative AI to help with assessed work. Some assignments prohibit its use; others permit it but require disclosure — and clear guidance on *how* to disclose isn't always available. This tool offers a structured, task-by-task checklist for recording your AI use, so you can produce a clear disclosure statement even when your institution or module hasn't provided one of its own. To be explicit: this tool does **not** encourage or endorse the use of generative AI in your assignments — it exists only to help you disclose whatever use you make of it, once you have confirmed that use is permitted.
+Generative AI use among students continues to grow. According to the [Student Generative AI Survey 2026](https://www.hepi.ac.uk/wp-content/uploads/2026/03/HEPI-Report-199-Gen-AI-Survey-2026.pdf), 94% of students use generative AI to help with assessed work. Some assignments prohibit its use; others permit it but require disclosure, and clear guidance on *how* to disclose isn't always available. This tool offers a structured, task-by-task checklist for recording your AI use, so you can produce a clear disclosure statement even when your institution or module hasn't provided one of its own. To be explicit: this tool does not encourage or endorse the use of generative AI in your assignments. It exists only to help you disclose whatever use you make of it, once you have confirmed that use is permitted.
 
-Select every task a generative AI tool assisted you with. For each one selected, add a short description of what you asked the AI to do and how you used its output. When you are finished, copy the declaration at the end of this page and make manual adjustments where needed.
+Select every task a generative AI tool assisted you with. For each one selected, add a short description of what you asked the AI to do and how you used its output. Your answers are automatically formatted into a declaration at the end of this page, ready for you to copy and adjust as needed.
 
 
 ```{ojs}
@@ -68,7 +68,7 @@ el("div", { class: "gaidet-example-wrap" }, [
 
 
 ::: {.callout-warning}
-Many universities do not have a single institution-wide policy on generative AI — permission varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or for specific tasks listed below; including a task or tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief.
+Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or for specific tasks listed below; including a task or tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief.
 
 This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#notes-and-disclaimers) at the end of this page for details.
 :::
@@ -101,6 +101,12 @@ function el(tag, props = {}, children = []) {
     node.append(child instanceof Node ? child : document.createTextNode(child));
   }
   return node;
+}
+
+function taskIsComplete(sentence, tools, openEnded, customLabel) {
+  return !!(sentence && sentence.trim())
+    && Object.keys(tools ?? {}).length > 0
+    && (!openEnded || !!(customLabel && customLabel.trim()));
 }
 
 function debounce(fn, delay = 500) {
@@ -143,6 +149,23 @@ function preserveFocus(build) {
 
 ```{ojs}
 //| echo: false
+autocompletePickers = new Map()
+```
+
+```{ojs}
+//| echo: false
+//| output: false
+{
+  document.addEventListener("click", (e) => {
+    for (const { input, closeList } of autocompletePickers.values()) {
+      if (!input.parentElement?.contains(e.target)) closeList();
+    }
+  });
+}
+```
+
+```{ojs}
+//| echo: false
 mutable selections = ({})
 ```
 
@@ -164,6 +187,11 @@ mutable copySuccess = false
 ```{ojs}
 //| echo: false
 mutable copiedText = ""
+```
+
+```{ojs}
+//| echo: false
+mutable justUpdated = false
 ```
 
 ```{ojs}
@@ -246,10 +274,7 @@ form = {
 
       const checked = key in selections;
       const sel = selections[key];
-      const isComplete = checked
-        && !!(sel.sentence && sel.sentence.trim())
-        && Object.keys(sel.tools ?? {}).length > 0
-        && (!item.openEnded || !!(sel.customLabel && sel.customLabel.trim()));
+      const isComplete = checked && taskIsComplete(sel.sentence, sel.tools, item.openEnded, sel.customLabel);
 
       function buildToolPicker() {
         const toolIndex = data.aiToolGroups.flatMap(group =>
@@ -297,7 +322,7 @@ form = {
           class: hasSelection ? "gaidet-autocomplete-input gaidet-autocomplete-input-more" : "gaidet-autocomplete-input",
           "data-field": `toolSearch::${key}`,
           "aria-label": hasSelection ? "Add another AI tool used for this task" : "Search for an AI tool",
-          placeholder: hasSelection ? "+ Add another tool" : "Start typing to add tool”…",
+          placeholder: hasSelection ? "+ Add another tool" : "Start typing to add a tool…",
           autocomplete: "off"
         });
 
@@ -388,9 +413,7 @@ form = {
           }
         });
 
-        document.addEventListener("click", (e) => {
-          if (!input.parentElement?.contains(e.target)) closeList();
-        });
+        autocompletePickers.set(key, { input, closeList });
 
         function renderSelected() {
           selectedWrap.innerHTML = "";
@@ -488,9 +511,7 @@ form = {
           class: "gaidet-proceed-btn",
           "aria-label": "Go to next task",
           onclick: (e) => {
-            const taskComplete = sentenceTextarea.value.trim().length > 0
-              && Object.keys(sel.tools ?? {}).length > 0
-              && (!item.openEnded || !!(sel.customLabel && sel.customLabel.trim()));
+            const taskComplete = taskIsComplete(sentenceTextarea.value, sel.tools, item.openEnded, sel.customLabel);
 
             if (!taskComplete) {
               proceedWarning.style.display = "block";
@@ -550,9 +571,7 @@ form = {
       if (detailsDiv) {
         sentenceTextarea.addEventListener("input", (e) => {
           wordCount.textContent = `Words: ${countWords(e.target.value)}`;
-          const liveComplete = e.target.value.trim().length > 0
-            && Object.keys(sel.tools ?? {}).length > 0
-            && (!item.openEnded || !!(sel.customLabel && sel.customLabel.trim()));
+          const liveComplete = taskIsComplete(e.target.value, sel.tools, item.openEnded, sel.customLabel);
           detailsDiv.classList.toggle("gaidet-item-details-complete", liveComplete);
           if (liveComplete) proceedWarning.style.display = "none";
         });
@@ -571,19 +590,20 @@ form = {
 
 ## Detailed task breakdown
 
-Tick a task below, then select the AI tool(s) you used for it and add them one at a time. Start typing a tool name (e.g. "cha" for ChatGPT). Please give the exact model or version where applicable (e.g. GPT-5.5, Claude Sonnet 5), since capability can vary considerably between versions. If your tool isn't listed, type its name and add it as a custom tool.
-
+Tick every task where you delegated work to AI, then add the tool(s) you used for it. Give the exact model or version where you can (e.g. GPT-5.5), since capability varies a lot between versions.
 
 ```{ojs}
 //| echo: false
 declarationText = {
   const entries = Object.values(selections);
 
+  function formatToolWithVersion([name, val]) {
+    const version = (val && typeof val === "object" && val.version) ? val.version.trim() : "";
+    return version ? `${name} (${version})` : name;
+  }
+
   const overallToolNames = [...new Set(entries.flatMap(e =>
-    Object.entries(e.tools ?? {}).map(([name, val]) => {
-      const version = (val && typeof val === "object" && val.version) ? val.version.trim() : "";
-      return version ? `${name} (${version})` : name;
-    })
+    Object.entries(e.tools ?? {}).map(formatToolWithVersion)
   ))].sort((a, b) => a.localeCompare(b));
   const overallToolsPart = overallToolNames.length > 0 ? overallToolNames.join(", ") : "[no tools ticked]";
 
@@ -598,10 +618,7 @@ declarationText = {
 
   const lines = entries.map(e => {
     const labelPart = (e.customLabel && e.customLabel.trim()) ? e.customLabel.trim() : e.label;
-    const itemToolNames = Object.entries(e.tools ?? {}).map(([name, val]) => {
-      const version = (val && typeof val === "object" && val.version) ? val.version.trim() : "";
-      return version ? `${name} (${version})` : name;
-    });
+    const itemToolNames = Object.entries(e.tools ?? {}).map(formatToolWithVersion);
     const itemToolsPart = itemToolNames.length > 0 ? itemToolNames.join(", ") : "[no tool specified]";
     const toolLabel = itemToolNames.length === 1 ? "Tool" : "Tools";
     const sentencePart = e.sentence.trim() || "[please add a short explainer]";
@@ -658,7 +675,7 @@ outputBox = {
       ]
     : null;
 
-  const warning = (incomplete && copyWarning && warningContent)
+  const warning = (incomplete && (copyWarning || declarationConfirmed) && warningContent)
     ? el("div", { class: "gaidet-warning" }, warningContent)
     : null;
 
@@ -704,6 +721,8 @@ outputBox = {
     mutable copyWarning = false;
     if (declarationConfirmed) {
       mutable copySuccess = false;
+      mutable justUpdated = true;
+      setTimeout(() => { mutable justUpdated = false; }, 1800);
     } else {
       mutable showConfirmPrompt = true;
     }
@@ -715,7 +734,7 @@ outputBox = {
     confirmBox,
     success,
     showDeclaration
-      ? el("pre", { id: "gaidet-output-text" }, [
+      ? el("pre", { id: "gaidet-output-text", class: justUpdated ? "gaidet-output-flash" : "" }, [
           el("strong", {}, "AI Disclosure Declaration"),
           declarationText.replace(/^AI Disclosure Declaration/, "")
         ])
@@ -825,20 +844,16 @@ ${progressBox}
 
 ## Notes and disclaimers
 
-::: {.callout-note}
-Learn more about generaratiive AI declaration generators: Suchikova, Y., Tsybuliak, N., Teixeira da Silva, J. A., & Nazarovets, S. (2026). [GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing](https://doi.org/10.1080/08989621.2025.2544331). *Accountability in Research*, *33*(3). 
-:::
+### Related reading
 
-::: {.callout-important}
-## Disclaimer of responsibility
+Learn more about generative AI declaration generators: Suchikova, Y., Tsybuliak, N., Teixeira da Silva, J. A., & Nazarovets, S. (2026). [GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing](https://doi.org/10.1080/08989621.2025.2544331). *Accountability in Research*, *33*(3).
 
-This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is **not** legal, academic, or official institutional guidance, and using it does **not** constitute compliance with any university, School, programme, or module policy. The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete and comprehensive account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. **You are solely responsible** for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author **cannot be held legally or otherwise accountable** for any reliance placed on this tool.
+### Disclaimer of responsibility
+
+This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is **not** legal, academic, or official institutional guidance, and using it does **not** constitute compliance with any university, School, programme, or module policy. The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. **You are solely responsible** for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author **cannot be held legally or otherwise accountable** for any reliance placed on this tool.
 
 The selection of AI tools listed in this form does not indicate endorsement of any kind. It follows the most commonly used generative AI tools and the tool lists published by [University of Galway Library](https://libguides.library.universityofgalway.ie/AIforResearch/tools) and [University College Dublin Library](https://libguides.ucd.ie/GENAI/AITools).
-:::
 
-::: {.callout-tip}
-## Note on privacy
+### Note on privacy
 
 This tool is free to use and fully [open source](https://github.com/stefan-mueller/disclose-ai), so you can verify these claims yourself. It does **not** store, transmit, or save any data you enter, anywhere. Everything runs entirely in your own browser and disappears the moment you close or refresh the page. The generated text is provided only so you can copy it into your own assignment appendix.
-:::

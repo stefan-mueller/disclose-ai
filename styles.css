@@ -5,6 +5,9 @@
   --gaidet-accent-tint: #eef1fd;
   --gaidet-border: #e2e5ea;
   --gaidet-text-muted: #5b6270;
+  --gaidet-warning-bg: #fff7ed;
+  --gaidet-warning-border: #fed7aa;
+  --gaidet-warning-text: #9a3412;
 }
 
 body {
@@ -231,6 +234,7 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-prompts-question .gaidet-tool-grid {
+  grid-template-columns: repeat(auto-fill, minmax(90px, max-content));
   gap: 0.6rem 0.8rem;
 }
 
@@ -415,9 +419,9 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-warning {
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  color: #9a3412;
+  background: var(--gaidet-warning-bg);
+  border: 1px solid var(--gaidet-warning-border);
+  color: var(--gaidet-warning-text);
   border-radius: 8px;
   padding: 0.6rem 0.9rem;
   margin-bottom: 0.9rem;
@@ -451,11 +455,11 @@ label.gaidet-tool-option:hover {
 .gaidet-proceed-warning {
   margin: 0;
   padding: 0.5rem 0.8rem;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
+  background: var(--gaidet-warning-bg);
+  border: 1px solid var(--gaidet-warning-border);
   border-radius: 8px;
   font-size: 0.8rem;
-  color: #9a3412;
+  color: var(--gaidet-warning-text);
   text-align: right;
 }
 
@@ -548,6 +552,15 @@ label.gaidet-tool-option:hover {
   padding: 1rem;
   font-size: 0.9rem;
   box-shadow: inset 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+@keyframes gaidet-flash {
+  0% { background-color: var(--gaidet-accent-tint); }
+  100% { background-color: #fff; }
+}
+
+.gaidet-output-flash {
+  animation: gaidet-flash 1.8s ease;
 }
 
 .gaidet-output-placeholder {
@@ -646,6 +659,7 @@ button:active {
 
 .gaidet-example-toggle:hover {
   background: var(--gaidet-accent-tint);
+  color: var(--gaidet-accent-dark);
 }
 
 .gaidet-example {
