@@ -30,19 +30,19 @@ exampleDeclarationText = `AI Disclosure Declaration
 
 AI tools used: ChatGPT (GPT-5.5), Claude Code (Sonnet 4.6), Grammarly
 
-The following generative AI tasks were delegated as part of this assignment:
+The core analysis, writing, and conclusions in this assignment are my own. Generative AI assisted with the following specific, limited tasks:
 
 - Idea generation
     Tool(s): ChatGPT (GPT-5.5)
-    Summary: Asked ChatGPT to suggest possible angles for the research question, then selected and refined one idea myself.
+    Summary: I had a general research area in mind; I asked ChatGPT to suggest possible angles, then chose and developed the final research question myself.
 
 - Code generation
     Tool(s): Claude Code (Sonnet 4.6)
-    Summary: Used Claude Code to draft boilerplate data-cleaning functions, which I reviewed and adapted to fit my dataset.
+    Summary: I wrote the core analysis logic myself; Claude Code was used only to draft repetitive boilerplate (e.g. file-loading functions), which I reviewed, tested, and adapted to my dataset.
 
 - Proofreading
     Tool(s): Grammarly
-    Summary: Ran my final draft through Grammarly to catch grammar and punctuation errors, then manually reviewed and accepted the suggestions I agreed with.
+    Summary: After completing my own final draft, I ran it through Grammarly for grammar and punctuation checks, and manually reviewed and accepted only the suggestions I agreed with.
 
 Responsibility for the submitted assignment lies entirely with the author of this disclosure statement.
 
@@ -70,7 +70,7 @@ el("div", { class: "gaidet-example-wrap" }, [
 ::: {.callout-warning}
 Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or for specific tasks listed below; including a task or tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief.
 
-This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#notes-and-disclaimers) at the end of this page for details.
+This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 :::
 
 ${promptsToggle}
@@ -685,7 +685,7 @@ nameField = preserveFocus(() => el("div", { class: "gaidet-name-field" }, [
       oninput: debounce((e) => { mutable studentName = e.target.value; })
     })
   ]),
-  el("p", { class: "gaidet-tool-instructions" }, "Used to complete the “Declaration submitted by” line at the end of the generated declaration.")
+  el("p", { class: "gaidet-tool-instructions" }, "Used to complete the “Declaration submitted by” line at the end of the generated disclaimer.")
 ]))
 ```
 
@@ -736,7 +736,7 @@ outputBox = {
     : "Everything looks ready. Click “Create declaration” below to generate it.";
 
   const confirmBox = showConfirmPrompt ? el("div", { class: "gaidet-confirm" }, [
-    el("p", {}, "Did you declare all use of generative AI in this assignment?"),
+    el("p", {}, "Did you disclose all use of generative AI in this assignment?"),
     el("div", { class: "gaidet-confirm-actions" }, [
       el("button", {
         class: "gaidet-btn-primary",
@@ -745,9 +745,9 @@ outputBox = {
           mutable showConfirmPrompt = false;
           mutable copySuccess = false;
         }
-      }, "Yes, create declaration"),
+      }, "Yes, generate declaration"),
       el("button", {
-        class: "gaidet-btn-secondary",
+        class: "ga <idet-btn-secondary",
         onclick: () => { mutable showConfirmPrompt = false; }
       }, "No, let me edit")
     ])

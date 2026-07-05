@@ -6,7 +6,7 @@
     },
     {
       "label": "Coding agents",
-      "tools": ["GitHub Copilot", "Claude Code", "Codex"]
+      "tools": ["GitHub Copilot", "Claude Code", "Codex", "Cursor", "Windsurf", "Cline", "Devin"]
     },
     {
       "label": "Grammar, proofreading and spelling",
@@ -18,11 +18,11 @@
     },
     {
       "label": "Image and design generation",
-      "tools": ["Midjourney", "DALL-E", "Stable Diffusion", "Adobe Firefly", "Canva", "Leonardo AI"]
+      "tools": ["Midjourney", "DALL-E", "Stable Diffusion", "Adobe Firefly", "Canva", "Leonardo AI", "Ideogram", "Google Imagen / Nano Banana"]
     },
     {
       "label": "Audio and video",
-      "tools": ["Runway", "ElevenLabs", "Otter.ai"]
+      "tools": ["Runway", "ElevenLabs", "Otter.ai", "Suno", "Google Veo", "Kling AI", "Synthesia", "HeyGen"]
     }
   ],
   "commonVersions": {
@@ -38,7 +38,8 @@
     "Qwen": "Qwen 3.7 Max",
     "GitHub Copilot": "Copilot (GPT-5.5)",
     "Claude Code": "Claude Sonnet 5",
-    "Codex": "Codex (GPT-5.5)"
+    "Codex": "Codex (GPT-5.5)",
+    "Cursor": "Cursor 3 (Composer 2)"
   },
   "categories": [
     {
