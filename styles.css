@@ -564,13 +564,34 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-output-placeholder {
-  background: #fff;
-  border: 1px dashed var(--gaidet-border);
-  border-radius: 8px;
-  padding: 0.9rem;
-  font-size: 0.85rem;
-  font-style: italic;
-  color: var(--gaidet-text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  min-height: 160px;
+  background: var(--gaidet-accent-tint);
+  border: 1px solid var(--gaidet-accent-bright);
+  border-radius: 10px;
+  padding: 1.5rem;
+  font-size: 0.95rem;
+  font-style: normal;
+  color: var(--gaidet-accent-dark);
+  text-align: center;
+}
+
+.gaidet-output-placeholder p {
+  margin: 0;
+  max-width: 32rem;
+}
+
+.gaidet-output-placeholder-icon {
+  color: var(--gaidet-accent);
+  opacity: 0.85;
+}
+
+.gaidet-output-placeholder-icon svg {
+  display: block;
 }
 
 /* Form controls */
@@ -625,6 +646,7 @@ button:active {
   display: flex;
   gap: 0.6rem;
   flex-wrap: wrap;
+  margin-top: 1.4rem;
 }
 
 .gaidet-btn-primary {
