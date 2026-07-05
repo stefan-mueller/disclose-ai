@@ -5,11 +5,15 @@ format:
     page-layout: article
 ---
 
-This tool generates a plain-text AI Disclosure Declaration that summarises which generative AI tools you used, and how, so you can paste it into your assignment appendix. None of the information or details you enter is stored or transmitted anywhere — it all stays in your browser.
+This tool generates a plain-text AI Disclosure Declaration that summarises which generative AI tools you used, and how, so you can paste it into your assignment appendix. It is completely **free to use**, **fully open source**, and **guarantees your privacy**: nothing you enter is ever stored, transmitted, or sent to any server. Everything runs locally in your own browser and disappears the moment you close or refresh the page.
 
 Built by [Stefan Müller](https://muellerstefan.net) and Claude Code. This idea is inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)), adapted for university assignments.
 
-Select every task you delegated to a generative AI tool. For each one selected, add one sentence describing what you asked the AI to do and how you used its output. When you are finished, copy the declaration at the end of this page and make manual adjustments where needed.
+## What is this tool for?
+
+Generative AI use among students continues to grow. According to the [Student Generative AI Survey 2026](https://www.hepi.ac.uk/wp-content/uploads/2026/03/HEPI-Report-199-Gen-AI-Survey-2026.pdf) (Rose Stephenson and Charlotte Armstrong, HEPI), 94% of students say they use generative AI to help with assessed work. Almost all students are therefore engaging with AI as part of their studies. Some assignments explicitly prohibit its use; others permit it but ask students to disclose their use transparently. In practice, however, clear guidance on *how* to disclose that use isn't always available. This tool aims to help: it offers a structured, task-by-task checklist for recording AI use, so you can produce a clear and consistent disclosure statement even when your institution or module hasn't provided one of its own. To be explicit: this tool does **not** encourage or endorse the use of generative AI in your assignments. It exists purely to help you disclose whatever use you make of it, transparently and consistently, once you have confirmed that use is permitted.
+
+Select every task a generative AI tool assisted you with. For each one selected, add a short description of what you asked the AI to do and how you used its output. When you are finished, copy the declaration at the end of this page and make manual adjustments where needed.
 
 
 ```{ojs}
@@ -37,7 +41,7 @@ The following generative AI tasks were delegated as part of this assignment:
     Tool(s): Grammarly
     Summary: Ran my final draft through Grammarly to catch grammar and punctuation errors, then manually reviewed and accepted the suggestions I agreed with.
 
-Responsibility for the final manuscript lies entirely with the author.
+Responsibility for the final assignment lies entirely with the student.
 Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.
 Declaration submitted by: Jane Doe`
 ```
@@ -109,21 +113,26 @@ function preserveFocus(build) {
   const field = active?.dataset?.field;
   const selStart = active?.selectionStart ?? null;
   const selEnd = active?.selectionEnd ?? null;
+  const scrollY = window.scrollY;
+  const scrollX = window.scrollX;
   const node = build();
   if (field) {
+    let attempts = 0;
     const refocus = () => {
+      attempts += 1;
       const next = node.querySelector(`[data-field="${CSS.escape(field)}"]`);
       if (!next) return;
       if (!next.isConnected) {
-        requestAnimationFrame(refocus);
+        if (attempts < 30) requestAnimationFrame(refocus);
         return;
       }
       next.focus({ preventScroll: true });
       if (selStart !== null && typeof next.setSelectionRange === "function") {
         next.setSelectionRange(selStart, selEnd);
       }
+      window.scrollTo(scrollX, scrollY);
     };
-    queueMicrotask(refocus);
+    requestAnimationFrame(refocus);
   }
   return node;
 }
@@ -147,6 +156,21 @@ mutable copyWarning = false
 ```{ojs}
 //| echo: false
 mutable copySuccess = false
+```
+
+```{ojs}
+//| echo: false
+mutable declarationConfirmed = false
+```
+
+```{ojs}
+//| echo: false
+mutable showConfirmPrompt = false
+```
+
+```{ojs}
+//| echo: false
+mutable declarationSnapshot = ""
 ```
 
 ```{ojs}
@@ -291,7 +315,8 @@ form = {
 
         function selectTool(entry) {
           if (!isSelected(entry.name)) {
-            commit([...currentSelected(), { name: entry.name, needsVersion: entry.needsVersion, version: "" }]);
+            const defaultVersion = (data.commonVersions ?? {})[entry.name] ?? "";
+            commit([...currentSelected(), { name: entry.name, needsVersion: entry.needsVersion, version: defaultVersion }]);
           }
           input.value = "";
           closeList();
@@ -428,7 +453,60 @@ form = {
         isComplete ? el("span", { class: "gaidet-item-complete", "aria-label": "Sentence and tool provided" }, " ✓") : null
       ]);
 
-      const details = checked ? el("div", { class: "gaidet-item-details" }, [
+      function countWords(text) {
+        return (text || "").trim().split(/\s+/).filter(Boolean).length;
+      }
+
+      const sentenceTextarea = el("textarea", {
+        class: "gaidet-sentence",
+        "data-field": `sentence::${key}`,
+        "aria-label": "Description of what you asked the AI to do and how you used the output",
+        placeholder: "What did you ask the AI to do, and how did you use the output? (about 25–30 words)",
+        maxlength: "220",
+        value: sel?.sentence ?? "",
+        oninput: debounce((e) => {
+          const next = { ...selections };
+          if (next[key]) {
+            next[key] = { ...next[key], sentence: e.target.value };
+            mutable selections = next;
+          }
+        })
+      });
+
+      const wordCount = el("p", { class: "gaidet-word-count" }, `Words: ${countWords(sel?.sentence)}`);
+
+      const proceedWarning = el("p", { class: "gaidet-proceed-warning" }, "Please add at least one AI tool and a description before moving on.");
+      proceedWarning.style.display = "none";
+
+      const proceedBtn = el("div", { class: "gaidet-proceed-wrap" }, [
+        proceedWarning,
+        el("button", {
+          type: "button",
+          class: "gaidet-proceed-btn",
+          "aria-label": "Go to next task",
+          onclick: (e) => {
+            const taskComplete = sentenceTextarea.value.trim().length > 0
+              && Object.keys(sel.tools ?? {}).length > 0
+              && (!item.openEnded || !!(sel.customLabel && sel.customLabel.trim()));
+
+            if (!taskComplete) {
+              proceedWarning.style.display = "block";
+              return;
+            }
+            proceedWarning.style.display = "none";
+
+            const currentItem = e.currentTarget.closest(".gaidet-item");
+            const allItems = Array.from(document.querySelectorAll(".gaidet-item"));
+            const idx = allItems.indexOf(currentItem);
+            const target = (idx >= 0 && allItems[idx + 1])
+              ? allItems[idx + 1]
+              : document.getElementById("gaidet-output-section");
+            if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, "→")
+      ]);
+
+      const detailsDiv = checked ? el("div", { class: "gaidet-item-details" }, [
         item.openEnded ? el("input", {
           type: "text",
           "data-field": `customLabel::${key}`,
@@ -445,21 +523,7 @@ form = {
           })
         }) : null,
         buildToolPicker(),
-        el("textarea", {
-          class: "gaidet-sentence",
-          "data-field": `sentence::${key}`,
-          "aria-label": "Description of what you asked the AI to do and how you used the output",
-          placeholder: "What did you ask the AI to do, and how did you use the output? (about 25–30 words)",
-          maxlength: "220",
-          value: sel.sentence,
-          oninput: debounce((e) => {
-            const next = { ...selections };
-            if (next[key]) {
-              next[key] = { ...next[key], sentence: e.target.value };
-              mutable selections = next;
-            }
-          })
-        }),
+        el("div", { class: "gaidet-sentence-wrap" }, [sentenceTextarea, wordCount, proceedBtn]),
         providePrompts ? el("textarea", {
           class: "gaidet-sentence",
           "data-field": `prompts::${key}`,
@@ -476,6 +540,23 @@ form = {
         }) : null
       ]) : null;
 
+      if (detailsDiv && isComplete) {
+        detailsDiv.classList.add("gaidet-item-details-complete");
+      }
+
+      if (detailsDiv) {
+        sentenceTextarea.addEventListener("input", (e) => {
+          wordCount.textContent = `Words: ${countWords(e.target.value)}`;
+          const liveComplete = e.target.value.trim().length > 0
+            && Object.keys(sel.tools ?? {}).length > 0
+            && (!item.openEnded || !!(sel.customLabel && sel.customLabel.trim()));
+          detailsDiv.classList.toggle("gaidet-item-details-complete", liveComplete);
+          if (liveComplete) proceedWarning.style.display = "none";
+        });
+      }
+
+      const details = detailsDiv;
+
       return el("div", { class: "gaidet-item" }, [checkboxLabel, details]);
     })
   ]);
@@ -487,7 +568,7 @@ form = {
 
 ## Detailed task breakdown
 
-Tick a task below, then select the AI tool(s) --  you used for it and add them one at a time — start typing a tool name (e.g. "cha" for ChatGPT). Please give the exact model or version where applicable (e.g. GPT-5.5, Claude Sonnet 5), since capability can vary considerably between versions. If your tool isn't listed, type its name and add it as a custom tool.
+Tick a task below, then select the AI tool(s) you used for it and add them one at a time. Start typing a tool name (e.g. "cha" for ChatGPT). Please give the exact model or version where applicable (e.g. GPT-5.5, Claude Sonnet 5), since capability can vary considerably between versions. If your tool isn't listed, type its name and add it as a custom tool.
 
 
 ```{ojs}
@@ -506,7 +587,7 @@ declarationText = {
   const heading = `AI Disclosure Declaration\n\nAI tools used: ${overallToolsPart}\n`;
 
   const signedBy = studentName.trim() || "[ADD NAME]";
-  const closing = `\n\nResponsibility for the final manuscript lies entirely with the author.\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.\nDeclaration submitted by: ${signedBy}`;
+  const closing = `\n\nResponsibility for the final assignment lies entirely with the student.\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.\nDeclaration submitted by: ${signedBy}`;
 
   if (entries.length === 0) {
     return `${heading}\nNo tasks have been ticked yet.${closing}`;
@@ -531,14 +612,14 @@ declarationText = {
 
 ```{ojs}
 //| echo: false
-nameField = preserveFocus(() => el("div", { class: "gaidet-item" }, [
+nameField = preserveFocus(() => el("div", { class: "gaidet-name-field" }, [
   el("label", {}, [
-    "Your name: ",
+    "Your name",
     el("input", {
       type: "text",
       "data-field": "studentName",
       "aria-label": "Your name",
-      style: "width:100%;max-width:300px;",
+      style: "display:block;width:100%;max-width:300px;margin-top:0.5rem;",
       placeholder: "e.g. Jane Doe",
       value: studentName,
       oninput: debounce((e) => { mutable studentName = e.target.value; })
@@ -561,61 +642,99 @@ outputBox = {
   );
   const incomplete = noTasks || incompleteEntries.length > 0;
 
-  const warning = (incomplete && copyWarning)
-    ? el("div", { class: "gaidet-warning" }, noTasks
-        ? "Please tick at least one task below before copying the declaration."
-        : [
-            "Please add a short description and at least one tool before copying the declaration, for:",
-            el("ul", { class: "gaidet-warning-list" },
-              incompleteEntries.map(sel => el("li", {},
-                (sel.customLabel && sel.customLabel.trim()) ? sel.customLabel.trim() : sel.label
-              ))
-            )
-          ])
+  const warningContent = noTasks
+    ? "Please tick at least one task below before creating the declaration."
+    : incompleteEntries.length > 0
+    ? [
+        "Please add a short description and at least one tool before creating the declaration, for:",
+        el("ul", { class: "gaidet-warning-list" },
+          incompleteEntries.map(sel => el("li", {},
+            (sel.customLabel && sel.customLabel.trim()) ? sel.customLabel.trim() : sel.label
+          ))
+        )
+      ]
     : null;
 
-  const successText = copySuccess === "download"
-    ? "Declaration downloaded as a text file — you can open it, paste it into your assignment, and make manual edits if needed."
-    : "Declaration copied to clipboard — you can paste it into your assignment and make manual edits if needed.";
+  const warning = (incomplete && copyWarning && warningContent)
+    ? el("div", { class: "gaidet-warning" }, warningContent)
+    : null;
 
-  const success = (!incomplete && copySuccess)
+  const showDeclaration = declarationConfirmed && !incomplete;
+
+  const successText = copySuccess === "download"
+    ? "Declaration downloaded as a text file. You can open it, paste it into your assignment, and make manual edits if needed."
+    : "Declaration copied to clipboard. You can paste it into your assignment and make manual edits if needed.";
+
+  const success = (showDeclaration && copySuccess)
     ? el("div", { class: "gaidet-success" }, successText)
     : null;
 
-  function guarded(action) {
-    return () => {
-      if (incomplete) {
-        mutable copyWarning = true;
-        mutable copySuccess = false;
-        return;
-      }
-      mutable copyWarning = false;
-      action();
-    };
-  }
+  const placeholderText = incomplete
+    ? "Your declaration will appear here once every ticked task has a tool and a short description."
+    : declarationConfirmed
+    ? "Your declaration will appear here."
+    : "Everything looks ready. Click “Create declaration” below to generate it.";
 
-  return el("div", { class: "gaidet-output" }, [
-    el("h3", {}, "Generated declaration"),
-    warning,
-    success,
-    incomplete
-      ? el("p", { class: "gaidet-output-placeholder" }, "Your declaration will appear here once every ticked task has a tool and a one-sentence description.")
-      : el("pre", { id: "gaidet-output-text" }, [
-          el("strong", {}, "AI Disclosure Declaration"),
-          declarationText.replace(/^AI Disclosure Declaration/, "")
-        ]),
-    el("div", { class: "gaidet-output-actions" }, [
+  const confirmBox = showConfirmPrompt ? el("div", { class: "gaidet-confirm" }, [
+    el("p", {}, "Did you declare all use of generative AI in this assignment?"),
+    el("div", { class: "gaidet-confirm-actions" }, [
       el("button", {
         class: "gaidet-btn-primary",
-        onclick: guarded(() => {
-          navigator.clipboard.writeText(declarationText);
-          mutable copySuccess = "copy";
-        })
-      }, "Copy to clipboard"),
+        onclick: () => {
+          mutable declarationSnapshot = declarationText;
+          mutable declarationConfirmed = true;
+          mutable showConfirmPrompt = false;
+          mutable copySuccess = false;
+        }
+      }, "Yes, generate declaration"),
       el("button", {
         class: "gaidet-btn-secondary",
-        onclick: guarded(() => {
-          const blob = new Blob([declarationText], { type: "text/plain" });
+        onclick: () => { mutable showConfirmPrompt = false; }
+      }, "No, let me edit")
+    ])
+  ]) : null;
+
+  function onCreateClick() {
+    if (incomplete) {
+      mutable copyWarning = true;
+      return;
+    }
+    mutable copyWarning = false;
+    if (declarationConfirmed) {
+      mutable declarationSnapshot = declarationText;
+      mutable copySuccess = false;
+    } else {
+      mutable showConfirmPrompt = true;
+    }
+  }
+
+  return el("div", { class: "gaidet-output", id: "gaidet-output-section" }, [
+    el("h3", {}, "Generated declaration"),
+    warning,
+    confirmBox,
+    success,
+    showDeclaration
+      ? el("pre", { id: "gaidet-output-text" }, [
+          el("strong", {}, "AI Disclosure Declaration"),
+          declarationSnapshot.replace(/^AI Disclosure Declaration/, "")
+        ])
+      : el("p", { class: "gaidet-output-placeholder" }, placeholderText),
+    el("div", { class: "gaidet-output-actions" }, [
+      showConfirmPrompt ? null : el("button", {
+        class: "gaidet-btn-primary",
+        onclick: onCreateClick
+      }, declarationConfirmed ? "Update declaration" : "Create declaration"),
+      showDeclaration ? el("button", {
+        class: "gaidet-btn-secondary",
+        onclick: () => {
+          navigator.clipboard.writeText(declarationSnapshot);
+          mutable copySuccess = "copy";
+        }
+      }, "Copy to clipboard") : null,
+      showDeclaration ? el("button", {
+        class: "gaidet-btn-secondary",
+        onclick: () => {
+          const blob = new Blob([declarationSnapshot], { type: "text/plain" });
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
@@ -623,8 +742,8 @@ outputBox = {
           a.click();
           URL.revokeObjectURL(url);
           mutable copySuccess = "download";
-        })
-      }, "Download as txt file")
+        }
+      }, "Download as txt file") : null
     ])
   ]);
 }
@@ -638,12 +757,12 @@ ${nameField}
 
 ${outputBox}
 
-This declaration is a starting point. I recommend reviewing and adjusting the generated wording to fit your own voice, your module's requirements, and your institution's referencing style before submitting. The source code for this website is available on [GitHub](https://github.com/stefan-mueller/ai-disclosure).
+This declaration is a starting point. I recommend reviewing and adjusting the generated wording to fit your own voice, your module's requirements, and your institution's referencing style before submitting. The source code for this website is available on [GitHub](https://github.com/stefan-mueller/disclose-ai).
 
 
 ## Save or resume your progress
 
-Nothing is saved automatically. If you want to continue later, save your progress to a file on your device, then load it again on your next visit — the file never leaves your computer.
+Nothing is saved automatically. If you want to continue later, save your progress to a file on your device, then load it again on your next visit. The file never leaves your computer.
 
 ```{ojs}
 //| echo: false
@@ -663,7 +782,7 @@ progressBox = {
           mutable studentName = data.studentName ?? "";
           mutable providePrompts = data.providePrompts ?? false;
         } catch (err) {
-          alert("Could not read this file — please make sure it's a progress file saved from this tool.");
+          alert("Could not read this file. Please make sure it's a progress file saved from this tool.");
         }
         e.target.value = "";
       };
@@ -710,7 +829,7 @@ Learn more about generaratiive AI declaration generators: Suchikova, Y., Tsybuli
 ::: {.callout-important}
 ## Disclaimer of responsibility
 
-This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is **not** legal, academic, or official institutional guidance, and using it does **not** constitute compliance with any university, School, programme, or module policy. The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete and comprehensive account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. **You are solely responsible** for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether — and how — AI tools may be used before you submit any work. The author **cannot be held legally or otherwise accountable** for any reliance placed on this tool.
+This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is **not** legal, academic, or official institutional guidance, and using it does **not** constitute compliance with any university, School, programme, or module policy. The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete and comprehensive account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. **You are solely responsible** for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author **cannot be held legally or otherwise accountable** for any reliance placed on this tool.
 
 The selection of AI tools listed in this form does not indicate endorsement of any kind. It follows the most commonly used generative AI tools and the tool lists published by [University of Galway Library](https://libguides.library.universityofgalway.ie/AIforResearch/tools) and [University College Dublin Library](https://libguides.ucd.ie/GENAI/AITools).
 :::
@@ -718,5 +837,5 @@ The selection of AI tools listed in this form does not indicate endorsement of a
 ::: {.callout-tip}
 ## Note on privacy
 
-This tool does not store, transmit or save any data you enter. Everything runs in your browser and disappears when you close or refresh the page. The generated text is provided only so you can copy it into your own assignment appendix.
+This tool is free to use and fully [open source](https://github.com/stefan-mueller/disclose-ai), so you can verify these claims yourself. It does **not** store, transmit, or save any data you enter, anywhere. Everything runs entirely in your own browser and disappears the moment you close or refresh the page. The generated text is provided only so you can copy it into your own assignment appendix.
 :::

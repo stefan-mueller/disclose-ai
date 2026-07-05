@@ -25,6 +25,21 @@
       "tools": ["Runway", "ElevenLabs", "Otter.ai"]
     }
   ],
+  "commonVersions": {
+    "ChatGPT": "GPT-5.5",
+    "Claude": "Claude Sonnet 5",
+    "Gemini": "Gemini 3.5 Flash",
+    "Microsoft Copilot": "Copilot (GPT-5.5)",
+    "Perplexity": "Perplexity Pro",
+    "Grok": "Grok 4.3",
+    "Meta AI / Llama": "Llama 4",
+    "Mistral / Le Chat": "Mistral Medium 3.5",
+    "DeepSeek": "DeepSeek V4",
+    "Qwen": "Qwen 3.7 Max",
+    "GitHub Copilot": "Copilot (GPT-5.5)",
+    "Claude Code": "Claude Sonnet 5",
+    "Codex": "Codex (GPT-5.5)"
+  },
   "categories": [
     {
       "id": "conceptualisation",

@@ -12,6 +12,10 @@ body {
   background-color: #fbfbfc;
 }
 
+h1, h2 {
+  margin-top: 2.2rem;
+}
+
 h2 {
   border-bottom: none;
   padding-bottom: 0;
@@ -203,8 +207,32 @@ label.gaidet-tool-option:hover {
   font-size: 0.95rem;
 }
 
+.gaidet-prompts-question .gaidet-tool-grid {
+  gap: 0.6rem 0.8rem;
+}
+
 .gaidet-prompts-question .gaidet-tool-option {
   font-size: 1rem;
+}
+
+.gaidet-prompts-question .gaidet-tool-option label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--gaidet-border);
+  border-radius: 8px;
+  font-size: 1.05rem;
+}
+
+.gaidet-prompts-question .gaidet-tool-option label:hover {
+  border-color: var(--gaidet-accent);
+  background: var(--gaidet-accent-tint);
+}
+
+.gaidet-prompts-question .gaidet-tool-option input[type="radio"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.5rem;
 }
 
 .gaidet-autocomplete {
@@ -350,11 +378,17 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-item-details {
-  margin: 0.5rem 0 1rem 1.4rem;
+  margin: 0.5rem 0 1rem 0.4rem;
   padding: 0.8rem 1rem;
   border-left: 3px solid var(--gaidet-accent);
   background: #f8f9fc;
   border-radius: 0 8px 8px 0;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.gaidet-item-details-complete {
+  border-left-color: #1a7f37;
+  background: #f3faf5;
 }
 
 .gaidet-warning {
@@ -370,6 +404,90 @@ label.gaidet-tool-option:hover {
 .gaidet-warning-list {
   margin: 0.4rem 0 0;
   padding-left: 1.3rem;
+}
+
+.gaidet-sentence-wrap {
+  max-width: 500px;
+}
+
+.gaidet-word-count {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: var(--gaidet-text-muted);
+  text-align: right;
+}
+
+.gaidet-proceed-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+
+.gaidet-proceed-warning {
+  margin: 0;
+  padding: 0.5rem 0.8rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #9a3412;
+  text-align: right;
+}
+
+.gaidet-proceed-btn {
+  background: none;
+  border: 1px solid var(--gaidet-accent);
+  color: var(--gaidet-accent);
+  border-radius: 50%;
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  font-size: 1.1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gaidet-proceed-btn:hover {
+  background: var(--gaidet-accent-tint);
+}
+
+.gaidet-name-field {
+  background: #fff;
+  border: 1px solid var(--gaidet-border);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.gaidet-name-field label {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.gaidet-confirm {
+  background: #fffaf0;
+  border: 1px solid #fcd9a1;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.gaidet-confirm p {
+  margin: 0 0 0.6rem;
+  font-weight: 600;
+}
+
+.gaidet-confirm-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
 }
 
 .gaidet-success {

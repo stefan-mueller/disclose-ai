@@ -1,6 +1,6 @@
 # AI Disclosure for University Assignments
 
-Live site: <https://stefan-mueller.github.io/ai-disclosure>
+Live site: <https://stefan-mueller.github.io/disclose-ai>
 
 A simplified, coursework-adapted version of the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/), built with Quarto and Observable JS instead of plain HTML and Python.
 
@@ -10,7 +10,7 @@ A simplified, coursework-adapted version of the [GAIDeT Declaration Generator](h
 - Simplified sub-item labels into plain language.
 - Narrowed data management to collection and visualisation only.
 - Added an audiovisual and interactive category to cover AI-generated visuals, narration and editing.
-- Added a mandatory one-sentence description field for every ticked task, so a checkbox alone is never the full disclosure.
+- Added a mandatory short description field for every ticked task, so a checkbox alone is never the full disclosure.
 - Added an optional field to log the exact prompt(s) used per task, for extra transparency.
 - Added a per-tool version/model field (e.g. GPT-5.5, Claude Sonnet 5), since capability varies significantly across versions of the same tool.
 - Added a copy-to-clipboard and download-as-file option for the generated declaration.
