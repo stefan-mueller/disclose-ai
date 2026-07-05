@@ -109,7 +109,16 @@ function taskIsComplete(sentence, tools, openEnded, customLabel) {
     && (!openEnded || !!(customLabel && customLabel.trim()));
 }
 
-function debounce(fn, delay = 500) {
+function autoGrow(textarea, attempts = 0) {
+  if (!textarea.isConnected) {
+    if (attempts < 30) requestAnimationFrame(() => autoGrow(textarea, attempts + 1));
+    return;
+  }
+  textarea.style.height = "auto";
+  textarea.style.height = `${textarea.scrollHeight}px`;
+}
+
+function debounce(fn, delay = 900) {
   let timer;
   return (...args) => {
     clearTimeout(timer);
@@ -488,7 +497,7 @@ form = {
         "data-field": `sentence::${key}`,
         "aria-label": "Description of what you asked the AI to do and how you used the output",
         placeholder: "What did you ask the AI to do, and how did you use the output?",
-        maxlength: "220",
+        maxlength: "3000",
         value: sel?.sentence ?? "",
         oninput: debounce((e) => {
           const next = { ...selections };
@@ -530,6 +539,21 @@ form = {
         }, "→")
       ]);
 
+      const promptsTextarea = providePrompts ? el("textarea", {
+        class: "gaidet-sentence",
+        "data-field": `prompts::${key}`,
+        "aria-label": "Prompts used for this task",
+        placeholder: "If applicable, please copy-paste the prompts you have used",
+        value: sel?.prompts ?? "",
+        oninput: debounce((e) => {
+          const next = { ...selections };
+          if (next[key]) {
+            next[key] = { ...next[key], prompts: e.target.value };
+            mutable selections = next;
+          }
+        })
+      }) : null;
+
       const detailsDiv = checked ? el("div", { class: "gaidet-item-details" }, [
         item.openEnded ? el("input", {
           type: "text",
@@ -548,20 +572,7 @@ form = {
         }) : null,
         buildToolPicker(),
         el("div", { class: "gaidet-sentence-wrap" }, [sentenceTextarea, wordCount, proceedBtn]),
-        providePrompts ? el("textarea", {
-          class: "gaidet-sentence",
-          "data-field": `prompts::${key}`,
-          "aria-label": "Prompts used for this task",
-          placeholder: "If applicable, please copy-paste the prompts you have used",
-          value: sel.prompts ?? "",
-          oninput: debounce((e) => {
-            const next = { ...selections };
-            if (next[key]) {
-              next[key] = { ...next[key], prompts: e.target.value };
-              mutable selections = next;
-            }
-          })
-        }) : null
+        providePrompts ? promptsTextarea : null
       ]) : null;
 
       if (detailsDiv && isComplete) {
@@ -569,12 +580,19 @@ form = {
       }
 
       if (detailsDiv) {
+        autoGrow(sentenceTextarea);
         sentenceTextarea.addEventListener("input", (e) => {
+          autoGrow(e.target);
           wordCount.textContent = `Words: ${countWords(e.target.value)}`;
           const liveComplete = taskIsComplete(e.target.value, sel.tools, item.openEnded, sel.customLabel);
           detailsDiv.classList.toggle("gaidet-item-details-complete", liveComplete);
           if (liveComplete) proceedWarning.style.display = "none";
         });
+      }
+
+      if (detailsDiv && providePrompts) {
+        autoGrow(promptsTextarea);
+        promptsTextarea.addEventListener("input", (e) => autoGrow(e.target));
       }
 
       const details = detailsDiv;
