@@ -6,7 +6,7 @@ format:
 ---
 
 
-This tool helps students disclose their use of generative AI in university assignments. It generates a plain-text declaration summarising which AI tools you used and how, ready to paste into your appendix. It is free to use, fully open source, and never leaves your browser. See the [privacy note](#note-on-privacy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
+This tool helps students disclose their use of generative AI in university assignments. It generates a plain-text declaration summarising which AI tools you used and how, ready to paste into your appendix. It is free to use, fully open source, and runs entirely in your browser, so nothing you enter is ever sent to a server. See the [privacy note](#note-on-privacy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
 
 
 ## What is this tool for?
@@ -17,7 +17,7 @@ This gap is what the tool below addresses. It offers a structured, task-by-task 
 
 Before you use it, one point needs to be explicit: this tool does not encourage or endorse the use of generative AI in your assignments. It exists only to help you disclose whatever use you make of it, once you have confirmed that use is permitted.
 
-To use it, select every task a generative AI tool assisted you with. For each one you select, add a short description of what you asked the AI to do and how you used its output. Your answers are automatically formatted into a declaration at the end of this page, ready for you to copy and adjust as needed.
+Select every task a generative AI tool assisted you with. For each task you select, add a short description of what you asked the AI to do and how you used its output. Your answers are automatically formatted into a declaration at the end of this page, ready for you to copy and adjust as needed.
 
 ```{ojs}
 //| echo: false
