@@ -44,8 +44,10 @@ The following generative AI tasks were delegated as part of this assignment:
     Tool(s): Grammarly
     Summary: Ran my final draft through Grammarly to catch grammar and punctuation errors, then manually reviewed and accepted the suggestions I agreed with.
 
-Responsibility for the final assignment lies entirely with the student.
+Responsibility for the submitted assignment lies entirely with the author of this disclosure statement.
+
 Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.
+
 Declaration submitted by: Jane Doe`
 ```
 
@@ -515,6 +517,8 @@ form = {
       function confirmIfComplete() {
         const taskComplete = taskIsComplete(sentenceTextarea.value, sel.tools, item.openEnded, sel.customLabel);
         if (!taskComplete) return false;
+        detailsDiv.classList.add("gaidet-item-details-complete");
+        proceedWarning.style.display = "none";
         if (!sel.proceeded) {
           const next = { ...selections };
           if (next[key]) {
@@ -522,8 +526,6 @@ form = {
             mutable selections = next;
           }
         }
-        detailsDiv.classList.add("gaidet-item-details-complete");
-        proceedWarning.style.display = "none";
         return true;
       }
 
@@ -532,7 +534,7 @@ form = {
         el("button", {
           type: "button",
           class: "gaidet-proceed-btn",
-          "aria-label": "Go to next task",
+          "aria-label": "Confirm this task is complete and go to the next one",
           onclick: (e) => {
             if (!confirmIfComplete()) {
               proceedWarning.style.display = "block";
@@ -545,9 +547,15 @@ form = {
             const target = (idx >= 0 && allItems[idx + 1])
               ? allItems[idx + 1]
               : document.getElementById("gaidet-output-section");
-            if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+            if (target) {
+              // Leave a peek of the just-confirmed box above the fold, so the jump
+              // still reads as "next task" rather than landing on a blank viewport.
+              const peek = 90;
+              const targetTop = target.getBoundingClientRect().top + window.scrollY;
+              window.scrollTo({ top: targetTop - peek, behavior: "smooth" });
+            }
           }
-        }, "→")
+        }, "Confirm")
       ]);
 
       const promptsTextarea = providePrompts ? el("textarea", {
@@ -582,7 +590,10 @@ form = {
           })
         }) : null,
         buildToolPicker(),
-        el("div", { class: "gaidet-sentence-wrap" }, [sentenceTextarea, wordCount, proceedBtn]),
+        el("div", { class: "gaidet-sentence-wrap" }, [
+          sentenceTextarea,
+          el("div", { class: "gaidet-sentence-footer" }, [proceedBtn, wordCount])
+        ]),
         providePrompts ? promptsTextarea : null
       ]) : null;
 
@@ -591,7 +602,6 @@ form = {
       }
 
       if (detailsDiv) {
-        detailsDiv.addEventListener("focusout", () => confirmIfComplete());
         autoGrow(sentenceTextarea);
         sentenceTextarea.addEventListener("input", (e) => {
           autoGrow(e.target);
@@ -640,7 +650,7 @@ declarationText = {
   const heading = `AI Disclosure Declaration\n\nAI tools used: ${overallToolsPart}\n`;
 
   const signedBy = studentName.trim() || "[ADD NAME]";
-  const closing = `\n\nResponsibility for the final assignment lies entirely with the student.\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.\nDeclaration submitted by: ${signedBy}`;
+  const closing = `\n\nResponsibility for the submitted assignment lies entirely with the author of this disclosure statement.\n\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.\n\nDeclaration submitted by: ${signedBy}`;
 
   if (entries.length === 0) {
     return `${heading}\nNo tasks have been ticked yet.${closing}`;
@@ -887,9 +897,18 @@ ${progressBox}
 This tool was built by [Stefan Müller](https://muellerstefan.net), with substantial help from Claude Code, which handled most of the coding and drafting under the maintainer’s direction.
 
 
+## How to cite this tool
+
+If you use this tool in your teaching, you can cite it as:
+
+>Müller, Stefan (2026). *AI Disclosure Statement Generator*. <https://discloseai.netlify.app>
+
+
 ## Related reading
 
-Learn more about generative AI declaration generators: Suchikova, Y., Tsybuliak, N., Teixeira da Silva, J. A., & Nazarovets, S. (2026). [GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing](https://doi.org/10.1080/08989621.2025.2544331). *Accountability in Research*, *33*(3).
+Learn more about generative AI declaration generators, the inspiration behind this project:
+
+>Suchikova, Yana, Tsybuliak, Natalia, Teixeira da Silva, Jaime A., & Nazarovets, Serhii (2026). [GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing](https://doi.org/10.1080/08989621.2025.2544331). *Accountability in Research*, *33*(3).
 
 ## Disclaimer of responsibility
 

@@ -446,19 +446,26 @@ hr {
   max-width: 620px;
 }
 
+.gaidet-sentence-footer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 0.9rem;
+}
+
 .gaidet-word-count {
-  margin: 0.2rem 0 0;
+  margin: 0;
   font-size: 0.78rem;
   color: var(--gaidet-text-muted);
-  text-align: right;
+  white-space: nowrap;
 }
 
 .gaidet-proceed-wrap {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 0.6rem;
-  margin-top: 0.9rem;
 }
 
 .gaidet-proceed-warning {
@@ -469,18 +476,17 @@ hr {
   border-radius: 8px;
   font-size: 0.8rem;
   color: var(--gaidet-warning-text);
-  text-align: right;
+  text-align: left;
 }
 
 .gaidet-proceed-btn {
   background: none;
   border: 1px solid var(--gaidet-accent);
   color: var(--gaidet-accent);
-  border-radius: 50%;
-  width: 2.1rem;
-  height: 2.1rem;
-  padding: 0;
-  font-size: 1.1rem;
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
   line-height: 1;
   display: inline-flex;
   align-items: center;
