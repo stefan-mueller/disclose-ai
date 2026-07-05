@@ -5,13 +5,18 @@ format:
     page-layout: article
 ---
 
-This tool generates a plain-text AI Disclosure Declaration that summarises which generative AI tools you used, and how, so you can paste it into your assignment appendix. It is completely **free to use**, **fully open source**, and **guarantees your privacy**: nothing you enter is ever stored, transmitted, or sent to any server. Everything runs locally in your own browser and disappears the moment you close or refresh the page.
 
-Built by [Stefan Müller](https://muellerstefan.net) and Claude Code. This idea is inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)), adapted for university assignments.
+
+This tool generates a plain-text AI Disclosure Declaration that summarises which generative AI tools you used, and how, so you can paste it into your assignment appendix. It is completely **free to use**, **fully open source**, and **never leaves your browser** — see the [privacy note](#notes-and-disclaimers) at the end of this page for details.
+
+
+Built by [Stefan Müller](https://muellerstefan.net) with the support of Claude Code. This idea is inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)), adapted for university assignments.
+
+
 
 ## What is this tool for?
 
-Generative AI use among students continues to grow. According to the [Student Generative AI Survey 2026](https://www.hepi.ac.uk/wp-content/uploads/2026/03/HEPI-Report-199-Gen-AI-Survey-2026.pdf) (Rose Stephenson and Charlotte Armstrong, HEPI), 94% of students say they use generative AI to help with assessed work. Almost all students are therefore engaging with AI as part of their studies. Some assignments explicitly prohibit its use; others permit it but ask students to disclose their use transparently. In practice, however, clear guidance on *how* to disclose that use isn't always available. This tool aims to help: it offers a structured, task-by-task checklist for recording AI use, so you can produce a clear and consistent disclosure statement even when your institution or module hasn't provided one of its own. To be explicit: this tool does **not** encourage or endorse the use of generative AI in your assignments. It exists purely to help you disclose whatever use you make of it, transparently and consistently, once you have confirmed that use is permitted.
+Generative AI use among students continues to grow: according to the [Student Generative AI Survey 2026](https://www.hepi.ac.uk/wp-content/uploads/2026/03/HEPI-Report-199-Gen-AI-Survey-2026.pdf) (Rose Stephenson and Charlotte Armstrong, HEPI), 94% of students use generative AI to help with assessed work. Some assignments prohibit its use; others permit it but require disclosure — and clear guidance on *how* to disclose isn't always available. This tool offers a structured, task-by-task checklist for recording your AI use, so you can produce a clear disclosure statement even when your institution or module hasn't provided one of its own. To be explicit: this tool does **not** encourage or endorse the use of generative AI in your assignments — it exists only to help you disclose whatever use you make of it, once you have confirmed that use is permitted.
 
 Select every task a generative AI tool assisted you with. For each one selected, add a short description of what you asked the AI to do and how you used its output. When you are finished, copy the declaration at the end of this page and make manual adjustments where needed.
 
@@ -63,11 +68,9 @@ el("div", { class: "gaidet-example-wrap" }, [
 
 
 ::: {.callout-warning}
-Many universities do not have a single institution-wide policy on generative AI. Permission to use AI varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor, your Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. 
+Many universities do not have a single institution-wide policy on generative AI — permission varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or for specific tasks listed below; including a task or tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief.
 
-Some assignments may prohibit the use of generative AI entirely, or for specific tasks among those listed below; the inclusion of a task or tool in this form does not constitute permission to use it, and this tool provides no means of circumventing, and does not excuse compliance with, any such prohibition imposed by your institution, School, programme, module, or assessment brief.
-
-This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. Many universities also publish general guidelines on using and citing AI. Check whether your institution has published such advice, and consult it for guidance. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#notes-and-disclaimers) at the end of this page for details. 
+This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#notes-and-disclaimers) at the end of this page for details.
 :::
 
 ${promptsToggle}
@@ -160,17 +163,17 @@ mutable copySuccess = false
 
 ```{ojs}
 //| echo: false
+mutable copiedText = ""
+```
+
+```{ojs}
+//| echo: false
 mutable declarationConfirmed = false
 ```
 
 ```{ojs}
 //| echo: false
 mutable showConfirmPrompt = false
-```
-
-```{ojs}
-//| echo: false
-mutable declarationSnapshot = ""
 ```
 
 ```{ojs}
@@ -294,7 +297,7 @@ form = {
           class: hasSelection ? "gaidet-autocomplete-input gaidet-autocomplete-input-more" : "gaidet-autocomplete-input",
           "data-field": `toolSearch::${key}`,
           "aria-label": hasSelection ? "Add another AI tool used for this task" : "Search for an AI tool",
-          placeholder: hasSelection ? "+ Add another tool" : "Start typing to search, e.g. “clau”…",
+          placeholder: hasSelection ? "+ Add another tool" : "Start typing to add tool”…",
           autocomplete: "off"
         });
 
@@ -315,8 +318,7 @@ form = {
 
         function selectTool(entry) {
           if (!isSelected(entry.name)) {
-            const defaultVersion = (data.commonVersions ?? {})[entry.name] ?? "";
-            commit([...currentSelected(), { name: entry.name, needsVersion: entry.needsVersion, version: defaultVersion }]);
+            commit([...currentSelected(), { name: entry.name, needsVersion: entry.needsVersion, version: "" }]);
           }
           input.value = "";
           closeList();
@@ -396,12 +398,13 @@ form = {
             const row = el("div", { class: "gaidet-autocomplete-chip" }, []);
             row.append(el("span", { class: "gaidet-autocomplete-chip-name" }, entry.name));
             if (entry.needsVersion) {
+              const suggestedVersion = (data.commonVersions ?? {})[entry.name];
               row.append(el("input", {
                 type: "text",
                 class: "gaidet-autocomplete-version-input",
                 "data-field": `toolVersion::${key}::${entry.name}`,
                 "aria-label": `${entry.name} model or version`,
-                placeholder: "Model/version (e.g., GPT-5.5)",
+                placeholder: suggestedVersion ? `e.g., ${suggestedVersion}` : "Model/version (e.g., GPT-5.5)",
                 value: entry.version,
                 oninput: debounce((e) => {
                   commit(currentSelected().map(t => t.name === entry.name ? { ...t, version: e.target.value } : t));
@@ -461,7 +464,7 @@ form = {
         class: "gaidet-sentence",
         "data-field": `sentence::${key}`,
         "aria-label": "Description of what you asked the AI to do and how you used the output",
-        placeholder: "What did you ask the AI to do, and how did you use the output? (about 25–30 words)",
+        placeholder: "What did you ask the AI to do, and how did you use the output?",
         maxlength: "220",
         value: sel?.sentence ?? "",
         oninput: debounce((e) => {
@@ -665,7 +668,7 @@ outputBox = {
     ? "Declaration downloaded as a text file. You can open it, paste it into your assignment, and make manual edits if needed."
     : "Declaration copied to clipboard. You can paste it into your assignment and make manual edits if needed.";
 
-  const success = (showDeclaration && copySuccess)
+  const success = (showDeclaration && copySuccess && declarationText === copiedText)
     ? el("div", { class: "gaidet-success" }, successText)
     : null;
 
@@ -681,7 +684,6 @@ outputBox = {
       el("button", {
         class: "gaidet-btn-primary",
         onclick: () => {
-          mutable declarationSnapshot = declarationText;
           mutable declarationConfirmed = true;
           mutable showConfirmPrompt = false;
           mutable copySuccess = false;
@@ -701,7 +703,6 @@ outputBox = {
     }
     mutable copyWarning = false;
     if (declarationConfirmed) {
-      mutable declarationSnapshot = declarationText;
       mutable copySuccess = false;
     } else {
       mutable showConfirmPrompt = true;
@@ -716,7 +717,7 @@ outputBox = {
     showDeclaration
       ? el("pre", { id: "gaidet-output-text" }, [
           el("strong", {}, "AI Disclosure Declaration"),
-          declarationSnapshot.replace(/^AI Disclosure Declaration/, "")
+          declarationText.replace(/^AI Disclosure Declaration/, "")
         ])
       : el("p", { class: "gaidet-output-placeholder" }, placeholderText),
     el("div", { class: "gaidet-output-actions" }, [
@@ -727,14 +728,15 @@ outputBox = {
       showDeclaration ? el("button", {
         class: "gaidet-btn-secondary",
         onclick: () => {
-          navigator.clipboard.writeText(declarationSnapshot);
+          navigator.clipboard.writeText(declarationText);
           mutable copySuccess = "copy";
+          mutable copiedText = declarationText;
         }
       }, "Copy to clipboard") : null,
       showDeclaration ? el("button", {
         class: "gaidet-btn-secondary",
         onclick: () => {
-          const blob = new Blob([declarationSnapshot], { type: "text/plain" });
+          const blob = new Blob([declarationText], { type: "text/plain" });
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
@@ -742,6 +744,7 @@ outputBox = {
           a.click();
           URL.revokeObjectURL(url);
           mutable copySuccess = "download";
+          mutable copiedText = declarationText;
         }
       }, "Download as txt file") : null
     ])
@@ -762,7 +765,7 @@ This declaration is a starting point. I recommend reviewing and adjusting the ge
 
 ## Save or resume your progress
 
-Nothing is saved automatically. If you want to continue later, save your progress to a file on your device, then load it again on your next visit. The file never leaves your computer.
+Nothing is saved automatically. If you want to continue later, click "Save progress" to save a JSON file to your computer, then use "Load progress" to pick it up again on your next visit. This file is saved directly to your device only; nothing is sent to a server.
 
 ```{ojs}
 //| echo: false

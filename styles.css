@@ -21,12 +21,35 @@ h2 {
   padding-bottom: 0;
 }
 
+#title-block-header {
+  margin-top: 2rem;
+  margin-bottom: 2.5rem;
+}
+
 .title {
   font-weight: 700;
   letter-spacing: -0.01em;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.6rem;
   border-bottom: 3px solid var(--gaidet-accent);
   display: inline-block;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.gaidet-byline {
+  font-size: 0.85rem;
+  color: var(--gaidet-text-muted);
+  margin-top: -0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.gaidet-byline a {
+  color: var(--gaidet-text-muted);
+  text-decoration: underline;
+}
+
+.gaidet-byline a:hover {
+  color: var(--gaidet-accent);
 }
 
 .callout {
@@ -501,12 +524,20 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-output {
-  background: #f8fafc;
-  border: 1px solid var(--gaidet-border);
-  border-left: 4px solid var(--gaidet-accent);
+  background: linear-gradient(#fff, #f5f7ff);
+  border: 2px solid var(--gaidet-accent);
+  border-left: 6px solid var(--gaidet-accent);
   border-radius: 12px;
-  padding: 1.1rem 1.4rem;
+  padding: 1.4rem 1.6rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 6px 16px rgba(59, 91, 219, 0.12), 0 2px 6px rgba(16, 24, 40, 0.06);
   transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.gaidet-output h3 {
+  margin-top: 0;
+  font-size: 1.3rem;
+  color: var(--gaidet-accent-dark);
 }
 
 .gaidet-output pre {
@@ -514,8 +545,9 @@ label.gaidet-tool-option:hover {
   background: #fff;
   border: 1px solid var(--gaidet-border);
   border-radius: 8px;
-  padding: 0.9rem;
-  font-size: 0.85rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+  box-shadow: inset 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 
 .gaidet-output-placeholder {
