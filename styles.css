@@ -161,7 +161,9 @@ a:hover {
 }
 
 .gaidet-category:hover,
-.gaidet-output:hover {
+.gaidet-output:hover,
+.gaidet-prompts-question:hover,
+.gaidet-name-field:hover {
   border-color: var(--gaidet-accent);
   box-shadow: 0 4px 10px rgba(16, 24, 40, 0.08), 0 2px 4px rgba(16, 24, 40, 0.05);
   transform: translateY(-2px);
@@ -296,6 +298,7 @@ label.gaidet-tool-option:hover {
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 4px rgba(16, 24, 40, 0.04);
   padding: 1.1rem 1.4rem;
   margin: 1rem 0 1.25rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .gaidet-prompts-question .gaidet-tool-label {
@@ -618,6 +621,7 @@ hr {
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
   padding: 1.1rem 1.4rem;
   margin-bottom: 1.25rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .gaidet-name-field label {

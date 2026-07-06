@@ -100,7 +100,7 @@
     },
     {
       "id": "other_tasks",
-      "label": "Other",
+      "label": "Other tasks",
       "items": [
         { "id": "other_task", "label": "Not listed above (please describe)", "openEnded": true }
       ]
