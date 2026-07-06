@@ -20,6 +20,16 @@ body {
   font-weight: 600;
 }
 
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: var(--gaidet-accent);
+}
+
+.navbar-brand:hover,
+.navbar-brand:focus {
+  color: var(--gaidet-accent);
+}
+
 h1, h2 {
   margin-top: 2.2rem;
 }
@@ -376,7 +386,7 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-autocomplete-chip-name {
-  font-size: 0.88rem;
+  font-size: 1.05rem;
   color: var(--gaidet-accent-dark);
   font-weight: 600;
   white-space: nowrap;
@@ -393,6 +403,43 @@ label.gaidet-tool-option:hover {
   font-size: 0.85rem;
   color: var(--gaidet-text-muted);
   margin-bottom: 0.2rem;
+}
+
+.gaidet-info-icon {
+  position: relative;
+  display: inline-block;
+  color: var(--gaidet-accent);
+  font-style: normal;
+  cursor: help;
+  border-bottom: 1px dotted var(--gaidet-accent);
+}
+
+.gaidet-info-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  width: 260px;
+  max-width: 70vw;
+  background: #1f2430;
+  color: #fff;
+  font-weight: 400;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  padding: 0.55rem 0.7rem;
+  border-radius: 6px;
+  white-space: pre-line;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.gaidet-info-icon:hover::after,
+.gaidet-info-icon:focus::after {
+  opacity: 1;
+  visibility: visible;
 }
 
 .gaidet-autocomplete-version-input {

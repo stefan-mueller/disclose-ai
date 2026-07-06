@@ -4,7 +4,7 @@ project:
 
 website:
   title: "AI Disclosure Statement Generator"
-  description: "A simplified, coursework-adapted version of the GAIDeT declaration generator."
+  description: "A free tool that helps students write a clear AI-use disclosure statement for university assignments."
   site-url: "https://disclose-ai.app"
   back-to-top-navigation: true
   navbar:
@@ -20,7 +20,7 @@ website:
       - href: "#about-the-maintainer"
         text: About
   page-footer:
-    center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)), [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net) and Claude Code with [Quarto](https://quarto.org). Privacy with [Cabin](https://withcabin.com/privacy/paper-picnic.com)"
+    center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)), [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net) and Claude Code with [Quarto](https://quarto.org). Privacy with [Cabin](https://withcabin.com/privacy/disclose-ai.app)"
 
 format:
   html:

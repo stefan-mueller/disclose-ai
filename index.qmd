@@ -7,17 +7,17 @@ format:
 
 <script async src="https://scripts.withcabin.com/hello.js"></script>
 
-This tool helps students disclose their use of generative AI in university assignments. It generates a plain-text declaration summarising which AI tools you used and how, ready to paste into your appendix. It is free to use, fully open source, and runs entirely in your browser, so nothing you enter is ever sent to a server. See the [privacy note](#note-on-privacy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
+This tool helps students disclose their use of generative AI in university assignments. It generates a plain-text declaration summarising which AI tools you used and how, ready to paste into your appendix. It is free to use, fully open source, and runs entirely in your browser, so nothing you enter is ever sent to a server. See the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
 
 
 ## Purpose and limits
+ 
+The use of AI tools amongst students [continues to grow](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/). 
+Some assignments prohibit generative AI entirely; other assignments allow students to use AI but require disclosure, though clear guidance on *how* to disclose isn’t always available.
 
+If you have permission to use AI, but need to disclose your use in a clear, structured way, this tool is for you: a structured, task-by-task checklist for recording your AI use, adapted from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
 
-AI tool use among students continues to grow. Some assignments prohibit generative AI entirely; others allow it but require disclosure, though clear guidance on *how* to disclose isn’t always available.
-
-If that’s your situation, this tool is for you: a structured, task-by-task checklist for recording your AI use, adapted from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
-
-Select every task a generative AI tool helped with, add a short description of what you asked it to do and how you used the output, and get a ready-to-copy declaration at the end of this page.
+The process of disclosing your AI use is straightforward: select every task a generative AI tool helped with, describe what you asked it to do and how you used and validated the output, and get a ready-to-copy declaration at the end of this page.
 
 ```{ojs}
 //| echo: false
@@ -68,13 +68,13 @@ el("div", { class: "gaidet-example-wrap" }, [
 
 
 ::: {.callout-warning}
-Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or allow AI use only for some of the tasks listed below. 
+Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or allow AI use only for a subset of tasks.
 
 Disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief.
 
 This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 
-Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies; for an example of what institution-specific AI guidance looks like, see [UCD Library's guide to using generative AI](https://libguides.ucd.ie/GENAI/usingAI).
+Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies; for an example of what institution-specific AI guidance looks like, see [UCD Library's guide to using generative AI](https://libguides.ucd.ie/GENAI/usingAI). This tool itself is an independent personal project and is not an official University College Dublin service.
 :::
 
 ```{ojs}
@@ -480,7 +480,16 @@ form = {
             if (entry.needsVersion) {
               const suggestedVersion = (data.commonVersions ?? {})[entry.name];
               row.append(el("div", { class: "gaidet-autocomplete-version-wrap" }, [
-                el("label", { class: "gaidet-autocomplete-version-label" }, `Model/version of ${entry.name}`),
+                el("label", { class: "gaidet-autocomplete-version-label" }, [
+                  `Model/version of ${entry.name} `,
+                  el("span", {
+                    class: "gaidet-info-icon",
+                    tabindex: "0",
+                    role: "img",
+                    "aria-label": "Why this matters and how to find it",
+                    "data-tooltip": "Capability can vary a lot between versions of the same tool, so the exact model helps others judge what it could and couldn't do.\n\nTo find it: check the tool's model picker/settings, or look at the chat window itself (e.g. ChatGPT shows the model above the chat box; Claude shows it in the model selector)."
+                  }, "ⓘ")
+                ]),
                 el("input", {
                   type: "text",
                   class: "gaidet-autocomplete-version-input",
@@ -538,8 +547,8 @@ form = {
       const sentenceTextarea = el("textarea", {
         class: "gaidet-sentence",
         "data-field": `sentence::${key}`,
-        "aria-label": "Description of what you asked the AI to do and how you used the output",
-        placeholder: "What did you ask the AI to do, and how did you use the output?",
+        "aria-label": "Description of what you asked the AI to do and how you used  and validated the output",
+        placeholder: "What did you ask the AI to do, and how did you use and validate the output?",
         maxlength: "3000",
         value: sel?.sentence ?? "",
         onblur: (e) => {
@@ -679,7 +688,7 @@ declarationText = {
     const itemToolNames = Object.entries(e.tools ?? {}).map(formatToolWithVersion);
     const itemToolsPart = itemToolNames.length > 0 ? itemToolNames.join(", ") : "[no tool specified]";
     const toolLabel = itemToolNames.length === 1 ? "Tool" : "Tools";
-    const sentencePart = e.sentence.trim() || "[please add a short explainer]";
+    const sentencePart = e.sentence.trim() || "[please add an explainer]";
     const promptsPart = providePrompts && e.prompts && e.prompts.trim() ? `\n    Prompts: ${e.prompts.trim()}` : "";
     return `- ${labelPart}\n    ${toolLabel}: ${itemToolsPart}\n    Summary: ${sentencePart}${promptsPart}`;
   });
@@ -724,7 +733,7 @@ declarationHtml = {
     const itemToolNames = Object.entries(e.tools ?? {}).map(formatToolWithVersion);
     const itemToolsPart = itemToolNames.length > 0 ? itemToolNames.join(", ") : "[no tool specified]";
     const toolLabel = itemToolNames.length === 1 ? "Tool" : "Tools";
-    const sentencePart = escapeHtml(e.sentence.trim() || "[please add a short explainer]");
+    const sentencePart = escapeHtml(e.sentence.trim() || "[please add an explainer]");
     const promptsPart = providePrompts && e.prompts && e.prompts.trim() ? `<br>Prompts: ${escapeHtml(e.prompts.trim())}` : "";
     return `<li><strong>${labelPart}</strong><br>${toolLabel}: ${itemToolsPart}<br>Summary: ${sentencePart}${promptsPart}</li>`;
   });
@@ -769,7 +778,7 @@ outputBox = {
     ? "Please tick at least one task below before creating the declaration."
     : incompleteEntries.length > 0
     ? [
-        "Please add a short description and at least one tool before creating the declaration, for:",
+        "Please add a description and at least one tool before creating the declaration, for:",
         el("ul", { class: "gaidet-warning-list" },
           incompleteEntries.map(sel => el("li", {},
             (sel.customLabel && sel.customLabel.trim()) ? sel.customLabel.trim() : sel.label
@@ -1011,10 +1020,20 @@ This tool is provided purely as a free, unofficial aid to help you structure you
 
 The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. 
 
-**You are solely responsible** for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author **cannot be held legally or otherwise accountable** for any reliance placed on this tool.
+You are solely responsible for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author cannot be held legally or otherwise accountable for any reliance placed on this tool.
+
+This tool is an independent personal project of the author and is **not** an official service of, or endorsed by, University College Dublin or any other institution.
+
+The AI tools listed or suggested in this form (e.g. ChatGPT, Claude, Grammarly) are trademarks of their respective owners. Their appearance here, including in the autocomplete suggestions, is for identification purposes only and does not imply any affiliation with, or endorsement of, this tool by those companies, nor endorsement of those tools by the author.
 
 
-## Note on privacy
+## Privacy policy
 
-This tool is free to use and fully [open source](https://github.com/stefan-mueller/disclose-ai), so you can verify these claims yourself. It does **not** store, transmit, or save your declaration or any of the task details you enter, anywhere. Everything runs entirely in your own browser and disappears the moment you close or refresh the page. The generated text is provided only so you can copy it into your own assignment appendix.
+This tool is fully [open source](https://github.com/stefan-mueller/disclose-ai), so you can verify these claims yourself.
+
+**Your declaration and task details.** Everything you enter here (tasks, tools, descriptions, prompts, your name) stays in your own browser. It is never stored, transmitted, or saved anywhere, and disappears the moment you close or refresh the page. The generated declaration is provided only so you can copy or download it yourself.
+
+**Analytics.** This site uses [Cabin](https://withcabin.com), a privacy-focused analytics service, to understand overall visitor numbers. Cabin does not use cookies, does not track IP addresses, and cannot identify individual visitors — it only reports aggregate, anonymous traffic data (e.g. how many people visited, which pages). See [Cabin's privacy policy](https://withcabin.com/privacy) for details. No data about the content you enter into this tool is ever sent to Cabin or anyone else.
+
+**Questions, errors, or suggestions.** If you have questions about this policy or how this site handles data, contact [Stefan Müller](https://muellerstefan.net). If you spot an error or have an improvement suggestion, feel free to open an issue or pull request on [GitHub](https://github.com/stefan-mueller/disclose-ai).
 
