@@ -26,7 +26,7 @@ mutable showExample = false
 
 ```{ojs}
 //| echo: false
-exampleDeclarationText = `AI Disclosure Declaration
+exampleDeclarationText = `Declaration on the Use of Artificial Intelligence Tools
 
 AI tools used: ChatGPT (GPT-5.5), Claude Code (Sonnet 4.6), Grammarly
 
@@ -59,8 +59,8 @@ el("div", { class: "gaidet-example-wrap" }, [
     onclick: () => { mutable showExample = !showExample; }
   }, showExample ? "Hide example declaration" : "Show example declaration"),
   showExample ? el("pre", { class: "gaidet-example" }, [
-    el("strong", {}, "AI Disclosure Declaration"),
-    exampleDeclarationText.replace(/^AI Disclosure Declaration/, "")
+    el("strong", {}, "Declaration on the Use of Artificial Intelligence Tools"),
+    exampleDeclarationText.replace(/^Declaration on the Use of Artificial Intelligence Tools/, "")
   ]) : null
 ])
 ```
@@ -161,9 +161,15 @@ function preserveFocus(build) {
       if (selStart !== null && typeof next.setSelectionRange === "function") {
         next.setSelectionRange(selStart, selEnd);
       }
+      // One more frame before correcting scroll: Safari can apply its own
+      // scroll adjustment on focus a tick after preventScroll would suggest,
+      // so measuring immediately can get overridden right after by Safari's
+      // own late adjustment. Waiting a frame lets that settle first.
       if (beforeTop !== null) {
-        const afterTop = next.getBoundingClientRect().top;
-        window.scrollBy(0, afterTop - beforeTop);
+        requestAnimationFrame(() => {
+          const afterTop = next.getBoundingClientRect().top;
+          window.scrollBy(0, afterTop - beforeTop);
+        });
       }
     };
     requestAnimationFrame(refocus);
@@ -621,7 +627,15 @@ form = {
       const detailsDiv = checked ? el("div", { class: "gaidet-item-details" }, [
         customLabelInput,
         buildToolPicker(),
-        el("div", { class: "gaidet-sentence-wrap" }, [sentenceTextarea]),
+        el("div", { class: "gaidet-sentence-wrap" }, [
+          sentenceTextarea,
+          el("button", {
+            type: "button",
+            class: "gaidet-sentence-enter",
+            "aria-label": "Mark this task's description as done",
+            onclick: () => markCompleteIfReady()
+          }, "→")
+        ]),
         providePrompts ? promptsTextarea : null
       ]) : null;
 
@@ -674,7 +688,7 @@ declarationText = {
   ))].sort((a, b) => a.localeCompare(b));
   const overallToolsPart = overallToolNames.length > 0 ? overallToolNames.join(", ") : "[no tools ticked]";
 
-  const heading = `AI Disclosure Declaration\n\nAI tools used: ${overallToolsPart}\n`;
+  const heading = `Declaration on the Use of Artificial Intelligence Tools\n\nAI tools used: ${overallToolsPart}\n`;
 
   const signedBy = studentName.trim() || "[ADD NAME]";
   const closing = `\n\nResponsibility for the submitted assignment lies entirely with the author of this disclosure statement.\n\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.\n\nDeclaration submitted by: ${signedBy}`;
@@ -719,7 +733,7 @@ declarationHtml = {
   ))].sort((a, b) => a.localeCompare(b));
   const overallToolsPart = overallToolNames.length > 0 ? overallToolNames.join(", ") : "[no tools ticked]";
 
-  const headingHtml = `<p><strong>AI Disclosure Declaration</strong></p><p><strong>AI tools used:</strong> ${overallToolsPart}</p>`;
+  const headingHtml = `<p><strong>Declaration on the Use of Artificial Intelligence Tools</strong></p><p><strong>AI tools used:</strong> ${overallToolsPart}</p>`;
 
   const signedBy = escapeHtml(studentName.trim() || "[ADD NAME]");
   const closingHtml = `<p>Responsibility for the submitted assignment lies entirely with the author of this disclosure statement.</p><p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p><p>Declaration submitted by: ${signedBy}</p>`;
@@ -862,8 +876,8 @@ outputBox = {
       ? null
       : showDeclaration
       ? el("pre", { id: "gaidet-output-text", class: justUpdated ? "gaidet-output-flash" : "" }, [
-          el("strong", {}, "AI Disclosure Declaration"),
-          declarationText.replace(/^AI Disclosure Declaration/, "")
+          el("strong", {}, "Declaration on the Use of Artificial Intelligence Tools"),
+          declarationText.replace(/^Declaration on the Use of Artificial Intelligence Tools/, "")
         ])
       : (() => {
           const icon = el("div", { class: "gaidet-output-placeholder-icon" }, []);
