@@ -35,6 +35,11 @@ body {
   color: var(--gaidet-accent);
 }
 
+.navbar-logo {
+  height: 30px;
+}
+
+
 h1, h2 {
   margin-top: 2.2rem;
 }
