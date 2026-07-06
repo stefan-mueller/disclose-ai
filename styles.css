@@ -358,11 +358,16 @@ label.gaidet-tool-option:hover {
 
 .gaidet-autocomplete-chip {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
   background: var(--gaidet-accent-tint);
   border-radius: 8px;
   padding: 0.35rem 0.6rem;
+}
+
+.gaidet-autocomplete-chip-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .gaidet-autocomplete-chip-name {
@@ -372,11 +377,25 @@ label.gaidet-tool-option:hover {
   white-space: nowrap;
 }
 
+.gaidet-autocomplete-version-wrap {
+  margin: 0.3rem 0 0.1rem 0.2rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid var(--gaidet-accent-bright);
+}
+
+.gaidet-autocomplete-version-label {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--gaidet-text-muted);
+  margin-bottom: 0.2rem;
+}
+
 .gaidet-autocomplete-version-input {
-  flex: 0 1 250px;
-  min-width: 0;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.85rem;
+  display: block;
+  width: 100%;
+  max-width: 250px;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.8rem;
 }
 
 .gaidet-autocomplete-remove {

@@ -12,11 +12,11 @@ This tool helps students disclose their use of generative AI in university assig
 ## Why use this tool?
 
 
-Generative AI use among students continues to grow. According to the [Student Generative AI Survey 2026](https://www.hepi.ac.uk/wp-content/uploads/2026/03/HEPI-Report-199-Gen-AI-Survey-2026.pdf), 94% of students use generative AI to help with assessed work. Some assignments prohibit its use; others permit it but require disclosure, and clear guidance on *how* to disclose isn’t always available.
+AI tool use among students continues to grow. Some assignments prohibit generative AI entirely; others allow it but require disclosure, though clear guidance on *how* to disclose isn’t always available.
 
-This website offers a structured, task-by-task checklist for recording your AI use and automatically generates a clear disclosure statement. It adapts the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)) for university assignments.
+If that’s your situation, this tool is for you: a structured, task-by-task checklist for recording your AI use, adapted from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
 
-Select every task a generative AI tool helped you with, then add a short description of what you asked it to do and how you used the output. Your answers are automatically formatted into a declaration at the end of this page, ready to copy and adjust as needed.
+Select every task a generative AI tool helped with, add a short description of what you asked it to do and how you used the output, and get a ready-to-copy declaration at the end of this page.
 
 ```{ojs}
 //| echo: false
@@ -425,27 +425,33 @@ form = {
           selectedWrap.innerHTML = "";
           currentSelected().forEach(entry => {
             const row = el("div", { class: "gaidet-autocomplete-chip" }, []);
-            row.append(el("span", { class: "gaidet-autocomplete-chip-name" }, entry.name));
+            const header = el("div", { class: "gaidet-autocomplete-chip-header" }, [
+              el("span", { class: "gaidet-autocomplete-chip-name" }, entry.name),
+              el("button", {
+                type: "button",
+                class: "gaidet-autocomplete-remove",
+                "aria-label": `Remove ${entry.name}`,
+                onclick: () => commit(currentSelected().filter(t => t.name !== entry.name))
+              }, "×")
+            ]);
+            row.append(header);
             if (entry.needsVersion) {
               const suggestedVersion = (data.commonVersions ?? {})[entry.name];
-              row.append(el("input", {
-                type: "text",
-                class: "gaidet-autocomplete-version-input",
-                "data-field": `toolVersion::${key}::${entry.name}`,
-                "aria-label": `${entry.name} model or version`,
-                placeholder: suggestedVersion ? `e.g., ${suggestedVersion}` : "Model/version",
-                value: entry.version,
-                oninput: debounce((e) => {
-                  commit(currentSelected().map(t => t.name === entry.name ? { ...t, version: e.target.value } : t));
+              row.append(el("div", { class: "gaidet-autocomplete-version-wrap" }, [
+                el("label", { class: "gaidet-autocomplete-version-label" }, `Model/version of ${entry.name}`),
+                el("input", {
+                  type: "text",
+                  class: "gaidet-autocomplete-version-input",
+                  "data-field": `toolVersion::${key}::${entry.name}`,
+                  "aria-label": `${entry.name} model or version`,
+                  placeholder: suggestedVersion ? `e.g., ${suggestedVersion}` : "Model/version",
+                  value: entry.version,
+                  oninput: debounce((e) => {
+                    commit(currentSelected().map(t => t.name === entry.name ? { ...t, version: e.target.value } : t));
+                  })
                 })
-              }));
+              ]));
             }
-            row.append(el("button", {
-              type: "button",
-              class: "gaidet-autocomplete-remove",
-              "aria-label": `Remove ${entry.name}`,
-              onclick: () => commit(currentSelected().filter(t => t.name !== entry.name))
-            }, "×"));
             selectedWrap.append(row);
           });
         }
@@ -454,9 +460,9 @@ form = {
 
         return el("div", { class: "gaidet-autocomplete" }, [
           el("p", { class: "gaidet-tool-label" }, "AI tool(s) used for this task:"),
+          el("p", { class: "gaidet-tool-instructions" }, "Press Enter or click a suggestion to add a tool. If yours isn't listed, type its name and add it as a custom tool."),
           el("div", { class: "gaidet-autocomplete-wrap" }, [input, list]),
-          selectedWrap,
-          el("p", { class: "gaidet-tool-instructions" }, "Press Enter or click a suggestion to add a tool. If yours isn't listed, type its name and add it as a custom tool.")
+          selectedWrap
         ]);
       }
 
@@ -683,7 +689,7 @@ nameField = preserveFocus(() => el("div", { class: "gaidet-name-field" }, [
       oninput: debounce((e) => { mutable studentName = e.target.value; })
     })
   ]),
-  el("p", { class: "gaidet-tool-instructions" }, "Used to complete the “Declaration submitted by” line at the end of the generated disclaimer.")
+  el("p", { class: "gaidet-tool-instructions" }, "Optional. Used to complete the “Declaration submitted by” line at the end of the generated disclaimer.")
 ]))
 ```
 

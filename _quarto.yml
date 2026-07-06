@@ -8,7 +8,7 @@ website:
   site-url: "https://discloseai.netlify.app"
   back-to-top-navigation: true
   page-footer:
-    center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)), [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net) and Claude Code with Quarto."
+    center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)), [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net) and Claude Code with [Quarto](https://quarto.org). Privacy with [Cabin](https://withcabin.com/privacy/paper-picnic.com)"
 
 format:
   html:
