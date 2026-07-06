@@ -5,6 +5,7 @@ format:
     page-layout: article
 ---
 
+<script async src="https://scripts.withcabin.com/hello.js"></script>
 
 This tool helps students disclose their use of generative AI in university assignments. It generates a plain-text declaration summarising which AI tools you used and how, ready to paste into your appendix. It is free to use, fully open source, and runs entirely in your browser, so nothing you enter is ever sent to a server. See the [privacy note](#note-on-privacy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
 
@@ -111,8 +112,14 @@ function autoGrow(textarea, attempts = 0) {
     if (attempts < 30) requestAnimationFrame(() => autoGrow(textarea, attempts + 1));
     return;
   }
-  textarea.style.height = "auto";
-  textarea.style.height = `${textarea.scrollHeight}px`;
+  // Deferred to the next frame so the keystroke itself paints immediately;
+  // reading scrollHeight synchronously here would force a layout reflow
+  // before the browser can render the typed character.
+  if (textarea._autoGrowRaf) cancelAnimationFrame(textarea._autoGrowRaf);
+  textarea._autoGrowRaf = requestAnimationFrame(() => {
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  });
 }
 
 function debounce(fn, delay = 900) {
@@ -904,12 +911,18 @@ ${progressBox}
 
 This tool was built by [Stefan Müller](https://muellerstefan.net), with substantial help from Claude Code, which handled most of the coding and drafting under the maintainer’s direction.
 
+I'd love to hear how you're using this tool and any suggestions for improving it. Please share your thoughts via this [short feedback form](https://forms.cloud.microsoft/e/nSGgCVHRQg).
+
+
+
+
 
 ## How to cite this tool
 
 If you use this tool in your teaching, you can cite it as:
 
->Müller, Stefan (2026). *AI Disclosure Statement Generator*. <https://disclose-ai.netlify.app>
+>Müller, Stefan (2026). *AI Disclosure Statement Generator*. <https://disclose-ai.app>
+
 
 
 ## Related reading
@@ -920,9 +933,14 @@ Learn more about generative AI declaration generators, the inspiration behind th
 
 ## Disclaimer of responsibility
 
-This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is **not** legal, academic, or official institutional guidance, and using it does **not** constitute compliance with any university, School, programme, or module policy. The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. **You are solely responsible** for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author **cannot be held legally or otherwise accountable** for any reliance placed on this tool.
+This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is **not** legal, academic, or official institutional guidance, and using it does **not** constitute compliance with any university, School, programme, or module policy. 
+
+The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. 
+
+**You are solely responsible** for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author **cannot be held legally or otherwise accountable** for any reliance placed on this tool.
 
 
 ## Note on privacy
 
 This tool is free to use and fully [open source](https://github.com/stefan-mueller/disclose-ai), so you can verify these claims yourself. It does **not** store, transmit, or save any data you enter, anywhere. Everything runs entirely in your own browser and disappears the moment you close or refresh the page. The generated text is provided only so you can copy it into your own assignment appendix.
+

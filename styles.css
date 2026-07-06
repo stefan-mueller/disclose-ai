@@ -385,7 +385,7 @@ label.gaidet-tool-option:hover {
 
 .gaidet-autocomplete-version-label {
   display: block;
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   color: var(--gaidet-text-muted);
   margin-bottom: 0.2rem;
 }

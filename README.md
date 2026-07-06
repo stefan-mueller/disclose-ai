@@ -1,6 +1,6 @@
 # AI Disclosure for University Assignments
 
-Live site: <https://discloseai.netlify.app>
+Live site: <https://disclose-ai.app>
 
 A simplified, coursework-adapted version of the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/), built with Quarto and Observable JS instead of plain HTML and Python.
 
