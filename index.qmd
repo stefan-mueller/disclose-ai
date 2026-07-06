@@ -690,6 +690,51 @@ declarationText = {
 
 ```{ojs}
 //| echo: false
+declarationHtml = {
+  // A rich-text twin of declarationText, for the "Copy to clipboard" button:
+  // pasted into Word/Docs/Outlook this gives a bold heading and a real
+  // bulleted list instead of plain "- " lines and asterisks.
+  function escapeHtml(s) {
+    return (s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  const entries = Object.values(selections);
+
+  function formatToolWithVersion([name, val]) {
+    const version = (val && typeof val === "object" && val.version) ? val.version.trim() : "";
+    return escapeHtml(version ? `${name} (${version})` : name);
+  }
+
+  const overallToolNames = [...new Set(entries.flatMap(e =>
+    Object.entries(e.tools ?? {}).map(formatToolWithVersion)
+  ))].sort((a, b) => a.localeCompare(b));
+  const overallToolsPart = overallToolNames.length > 0 ? overallToolNames.join(", ") : "[no tools ticked]";
+
+  const headingHtml = `<p><strong>AI Disclosure Declaration</strong></p><p><strong>AI tools used:</strong> ${overallToolsPart}</p>`;
+
+  const signedBy = escapeHtml(studentName.trim() || "[ADD NAME]");
+  const closingHtml = `<p>Responsibility for the submitted assignment lies entirely with the author of this disclosure statement.</p><p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p><p>Declaration submitted by: ${signedBy}</p>`;
+
+  if (entries.length === 0) {
+    return `${headingHtml}<p>No tasks have been ticked yet.</p>${closingHtml}`;
+  }
+
+  const items = entries.map(e => {
+    const labelPart = escapeHtml((e.customLabel && e.customLabel.trim()) ? e.customLabel.trim() : e.label);
+    const itemToolNames = Object.entries(e.tools ?? {}).map(formatToolWithVersion);
+    const itemToolsPart = itemToolNames.length > 0 ? itemToolNames.join(", ") : "[no tool specified]";
+    const toolLabel = itemToolNames.length === 1 ? "Tool" : "Tools";
+    const sentencePart = escapeHtml(e.sentence.trim() || "[please add a short explainer]");
+    const promptsPart = providePrompts && e.prompts && e.prompts.trim() ? `<br>Prompts: ${escapeHtml(e.prompts.trim())}` : "";
+    return `<li><strong>${labelPart}</strong><br>${toolLabel}: ${itemToolsPart}<br>Summary: ${sentencePart}${promptsPart}</li>`;
+  });
+
+  return `${headingHtml}<p>The following generative AI tasks were delegated as part of this assignment:</p><ul>${items.join("")}</ul>${closingHtml}`;
+}
+```
+
+```{ojs}
+//| echo: false
 nameField = preserveFocus(() => el("div", { class: "gaidet-name-field" }, [
   el("label", {}, [
     "Your name",
@@ -827,7 +872,14 @@ outputBox = {
       showDeclaration ? el("button", {
         class: "gaidet-btn-secondary",
         onclick: () => {
-          navigator.clipboard.writeText(declarationText);
+          const item = new ClipboardItem({
+            "text/plain": new Blob([declarationText], { type: "text/plain" }),
+            "text/html": new Blob([declarationHtml], { type: "text/html" })
+          });
+          navigator.clipboard.write([item]).catch(() => {
+            // Older/other browsers without rich-clipboard support.
+            navigator.clipboard.writeText(declarationText);
+          });
           mutable copySuccess = "copy";
           mutable copiedText = declarationText;
         }
