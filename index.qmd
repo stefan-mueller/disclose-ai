@@ -7,7 +7,7 @@ format:
 
 <script async src="https://scripts.withcabin.com/hello.js"></script>
 
-This tool helps students disclose their use of generative AI in university assignments. It generates a plain-text declaration summarising which AI tools you used and how, ready to paste into your appendix. It is free to use, fully open source, and runs entirely in your browser, so nothing you enter is ever sent to a server. See the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
+This tool helps students disclose their use of generative AI in university assignments. It generates a declaration summarising which AI tools you used and how, ready to be added to your assignment submission. It is free to use, fully open source, and runs entirely in your browser. Nothing you enter is ever sent to a server. See the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
 
 
 ## Purpose and limits
@@ -15,9 +15,11 @@ This tool helps students disclose their use of generative AI in university assig
 The use of AI tools amongst students [continues to grow](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/). 
 Some assignments prohibit generative AI entirely; other assignments allow students to use AI but require disclosure, though clear guidance on *how* to disclose isn’t always available.
 
-If you have permission to use AI, but need to disclose your use in a clear, structured way, this tool is for you: a structured, task-by-task checklist for recording your AI use, adapted from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
 
-The process of disclosing your AI use is straightforward: select every task a generative AI tool helped with, describe what you asked it to do and how you used and validated the output, and get a ready-to-copy declaration at the end of this page.
+If you have permission to use AI but need to disclose it clearly, this tool is for you: a structured, task-by-task checklist for recording your AI use, adapted from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
+
+Disclosing your AI use is simple: select every task a generative AI tool helped with, describe what you asked it to do and how you used and checked the output, and get a ready-to-copy declaration.
+
 
 ```{ojs}
 //| echo: false
@@ -72,7 +74,7 @@ Many universities do not have a single institution-wide policy on generative AI.
 
 Disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief.
 
-This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
+You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 
 Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies; for an example of what institution-specific AI guidance looks like, see [UCD Library's guide to using generative AI](https://libguides.ucd.ie/GENAI/usingAI). This tool itself is an independent personal project and is not an official University College Dublin service.
 :::
