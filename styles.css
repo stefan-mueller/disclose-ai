@@ -461,50 +461,6 @@ hr {
   max-width: 620px;
 }
 
-.gaidet-sentence-footer {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.8rem;
-  margin-top: 0.9rem;
-}
-
-.gaidet-proceed-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.6rem;
-}
-
-.gaidet-proceed-warning {
-  margin: 0;
-  padding: 0.5rem 0.8rem;
-  background: var(--gaidet-warning-bg);
-  border: 1px solid var(--gaidet-warning-border);
-  border-radius: 8px;
-  font-size: 0.8rem;
-  color: var(--gaidet-warning-text);
-  text-align: left;
-}
-
-.gaidet-proceed-btn {
-  background: none;
-  border: 1px solid var(--gaidet-accent);
-  color: var(--gaidet-accent);
-  border-radius: 999px;
-  padding: 0.45rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gaidet-proceed-btn:hover {
-  background: var(--gaidet-accent-tint);
-}
-
 .gaidet-name-field {
   background: #fff;
   border: 1px solid var(--gaidet-border);

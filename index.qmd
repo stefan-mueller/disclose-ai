@@ -281,6 +281,17 @@ promptsToggle = el("div", { class: "gaidet-prompts-question" }, [
 ```{ojs}
 //| echo: false
 form = {
+  // A working copy of `selections`, shared by every commit function created
+  // during this render. `selections` itself is frozen for the lifetime of this
+  // render (it won't reflect a commit made moments ago by this same render,
+  // even though the commit did trigger a future re-render), so committing from
+  // it directly risks one task's update clobbering another's when several
+  // fields across tasks are edited/committed in quick succession. Every commit
+  // below reads and writes `pendingSelections` instead, so they chain off each
+  // other correctly within this render, and only publish to the reactive
+  // `selections` (starting the next render) as their last step.
+  let pendingSelections = selections;
+
   return preserveFocus(() => el("div", {}, data.categories.map(cat => {
   const categoryEl = el("div", { class: "gaidet-category" }, [
     el("h3", {}, cat.label),
@@ -294,7 +305,7 @@ form = {
       // Tracks this task's tools independently of `selections`, which is frozen
       // for the lifetime of this render: a commit updates `selections` and
       // schedules a full re-render, but doesn't retroactively unfreeze it for
-      // code (like confirmIfComplete, below) still running in this same render.
+      // code (like markCompleteIfReady, below) still running in this same render.
       let currentTools = sel?.tools ?? {};
 
       function buildToolPicker() {
@@ -315,7 +326,7 @@ form = {
         }
 
         function commit(nextSelected) {
-          const next = { ...selections };
+          const next = { ...pendingSelections };
           if (!next[key]) return;
           const toolsMap = {};
           nextSelected.forEach(t => {
@@ -323,6 +334,7 @@ form = {
           });
           currentTools = toolsMap;
           next[key] = { ...next[key], tools: toolsMap };
+          pendingSelections = next;
           mutable selections = next;
         }
 
@@ -486,7 +498,7 @@ form = {
           type: "checkbox",
           checked,
           onchange: (e) => {
-            const next = { ...selections };
+            const next = { ...pendingSelections };
             if (e.target.checked) {
               next[key] = {
                 label: item.label,
@@ -500,6 +512,7 @@ form = {
             } else {
               delete next[key];
             }
+            pendingSelections = next;
             mutable selections = next;
           }
         }),
@@ -515,29 +528,25 @@ form = {
         maxlength: "3000",
         value: sel?.sentence ?? "",
         onblur: (e) => {
-          const next = { ...selections };
+          const next = { ...pendingSelections };
           if (next[key]) {
             next[key] = { ...next[key], sentence: e.target.value };
+            pendingSelections = next;
             mutable selections = next;
           }
         }
       });
 
-      const proceedWarning = el("p", { class: "gaidet-proceed-warning" }, "Please add at least one AI tool and a description before moving on.");
-      proceedWarning.style.display = "none";
-
-      function confirmIfComplete() {
+      function markCompleteIfReady() {
         // Read sentence/tools/customLabel from live sources (the textarea/input's
         // own DOM value, and the `currentTools` tracker) rather than `selections`,
         // which is frozen for this render and can be missing an edit that was
-        // just committed a moment ago in this same render (e.g. adding a tool
-        // right before clicking Confirm).
-        const currentCustomLabel = customLabelInput ? customLabelInput.value : (selections[key]?.customLabel ?? "");
+        // just committed a moment ago in this same render.
+        const currentCustomLabel = customLabelInput ? customLabelInput.value : (pendingSelections[key]?.customLabel ?? "");
         const taskComplete = taskIsComplete(sentenceTextarea.value, currentTools, item.openEnded, currentCustomLabel);
         if (!taskComplete) return false;
         detailsDiv.classList.add("gaidet-item-details-complete");
-        proceedWarning.style.display = "none";
-        const next = { ...selections };
+        const next = { ...pendingSelections };
         if (next[key]) {
           next[key] = {
             ...next[key],
@@ -546,39 +555,11 @@ form = {
             customLabel: currentCustomLabel,
             proceeded: true
           };
+          pendingSelections = next;
           mutable selections = next;
         }
         return true;
       }
-
-      const proceedBtn = el("div", { class: "gaidet-proceed-wrap" }, [
-        proceedWarning,
-        el("button", {
-          type: "button",
-          class: "gaidet-proceed-btn",
-          "aria-label": "Confirm this task is complete and go to the next one",
-          onclick: (e) => {
-            if (!confirmIfComplete()) {
-              proceedWarning.style.display = "block";
-              return;
-            }
-
-            const currentItem = e.currentTarget.closest(".gaidet-item");
-            const allItems = Array.from(document.querySelectorAll(".gaidet-item"));
-            const idx = allItems.indexOf(currentItem);
-            const target = (idx >= 0 && allItems[idx + 1])
-              ? allItems[idx + 1]
-              : document.getElementById("gaidet-output-section");
-            if (target) {
-              // Leave a peek of the just-confirmed box above the fold, so the jump
-              // still reads as "next task" rather than landing on a blank viewport.
-              const peek = 90;
-              const targetTop = target.getBoundingClientRect().top + window.scrollY;
-              window.scrollTo({ top: targetTop - peek, behavior: "smooth" });
-            }
-          }
-        }, "Confirm")
-      ]);
 
       const promptsTextarea = providePrompts ? el("textarea", {
         class: "gaidet-sentence",
@@ -587,9 +568,10 @@ form = {
         placeholder: "If applicable, please copy-paste the prompts you have used.",
         value: sel?.prompts ?? "",
         onblur: (e) => {
-          const next = { ...selections };
+          const next = { ...pendingSelections };
           if (next[key]) {
             next[key] = { ...next[key], prompts: e.target.value };
+            pendingSelections = next;
             mutable selections = next;
           }
         }
@@ -603,9 +585,10 @@ form = {
         placeholder: "What was this task or component? (short description)",
         value: sel?.customLabel ?? "",
         onblur: (e) => {
-          const next = { ...selections };
+          const next = { ...pendingSelections };
           if (next[key]) {
             next[key] = { ...next[key], customLabel: e.target.value };
+            pendingSelections = next;
             mutable selections = next;
           }
         }
@@ -614,10 +597,7 @@ form = {
       const detailsDiv = checked ? el("div", { class: "gaidet-item-details" }, [
         customLabelInput,
         buildToolPicker(),
-        el("div", { class: "gaidet-sentence-wrap" }, [
-          sentenceTextarea,
-          el("div", { class: "gaidet-sentence-footer" }, [proceedBtn])
-        ]),
+        el("div", { class: "gaidet-sentence-wrap" }, [sentenceTextarea]),
         providePrompts ? promptsTextarea : null
       ]) : null;
 
@@ -627,12 +607,11 @@ form = {
 
       if (detailsDiv) {
         autoGrow(sentenceTextarea);
-        sentenceTextarea.addEventListener("input", (e) => {
-          autoGrow(e.target);
-          const liveComplete = taskIsComplete(e.target.value, sel.tools, item.openEnded, sel.customLabel);
-          detailsDiv.classList.toggle("gaidet-item-details-complete", liveComplete && !!sel.proceeded);
-          if (liveComplete) proceedWarning.style.display = "none";
-        });
+        sentenceTextarea.addEventListener("input", (e) => autoGrow(e.target));
+        // "Moved to the next section": once focus leaves this task's fields
+        // (tabbing/clicking to the next task, or down to the declaration),
+        // mark it complete if it qualifies.
+        detailsDiv.addEventListener("focusout", () => markCompleteIfReady());
       }
 
       if (detailsDiv && providePrompts) {
@@ -783,6 +762,20 @@ outputBox = {
       return;
     }
     mutable copyWarning = false;
+
+    // Every entry is already complete at this point (the `incomplete` check
+    // above guarantees it), so generating the declaration also marks any
+    // not-yet-proceeded task as done, turning its box green.
+    const next = { ...selections };
+    let anyNewlyProceeded = false;
+    for (const k of Object.keys(next)) {
+      if (!next[k].proceeded) {
+        next[k] = { ...next[k], proceeded: true };
+        anyNewlyProceeded = true;
+      }
+    }
+    if (anyNewlyProceeded) mutable selections = next;
+
     if (declarationConfirmed) {
       mutable copySuccess = false;
       mutable justUpdated = true;
