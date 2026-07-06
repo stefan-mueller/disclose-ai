@@ -3,10 +3,22 @@ project:
   output-dir: docs
 
 website:
-  title: "AI Disclosure for University Assignments"
+  title: "AI Disclosure Statement Generator"
   description: "A simplified, coursework-adapted version of the GAIDeT declaration generator."
   site-url: "https://disclose-ai.app"
   back-to-top-navigation: true
+  navbar:
+    search: false
+    border: true
+    background: "white"
+    pinned: true
+    right:
+      - href: "#purpose-and-limits"
+        text: Purpose
+      - href: "#generate-declaration"
+        text: Generate Declaration
+      - href: "#about-the-maintainer"
+        text: About
   page-footer:
     center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)), [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net) and Claude Code with [Quarto](https://quarto.org). Privacy with [Cabin](https://withcabin.com/privacy/paper-picnic.com)"
 
@@ -16,6 +28,7 @@ format:
     css: styles.css
     toc: false
     page-layout: article
+    smooth-scroll: true
     anchor-sections: false
     grid:
       body-width: 900px

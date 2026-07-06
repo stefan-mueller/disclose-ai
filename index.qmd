@@ -10,7 +10,7 @@ format:
 This tool helps students disclose their use of generative AI in university assignments. It generates a plain-text declaration summarising which AI tools you used and how, ready to paste into your appendix. It is free to use, fully open source, and runs entirely in your browser, so nothing you enter is ever sent to a server. See the [privacy note](#note-on-privacy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
 
 
-## Why use this tool?
+## Purpose and limits
 
 
 AI tool use among students continues to grow. Some assignments prohibit generative AI entirely; others allow it but require disclosure, though clear guidance on *how* to disclose isn’t always available.
@@ -73,6 +73,8 @@ Many universities do not have a single institution-wide policy on generative AI.
 Disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief.
 
 This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
+
+Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies; for an example of what institution-specific AI guidance looks like, see [UCD Library's guide to using generative AI](https://libguides.ucd.ie/GENAI/usingAI).
 :::
 
 ```{ojs}
@@ -137,8 +139,13 @@ function preserveFocus(build) {
   const field = active?.dataset?.field;
   const selStart = active?.selectionStart ?? null;
   const selEnd = active?.selectionEnd ?? null;
-  const scrollY = window.scrollY;
-  const scrollX = window.scrollX;
+  // Where the field sits on screen right now, not the page's absolute scroll
+  // position: restoring the old absolute scrollY fought the new layout when
+  // an edit changed a box's height, but not correcting for anything at all
+  // lets the browser's own scroll-anchoring reset to the top of this whole
+  // block on every rebuild. Keeping the field at the same viewport-relative
+  // spot avoids both.
+  const beforeTop = active?.getBoundingClientRect?.().top ?? null;
   const node = build();
   if (field) {
     let attempts = 0;
@@ -154,7 +161,10 @@ function preserveFocus(build) {
       if (selStart !== null && typeof next.setSelectionRange === "function") {
         next.setSelectionRange(selStart, selEnd);
       }
-      window.scrollTo(scrollX, scrollY);
+      if (beforeTop !== null) {
+        const afterTop = next.getBoundingClientRect().top;
+        window.scrollBy(0, afterTop - beforeTop);
+      }
     };
     requestAnimationFrame(refocus);
   }
@@ -335,6 +345,11 @@ form = {
           currentTools = toolsMap;
           next[key] = { ...next[key], tools: toolsMap };
           pendingSelections = next;
+          // Update the visible chip list immediately, rather than waiting for
+          // the full task list to rebuild (which still happens, for the rest
+          // of the app to pick up the change, but no longer gates this box's
+          // own visual feedback).
+          renderSelected();
           mutable selections = next;
         }
 
@@ -630,7 +645,7 @@ form = {
 }
 ```
 
-## Detailed task breakdown
+## Generate declaration
 
 Tick every task where you delegated work to AI, then add the tool(s) you used for it. Give the exact model or version where you can (e.g. GPT-5.5), since capability varies a lot between versions.
 
@@ -786,7 +801,6 @@ outputBox = {
   }
 
   return el("div", { class: "gaidet-output", id: "gaidet-output-section" }, [
-    el("h3", {}, "Generated declaration"),
     warning,
     confirmBox,
     success,
@@ -844,6 +858,8 @@ ${form}
 ${nameField}
 
 ${promptsToggle}
+
+## Your declaration
 
 ${outputBox}
 
@@ -948,5 +964,5 @@ The author, Stefan Müller, and any contributors accept **no responsibility or l
 
 ## Note on privacy
 
-This tool is free to use and fully [open source](https://github.com/stefan-mueller/disclose-ai), so you can verify these claims yourself. It does **not** store, transmit, or save any data you enter, anywhere. Everything runs entirely in your own browser and disappears the moment you close or refresh the page. The generated text is provided only so you can copy it into your own assignment appendix.
+This tool is free to use and fully [open source](https://github.com/stefan-mueller/disclose-ai), so you can verify these claims yourself. It does **not** store, transmit, or save your declaration or any of the task details you enter, anywhere. Everything runs entirely in your own browser and disappears the moment you close or refresh the page. The generated text is provided only so you can copy it into your own assignment appendix.
 
