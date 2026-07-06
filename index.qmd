@@ -916,9 +916,9 @@ outputBox = {
 
 ${form}
 
-${nameField}
-
 ${promptsToggle}
+
+${nameField}
 
 ## Your declaration
 
