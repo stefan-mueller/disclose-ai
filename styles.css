@@ -469,13 +469,6 @@ hr {
   margin-top: 0.9rem;
 }
 
-.gaidet-word-count {
-  margin: 0;
-  font-size: 0.78rem;
-  color: var(--gaidet-text-muted);
-  white-space: nowrap;
-}
-
 .gaidet-proceed-wrap {
   display: flex;
   flex-direction: column;

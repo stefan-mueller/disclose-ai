@@ -68,7 +68,9 @@ el("div", { class: "gaidet-example-wrap" }, [
 
 
 ::: {.callout-warning}
-Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or for specific tasks listed below; disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief.
+Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or allow AI use only for some of the tasks listed below. 
+
+Disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief.
 
 This declaration only covers disclosure; depending on your citation style, you may also need to formally cite AI tools in your reference list. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 :::
@@ -289,14 +291,19 @@ form = {
       const sel = selections[key];
       const isComplete = checked && taskIsComplete(sel.sentence, sel.tools, item.openEnded, sel.customLabel);
 
+      // Tracks this task's tools independently of `selections`, which is frozen
+      // for the lifetime of this render: a commit updates `selections` and
+      // schedules a full re-render, but doesn't retroactively unfreeze it for
+      // code (like confirmIfComplete, below) still running in this same render.
+      let currentTools = sel?.tools ?? {};
+
       function buildToolPicker() {
         const toolIndex = data.aiToolGroups.flatMap(group =>
           group.tools.map(tool => ({ name: tool, category: group.label, needsVersion: !noVersionTools.has(tool) }))
         );
 
         function currentSelected() {
-          const entry = selections[key] ?? { tools: {} };
-          return Object.entries(entry.tools ?? {}).map(([name, val]) => ({
+          return Object.entries(currentTools ?? {}).map(([name, val]) => ({
             name,
             needsVersion: typeof val === "object",
             version: (val && typeof val === "object" && val.version) || ""
@@ -314,6 +321,7 @@ form = {
           nextSelected.forEach(t => {
             toolsMap[t.name] = t.needsVersion ? { version: t.version || "" } : true;
           });
+          currentTools = toolsMap;
           next[key] = { ...next[key], tools: toolsMap };
           mutable selections = next;
         }
@@ -453,9 +461,9 @@ form = {
                   "aria-label": `${entry.name} model or version`,
                   placeholder: suggestedVersion ? `e.g., ${suggestedVersion}` : "Model/version",
                   value: entry.version,
-                  oninput: debounce((e) => {
+                  onblur: (e) => {
                     commit(currentSelected().map(t => t.name === entry.name ? { ...t, version: e.target.value } : t));
-                  })
+                  }
                 })
               ]));
             }
@@ -499,10 +507,6 @@ form = {
         isComplete ? el("span", { class: "gaidet-item-complete", "aria-label": "Sentence and tool provided" }, " ✓") : null
       ]);
 
-      function countWords(text) {
-        return (text || "").trim().split(/\s+/).filter(Boolean).length;
-      }
-
       const sentenceTextarea = el("textarea", {
         class: "gaidet-sentence",
         "data-field": `sentence::${key}`,
@@ -510,31 +514,39 @@ form = {
         placeholder: "What did you ask the AI to do, and how did you use the output?",
         maxlength: "3000",
         value: sel?.sentence ?? "",
-        oninput: debounce((e) => {
+        onblur: (e) => {
           const next = { ...selections };
           if (next[key]) {
             next[key] = { ...next[key], sentence: e.target.value };
             mutable selections = next;
           }
-        })
+        }
       });
-
-      const wordCount = el("p", { class: "gaidet-word-count" }, `Words: ${countWords(sel?.sentence)}`);
 
       const proceedWarning = el("p", { class: "gaidet-proceed-warning" }, "Please add at least one AI tool and a description before moving on.");
       proceedWarning.style.display = "none";
 
       function confirmIfComplete() {
-        const taskComplete = taskIsComplete(sentenceTextarea.value, sel.tools, item.openEnded, sel.customLabel);
+        // Read sentence/tools/customLabel from live sources (the textarea/input's
+        // own DOM value, and the `currentTools` tracker) rather than `selections`,
+        // which is frozen for this render and can be missing an edit that was
+        // just committed a moment ago in this same render (e.g. adding a tool
+        // right before clicking Confirm).
+        const currentCustomLabel = customLabelInput ? customLabelInput.value : (selections[key]?.customLabel ?? "");
+        const taskComplete = taskIsComplete(sentenceTextarea.value, currentTools, item.openEnded, currentCustomLabel);
         if (!taskComplete) return false;
         detailsDiv.classList.add("gaidet-item-details-complete");
         proceedWarning.style.display = "none";
-        if (!sel.proceeded) {
-          const next = { ...selections };
-          if (next[key]) {
-            next[key] = { ...next[key], proceeded: true };
-            mutable selections = next;
-          }
+        const next = { ...selections };
+        if (next[key]) {
+          next[key] = {
+            ...next[key],
+            tools: currentTools,
+            sentence: sentenceTextarea.value,
+            customLabel: currentCustomLabel,
+            proceeded: true
+          };
+          mutable selections = next;
         }
         return true;
       }
@@ -574,35 +586,37 @@ form = {
         "aria-label": "Prompts used for this task",
         placeholder: "If applicable, please copy-paste the prompts you have used.",
         value: sel?.prompts ?? "",
-        oninput: debounce((e) => {
+        onblur: (e) => {
           const next = { ...selections };
           if (next[key]) {
             next[key] = { ...next[key], prompts: e.target.value };
             mutable selections = next;
           }
-        })
+        }
+      }) : null;
+
+      const customLabelInput = item.openEnded ? el("input", {
+        type: "text",
+        "data-field": `customLabel::${key}`,
+        "aria-label": "Task or component description",
+        style: "width:100%;max-width:500px;",
+        placeholder: "What was this task or component? (short description)",
+        value: sel?.customLabel ?? "",
+        onblur: (e) => {
+          const next = { ...selections };
+          if (next[key]) {
+            next[key] = { ...next[key], customLabel: e.target.value };
+            mutable selections = next;
+          }
+        }
       }) : null;
 
       const detailsDiv = checked ? el("div", { class: "gaidet-item-details" }, [
-        item.openEnded ? el("input", {
-          type: "text",
-          "data-field": `customLabel::${key}`,
-          "aria-label": "Task or component description",
-          style: "width:100%;max-width:500px;",
-          placeholder: "What was this task or component? (short description)",
-          value: sel.customLabel ?? "",
-          oninput: debounce((e) => {
-            const next = { ...selections };
-            if (next[key]) {
-              next[key] = { ...next[key], customLabel: e.target.value };
-              mutable selections = next;
-            }
-          })
-        }) : null,
+        customLabelInput,
         buildToolPicker(),
         el("div", { class: "gaidet-sentence-wrap" }, [
           sentenceTextarea,
-          el("div", { class: "gaidet-sentence-footer" }, [proceedBtn, wordCount])
+          el("div", { class: "gaidet-sentence-footer" }, [proceedBtn])
         ]),
         providePrompts ? promptsTextarea : null
       ]) : null;
@@ -615,7 +629,6 @@ form = {
         autoGrow(sentenceTextarea);
         sentenceTextarea.addEventListener("input", (e) => {
           autoGrow(e.target);
-          wordCount.textContent = `Words: ${countWords(e.target.value)}`;
           const liveComplete = taskIsComplete(e.target.value, sel.tools, item.openEnded, sel.customLabel);
           detailsDiv.classList.toggle("gaidet-item-details-complete", liveComplete && !!sel.proceeded);
           if (liveComplete) proceedWarning.style.display = "none";
