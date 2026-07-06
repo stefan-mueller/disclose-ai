@@ -1016,13 +1016,13 @@ Learn more about generative AI declaration generators, the inspiration behind th
 
 ## Disclaimer of responsibility
 
-This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is **not** legal, academic, or official institutional guidance, and using it does **not** constitute compliance with any university, School, programme, or module policy. 
+This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is not legal, academic, or official institutional guidance, and using it does not constitute compliance with any university, School, programme, or module policy. 
 
 The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. 
 
 You are solely responsible for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author cannot be held legally or otherwise accountable for any reliance placed on this tool.
 
-This tool is an independent personal project of the author and is **not** an official service of, or endorsed by, University College Dublin or any other institution.
+This tool is an independent personal project of the author and is not an official service of, or endorsed by, University College Dublin or any other institution.
 
 The AI tools listed or suggested in this form (e.g. ChatGPT, Claude, Grammarly) are trademarks of their respective owners. Their appearance here, including in the autocomplete suggestions, is for identification purposes only and does not imply any affiliation with, or endorsement of, this tool by those companies, nor endorsement of those tools by the author.
 
@@ -1035,5 +1035,5 @@ This tool is fully [open source](https://github.com/stefan-mueller/disclose-ai),
 
 **Analytics.** This site uses [Cabin](https://withcabin.com), a privacy-focused analytics service, to understand overall visitor numbers. Cabin does not use cookies, does not track IP addresses, and cannot identify individual visitors — it only reports aggregate, anonymous traffic data (e.g. how many people visited, which pages). See [Cabin's privacy policy](https://withcabin.com/privacy) for details. No data about the content you enter into this tool is ever sent to Cabin or anyone else.
 
-**Questions, errors, or suggestions.** If you have questions about this policy or how this site handles data, contact [Stefan Müller](https://muellerstefan.net). If you spot an error or have an improvement suggestion, feel free to open an issue or pull request on [GitHub](https://github.com/stefan-mueller/disclose-ai).
+**Questions, errors, or suggestions.** If you have questions about this policy, contact [Stefan Müller](https://muellerstefan.net). If you spot an error or have an improvement suggestion, feel free to open an issue or pull request on [GitHub](https://github.com/stefan-mueller/disclose-ai).
 
