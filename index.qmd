@@ -21,8 +21,6 @@ If you have permission to use AI but need to disclose it clearly, this tool is f
 
 Disclosing your AI use is simple: select every task a generative AI tool helped with, describe what you asked it to do and how you used and checked the output, and get a ready-to-copy declaration.
 
-Before you begin, please read the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
-
 
 ```{ojs}
 //| echo: false
@@ -49,7 +47,7 @@ The core analysis, writing, and conclusions in this assignment are my own. Gener
     Tool(s): Grammarly
     Summary: After completing my own final draft, I ran it through Grammarly for grammar and punctuation checks, and manually reviewed and accepted only the suggestions I agreed with.
 
-Responsibility for the submitted assignment lies entirely with the author of this disclosure statement.
+Responsibility for the submitted assignment lies entirely with the author of this declaration.
 
 Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.
 
@@ -678,6 +676,9 @@ form = {
 Tick every task where you delegated work to AI, then add the tool(s) you used for it. Give the exact model or version where you can (e.g. GPT-5.5), since capability varies a lot between versions.
 
 
+Before you begin, please read the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
+
+
 ```{ojs}
 //| echo: false
 declarationText = {
@@ -696,7 +697,7 @@ declarationText = {
   const heading = `Declaration on the Use of Artificial Intelligence Tools\n\nAI tools used: ${overallToolsPart}\n`;
 
   const signedBy = studentName.trim() || "[ADD NAME]";
-  const closing = `\n\nResponsibility for the submitted assignment lies entirely with the author of this disclosure statement.\n\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.\n\nDeclaration submitted by: ${signedBy}`;
+  const closing = `\n\nResponsibility for the submitted assignment lies entirely with the author of this declaration.\n\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.\n\nDeclaration submitted by: ${signedBy}`;
 
   if (entries.length === 0) {
     return `${heading}\nNo tasks have been ticked yet.${closing}`;
@@ -741,7 +742,7 @@ declarationHtml = {
   const headingHtml = `<p><strong>Declaration on the Use of Artificial Intelligence Tools</strong></p><p><strong>AI tools used:</strong> ${overallToolsPart}</p>`;
 
   const signedBy = escapeHtml(studentName.trim() || "[ADD NAME]");
-  const closingHtml = `<p>Responsibility for the submitted assignment lies entirely with the author of this disclosure statement.</p><p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p><p>Declaration submitted by: ${signedBy}</p>`;
+  const closingHtml = `<p>Responsibility for the submitted assignment lies entirely with the author of this declaration.</p><p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p><p>Declaration submitted by: ${signedBy}</p>`;
 
   if (entries.length === 0) {
     return `${headingHtml}<p>No tasks have been ticked yet.</p>${closingHtml}`;
@@ -776,7 +777,7 @@ nameField = preserveFocus(() => el("div", { class: "gaidet-name-field" }, [
       oninput: debounce((e) => { mutable studentName = e.target.value; })
     })
   ]),
-  el("p", { class: "gaidet-tool-instructions" }, "Optional. Used to complete the “Declaration submitted by” line at the end of the generated disclaimer.")
+  el("p", { class: "gaidet-tool-instructions" }, "Optional. Used to complete the “Declaration submitted by” line at the end of the generated declaration.")
 ]))
 ```
 
