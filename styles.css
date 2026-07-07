@@ -109,7 +109,7 @@ h2 {
   height: 3px;
   background: var(--gaidet-accent);
   transform-origin: left;
-  animation: gaidet-underline 0.6s ease-out 0.3s both;
+  animation: gaidet-underline 0.3s ease-out 0.3s both;
 }
 
 .gaidet-overview {
@@ -149,6 +149,17 @@ h2 {
 
 .callout {
   background-color: #fff;
+}
+
+.callout-warning {
+  /* Quarto's callout styling reads these Bootstrap variables internally for
+     the icon and left border, so redefining them here recolors the whole
+     callout to our warmer, more muted amber, without needing to know its
+     exact internal markup/selectors. Same tone as .gaidet-warning elsewhere,
+     chosen to sit better alongside the teal theme than Bootstrap's default
+     bright orange. */
+  --bs-warning: #9a3412;
+  --bs-warning-rgb: 154, 52, 18;
 }
 
 .callout > .callout-body-container {
