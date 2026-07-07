@@ -821,7 +821,7 @@ outputBox = {
     : null;
 
   const placeholderText = incomplete
-    ? ["Your declaration will appear here once every ticked task has a tool and a short description.", "If you have not used AI in any way for this assignment, please add the following sentence to your work instead: ‘No generative AI tools were used in the preparation of this assignment.’"]
+    ? ["Your declaration will appear here once every ticked task has a tool and a short description.", "If you didn't use AI at all, add: ‘No generative AI tools were used in the preparation of this assignment.’"]
     : declarationConfirmed
     ? "Your declaration will appear here."
     : "Everything looks ready. Click “Create declaration” below to generate it.";
