@@ -802,9 +802,7 @@ outputBox = {
     ? el("div", { class: "gaidet-success" }, successText)
     : null;
 
-  const placeholderText = incomplete
-    ? ["Your declaration will appear here once every ticked task has a tool and a short description.", "If you didn't use AI at all, add: ‘No generative AI tools were used in the preparation of this assignment.’"]
-    : "Your declaration will appear here.";
+  const placeholderText = ["Your declaration will appear here once every ticked task has a tool and a short description.", "If you didn't use AI at all, add: ‘No generative AI tools were used in the preparation of this assignment.’"];
 
   const confirmBox = showConfirmPrompt ? el("div", { class: "gaidet-confirm" }, [
     el("p", {}, "Did you disclose all use of generative AI in this assignment?"),
