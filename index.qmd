@@ -7,8 +7,9 @@ format:
 
 <script async src="https://scripts.withcabin.com/hello.js"></script>
 
-This tool helps students disclose their use of generative AI in university assignments. It generates a declaration summarising which AI tools you used and how, ready to be added to your assignment submission. It is free to use, fully open source, and runs entirely in your browser. Nothing you enter is ever sent to a server. See the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
-
+::: {.gaidet-overview}
+An open-source tool that helps students write a structured, task-by-task AI-use disclosure statement for assignment submissions. It's free to use and runs entirely in your browser: nothing you enter is ever sent to a server.
+:::
 
 ## Purpose and limits
  
@@ -19,6 +20,8 @@ Some assignments prohibit generative AI entirely; other assignments allow studen
 If you have permission to use AI but need to disclose it clearly, this tool is for you: a structured, task-by-task checklist for recording your AI use, adapted from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
 
 Disclosing your AI use is simple: select every task a generative AI tool helped with, describe what you asked it to do and how you used and checked the output, and get a ready-to-copy declaration.
+
+Before you begin, please read the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
 
 
 ```{ojs}
@@ -818,7 +821,7 @@ outputBox = {
     : null;
 
   const placeholderText = incomplete
-    ? "Your declaration will appear here once every ticked task has a tool and a short description."
+    ? ["Your declaration will appear here once every ticked task has a tool and a short description.", "If you have not used AI in any way for this assignment, please add the following sentence to your work instead: ‘No generative AI tools were used in the preparation of this assignment.’"]
     : declarationConfirmed
     ? "Your declaration will appear here."
     : "Everything looks ready. Click “Create declaration” below to generate it.";
@@ -886,7 +889,9 @@ outputBox = {
           icon.innerHTML = `<svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9L12 2z"/><path d="M19 14.5l0.9 2.6l2.6 0.9l-2.6 0.9L19 21.5l-0.9-2.6l-2.6-0.9l2.6-0.9L19 14.5z" opacity="0.65"/></svg>`;
           return el("div", { class: "gaidet-output-placeholder" }, [
             icon,
-            el("p", {}, placeholderText)
+            ...(Array.isArray(placeholderText)
+              ? placeholderText.map(t => el("p", {}, t))
+              : [el("p", {}, placeholderText)])
           ]);
         })(),
     el("div", { class: "gaidet-output-actions" }, [

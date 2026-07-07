@@ -36,7 +36,8 @@ body {
 }
 
 .navbar-logo {
-  height: 30px;
+  height: 25px;
+  max-height: 25px;
 }
 
 
@@ -102,6 +103,20 @@ h2 {
   background: var(--gaidet-accent);
   transform-origin: left;
   animation: gaidet-underline 0.6s ease-out 0.3s both;
+}
+
+.gaidet-overview {
+  background: var(--gaidet-accent-tint);
+  border-radius: 14px;
+  padding: 1.1rem 1.4rem;
+  margin: 1.5rem 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--gaidet-text-muted);
+}
+
+.gaidet-overview p {
+  margin: 0;
 }
 
 .gaidet-byline {
