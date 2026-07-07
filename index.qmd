@@ -1074,7 +1074,7 @@ This tool is fully [open source](https://github.com/stefan-mueller/disclose-ai),
 
 **Your declaration and task details.** Everything you enter here (tasks, tools, descriptions, prompts, your name) stays in your own browser. It is never stored, transmitted, or saved anywhere, and disappears the moment you close or refresh the page. The generated declaration is provided only so you can copy or download it yourself.
 
-**Analytics.** This site uses [Cabin](https://withcabin.com), a privacy-focused analytics service, to understand overall visitor numbers. Cabin does not use cookies, does not track IP addresses, and cannot identify individual visitors — it only reports aggregate, anonymous traffic data (e.g. how many people visited, which pages). See [Cabin's privacy policy](https://withcabin.com/privacy) for details. No data about the content you enter into this tool is ever sent to Cabin or anyone else.
+**Analytics.** This site uses [Cabin](https://withcabin.com), a privacy-focused analytics service, to understand overall visitor numbers. Cabin does not use cookies, does not track IP addresses, and cannot identify individual visitors — it only reports aggregate, anonymous traffic data (e.g. how many people visited, which pages). See [Cabin's privacy policy](https://withcabin.com/privacy/disclose-ai.app) for details. No data about the content you enter into this tool is ever sent to Cabin or anyone else.
 
 **Questions, errors, or suggestions.** If you have questions about this policy, contact [Stefan Müller](https://muellerstefan.net). If you spot an error or have an improvement suggestion, feel free to open an issue or pull request on [GitHub](https://github.com/stefan-mueller/disclose-ai).
 
