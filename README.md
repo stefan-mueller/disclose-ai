@@ -1,4 +1,4 @@
-# AI Disclosure for University Assignments
+# AI Disclosure Statement Generator
 
 Website: <https://disclose-ai.app>
 
