@@ -886,40 +886,42 @@ outputBox = {
 
   return el("div", { class: "gaidet-output", id: "gaidet-output-section" }, [
     el("h2", { class: "gaidet-output-title" }, "Your declaration"),
-    el("div", { class: "gaidet-output-actions" }, [
+    el("div", { class: "gaidet-output-header-actions" }, [
       showConfirmPrompt ? null : el("button", {
         class: "gaidet-btn-primary",
         onclick: onCreateClick
       }, declarationConfirmed ? "Update declaration" : "Create declaration"),
-      showDeclaration ? el("button", {
-        class: "gaidet-btn-secondary",
-        onclick: () => {
-          const item = new ClipboardItem({
-            "text/plain": new Blob([declarationText], { type: "text/plain" }),
-            "text/html": new Blob([declarationHtml], { type: "text/html" })
-          });
-          navigator.clipboard.write([item]).catch(() => {
-            // Older/other browsers without rich-clipboard support.
-            navigator.clipboard.writeText(declarationText);
-          });
-          mutable copySuccess = "copy";
-          mutable copiedText = declarationText;
-        }
-      }, "Copy to clipboard") : null,
-      showDeclaration ? el("button", {
-        class: "gaidet-btn-secondary",
-        onclick: () => {
-          const blob = new Blob([declarationText], { type: "text/plain" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "ai-disclosure-declaration.txt";
-          a.click();
-          URL.revokeObjectURL(url);
-          mutable copySuccess = "download";
-          mutable copiedText = declarationText;
-        }
-      }, "Download as txt file") : null
+      el("div", { class: "gaidet-output-actions-secondary" }, [
+        showDeclaration ? el("button", {
+          class: "gaidet-btn-secondary gaidet-btn-small",
+          onclick: () => {
+            const item = new ClipboardItem({
+              "text/plain": new Blob([declarationText], { type: "text/plain" }),
+              "text/html": new Blob([declarationHtml], { type: "text/html" })
+            });
+            navigator.clipboard.write([item]).catch(() => {
+              // Older/other browsers without rich-clipboard support.
+              navigator.clipboard.writeText(declarationText);
+            });
+            mutable copySuccess = "copy";
+            mutable copiedText = declarationText;
+          }
+        }, "Copy to clipboard") : null,
+        showDeclaration ? el("button", {
+          class: "gaidet-btn-secondary gaidet-btn-small",
+          onclick: () => {
+            const blob = new Blob([declarationText], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "ai-disclosure-declaration.txt";
+            a.click();
+            URL.revokeObjectURL(url);
+            mutable copySuccess = "download";
+            mutable copiedText = declarationText;
+          }
+        }, "Download as txt file") : null
+      ])
     ]),
     warning,
     confirmBox,
