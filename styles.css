@@ -11,13 +11,13 @@
 }
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: sans-serif;
   background-color: #fbfbfc;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 
@@ -693,9 +693,8 @@ hr {
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-.gaidet-output h3 {
+.gaidet-output-title {
   margin-top: 0;
-  font-size: 1.3rem;
   color: var(--gaidet-accent-dark);
 }
 
@@ -705,7 +704,8 @@ hr {
   border: 1px solid var(--gaidet-border);
   border-radius: 8px;
   padding: 1rem;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
   box-shadow: inset 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 
@@ -812,7 +812,7 @@ button:active {
   display: flex;
   gap: 0.6rem;
   flex-wrap: wrap;
-  margin-top: 1.4rem;
+  margin-bottom: 1.2rem;
 }
 
 .gaidet-btn-primary {
@@ -875,4 +875,34 @@ button:active {
   background: var(--gaidet-accent);
   border-radius: 999px;
   transition: width 0.3s ease;
+}
+
+/* Two-column layout for the checklist + live declaration preview: only on
+   screens wide enough that a sidebar doesn't cramp the checklist itself.
+   Below the breakpoint, .gaidet-layout has no special rules at all, so the
+   left/right blocks just stack in normal document order, i.e. the original
+   single-column layout, with no JS or duplicated markup needed either way. */
+@media (min-width: 1100px) {
+  .gaidet-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 46%);
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .gaidet-layout-right {
+    position: sticky;
+    top: 4.5rem;
+  }
+
+}
+
+.gaidet-prompts-reminder {
+  background: var(--gaidet-warning-bg);
+  border: 1px solid var(--gaidet-warning-border);
+  color: var(--gaidet-warning-text);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 0.9rem;
+  font-size: 1rem;
 }
