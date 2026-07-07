@@ -1,8 +1,8 @@
 :root {
-  --gaidet-accent: #3b5bdb;
-  --gaidet-accent-dark: #2f49ad;
-  --gaidet-accent-bright: #7b98ff;
-  --gaidet-accent-tint: #eef1fd;
+  --gaidet-accent: #0f766e;
+  --gaidet-accent-dark: #134e4a;
+  --gaidet-accent-bright: #2dd4bf;
+  --gaidet-accent-tint: #f0fdfa;
   --gaidet-border: #e2e5ea;
   --gaidet-text-muted: #5b6270;
   --gaidet-warning-bg: #fff7ed;
@@ -113,13 +113,18 @@ h2 {
 }
 
 .gaidet-overview {
-  background: var(--gaidet-accent-tint);
+  background: var(--gaidet-accent);
   border-radius: 14px;
   padding: 1.1rem 1.4rem;
   margin: 1.5rem 0;
   font-size: 1rem;
   line-height: 1.55;
-  color: var(--gaidet-text-muted);
+  color: #ffffffdb;
+}
+
+.gaidet-overview a {
+  color: #fff;
+  text-decoration: underline;
 }
 
 .gaidet-overview p {
@@ -175,7 +180,8 @@ a:hover {
 .gaidet-category {
   background: #fff;
   border: 1px solid var(--gaidet-border);
-  border-radius: 12px;
+  border-left: 4px solid var(--gaidet-accent);
+  border-radius: 16px;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
   padding: 1.1rem 1.4rem;
   margin-bottom: 1.25rem;
@@ -220,7 +226,7 @@ a:hover {
 }
 
 .gaidet-item-complete {
-  color: #1a7f37;
+  color: var(--gaidet-accent);
   font-weight: 700;
 }
 
@@ -316,7 +322,8 @@ label.gaidet-tool-option:hover {
   display: block;
   background: #fff;
   border: 1px solid var(--gaidet-border);
-  border-radius: 12px;
+  border-left: 4px solid var(--gaidet-accent);
+  border-radius: 16px;
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 4px rgba(16, 24, 40, 0.04);
   padding: 1.1rem 1.4rem;
   margin: 1rem 0 1.25rem;
@@ -572,16 +579,17 @@ hr {
 }
 
 .gaidet-item-details-complete {
-  border-left-color: #1a7f37;
-  background: #f3faf5;
+  border-left-color: var(--gaidet-accent);
+  background: var(--gaidet-accent-tint);
 }
 
-/* Once the task box is green, its tool chips switch from the blue accent tint
-   to a slightly darker green than the box itself, so they read as "done" too.
-   A chip whose version input is still empty (placeholder showing) stays blue,
-   since a tool without its model/version filled in isn't really finished. */
+/* Once the task box is marked done, its tool chips switch to a slightly
+   more saturated tint than the box itself, so they read as "done" too.
+   A chip whose version input is still empty (placeholder showing) stays at
+   the lighter default tint, since a tool without its model/version filled
+   in isn't really finished. */
 .gaidet-item-details-complete .gaidet-autocomplete-chip {
-  background: #dcf2e3;
+  background: #ccfbf1;
 }
 
 .gaidet-item-details-complete .gaidet-autocomplete-chip:has(.gaidet-autocomplete-version-input:placeholder-shown) {
@@ -639,7 +647,8 @@ hr {
 .gaidet-name-field {
   background: #fff;
   border: 1px solid var(--gaidet-border);
-  border-radius: 12px;
+  border-left: 4px solid var(--gaidet-accent);
+  border-radius: 16px;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
   padding: 1.1rem 1.4rem;
   margin-bottom: 1.25rem;
@@ -686,7 +695,7 @@ hr {
   background: linear-gradient(#fff, #f5f7ff);
   border: 2px solid var(--gaidet-accent);
   border-left: 6px solid var(--gaidet-accent);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1.4rem 1.6rem;
   margin: 1.5rem 0;
   box-shadow: 0 6px 16px rgba(59, 91, 219, 0.12), 0 2px 6px rgba(16, 24, 40, 0.06);

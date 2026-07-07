@@ -501,7 +501,7 @@ form = {
                     tabindex: "0",
                     role: "img",
                     "aria-label": "Why this matters and how to find it",
-                    "data-tooltip": "Capability can vary a lot between versions of the same tool, so the exact model helps others judge what it could and couldn't do.\n\nTo find it: check the tool's model picker/settings, or look at the chat window itself (e.g. ChatGPT shows the model above the chat box; Claude shows it in the model selector)."
+                    "data-tooltip": "Capability can vary a lot between versions of the same tool, so the exact model helps others judge what it could and couldn't do.\n\nTo find it: check the tool's model picker/settings, or look at the chat window itself (e.g. ChatGPT shows the model above the chat box; Claude shows it in the model selector).\n\nIf you cannot identify the exact model or version, include the timeframe during which you used the tool (e.g., January 2026)."
                   }, "ⓘ")
                 ]),
                 el("input", {
@@ -1049,11 +1049,17 @@ If you use this tool in your teaching, you can cite it as:
 
 
 
-## Related reading
+## Related literature and tools
 
-Learn more about generative AI declaration generators, the inspiration behind this project:
+
+A number of similar tools exist to support transparent AI-use disclosure, including the [AID Framework](https://aidframework.org) and the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/). All aim at the same goal: helping students and researchers disclose their AI use clearly and consistently. Use whichever fits your context best.
+
+Learn more about generative AI declaration generators:
 
 >Suchikova, Yana, Tsybuliak, Natalia, Teixeira da Silva, Jaime A., & Nazarovets, Serhii (2026). “GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing“. *Accountability in Research*, *33*(3). [10.1080/08989621.2025.2544331](https://doi.org/10.1080/08989621.2025.2544331)
+
+
+>Weaver, Kari D. (2024). “The Artificial Intelligence Disclosure (AID) Framework: An Introduction“. *College & Research Libraries News*, *85*(10), 407–411. [arxiv.org/abs/2408.01904](https://arxiv.org/abs/2408.01904)
 
 ## Disclaimer of responsibility
 
