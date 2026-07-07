@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "AI Disclosure Statement Generator"
+  title: "AI Disclosure Generator"
   description: "A free tool that helps students write a clear AI-use disclosure statement for university assignments."
   site-url: "https://disclose-ai.app"
   favicon: favicon.svg

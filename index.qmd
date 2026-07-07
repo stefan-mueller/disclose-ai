@@ -1,5 +1,5 @@
 ---
-title: "AI Disclosure Statement Generator"
+title: "AI Disclosure Generator"
 format:
   html:
     page-layout: article
@@ -8,18 +8,17 @@ format:
 <script async src="https://scripts.withcabin.com/hello.js"></script>
 
 ::: {.gaidet-overview}
-An open-source tool that helps students write a structured, task-by-task AI-use disclosure statement for assignment submissions. It's free to use and runs entirely in your browser: nothing you enter is ever sent to a server.
+An open-source tool that helps students create structured, task-by-task AI-use disclosure statements for assignment submissions. It’s free, runs entirely in your browser, and never sends anything you enter to a server.
 :::
 
 ## Purpose and limits
  
-The use of AI tools amongst students [continues to grow](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/). 
-Some assignments prohibit generative AI entirely; other assignments allow students to use AI but require disclosure, though clear guidance on *how* to disclose isn’t always available.
 
+ The use of AI tools among students c[continues to grow](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/). Some assignments prohibit generative AI entirely, while others allow it but require students to disclose how it was used. Clear guidance on how to do this is not always available.
 
-If you have permission to use AI but need to disclose it clearly, this tool is for you: a structured, task-by-task checklist for recording your AI use, adapted from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
+If your assignment permits AI use but requires disclosure, this tool helps you create a structured, task-by-task AI-use disclosure statement, adapted from the  [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
 
-Disclosing your AI use is simple: select every task a generative AI tool helped with, describe what you asked it to do and how you used and checked the output, and get a ready-to-copy declaration.
+Creating your disclosure is simple: select each task where generative AI assisted you, describe what you asked it to do, explain how you used and verified the output, and copy the generated declaration.
 
 
 ```{ojs}
@@ -675,7 +674,7 @@ promptsReminder = providePrompts
   : null
 ```
 
-Tick every task where you delegated work to AI, then add the tool(s) you used for it. Give the exact model or version where you can (e.g. GPT-5.5), since capability varies a lot between versions.
+Select every task where you delegated work to AI, then add the tool(s) you used for it. Give the exact model or version where you can (e.g. GPT-5.5), since capability varies a lot between versions.
 
 
 Before you begin, please read the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
@@ -802,7 +801,7 @@ outputBox = {
     ? el("div", { class: "gaidet-success" }, successText)
     : null;
 
-  const placeholderText = ["Your declaration will appear here once every ticked task has a tool and a short description.", "If you didn't use AI at all, add: ‘No generative AI tools were used in the preparation of this assignment.’"];
+  const placeholderText = ["Your declaration will appear here once every ticked task has a tool and a short description.", "Your declaration should accurately reflect all uses of generative AI in preparing the assignment.", "If you didn't use AI at all, add: ‘No generative AI tools were used in the preparation of this assignment.’"];
 
   const confirmBox = showConfirmPrompt ? el("div", { class: "gaidet-confirm" }, [
     el("p", {}, "Did you disclose all use of generative AI in this assignment?"),
@@ -997,11 +996,10 @@ ${progressBox}
 
 ## About the maintainer
 
-This tool was built by [Stefan Müller](https://muellerstefan.net), with substantial help from Claude Code, which handled most of the coding and drafting under the maintainer’s direction.
+
+This tool was built by [Stefan Müller](https://muellerstefan.net) with substantial assistance from Claude Code, under the maintainer's direction.
 
 I'd love to hear how you're using this tool and any suggestions for improving it. Please share your thoughts via this [short feedback form](https://forms.cloud.microsoft/e/nSGgCVHRQg).
-
-
 
 
 
@@ -1009,7 +1007,7 @@ I'd love to hear how you're using this tool and any suggestions for improving it
 
 If you use this tool in your teaching, you can cite it as:
 
->Müller, Stefan (2026). *AI Disclosure Statement Generator*. <https://disclose-ai.app>
+>Müller, Stefan (2026). *AI Disclosure Generator*. <https://disclose-ai.app>
 
 
 
@@ -1018,7 +1016,7 @@ If you use this tool in your teaching, you can cite it as:
 
 A number of similar tools exist to support transparent AI-use disclosure, including the [AID Framework](https://aidframework.org) and the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/). All aim at the same goal: helping students and researchers disclose their AI use clearly and consistently. Use whichever fits your context best.
 
-Learn more about generative AI declaration generators:
+Further reading on AI-use disclosure:
 
 >Suchikova, Yana, Tsybuliak, Natalia, Teixeira da Silva, Jaime A., & Nazarovets, Serhii (2026). “GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing“. *Accountability in Research*, *33*(3). [10.1080/08989621.2025.2544331](https://doi.org/10.1080/08989621.2025.2544331)
 
@@ -1031,7 +1029,7 @@ This tool is provided purely as a free, unofficial aid to help you structure you
 
 The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. 
 
-You are solely responsible for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author cannot be held legally or otherwise accountable for any reliance placed on this tool.
+You are solely responsible for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author cannot be held legally accountable for any reliance placed on this tool.
 
 This tool is an independent personal project of the author and is not an official service of, or endorsed by, University College Dublin or any other institution.
 
@@ -1042,9 +1040,9 @@ The AI tools listed or suggested in this form (e.g. ChatGPT, Claude, Grammarly) 
 
 This tool is fully [open source](https://github.com/stefan-mueller/disclose-ai), so you can verify these claims yourself.
 
-**Your declaration and task details.** Everything you enter here (tasks, tools, descriptions, prompts, your name) stays in your own browser. It is never stored, transmitted, or saved anywhere, and disappears the moment you close or refresh the page. The generated declaration is provided only so you can copy or download it yourself.
+**Your declaration and task details.** Everything you enter here (tasks, tools, descriptions, prompts, your name) stays in your own browser. It is never stored, transmitted, or saved anywhere, and remains only in your browser and is cleared when you refresh or close the page. The generated declaration is provided only so you can copy or download it yourself.
 
 **Analytics.** This site uses [Cabin](https://withcabin.com), a privacy-focused analytics service, to understand overall visitor numbers. Cabin does not use cookies, does not track IP addresses, and cannot identify individual visitors — it only reports aggregate, anonymous traffic data (e.g. how many people visited, which pages). See [Cabin's privacy policy](https://withcabin.com/privacy/disclose-ai.app) for details. No data about the content you enter into this tool is ever sent to Cabin or anyone else.
 
-**Questions, errors, or suggestions.** If you have questions about this policy, contact [Stefan Müller](https://muellerstefan.net). If you spot an error or have an improvement suggestion, feel free to open an issue or pull request on [GitHub](https://github.com/stefan-mueller/disclose-ai).
+**Questions or feedback.** If you have questions about this policy, contact [Stefan Müller](https://muellerstefan.net). If you spot an error or have an improvement suggestion, feel free to open an issue or pull request on [GitHub](https://github.com/stefan-mueller/disclose-ai).
 

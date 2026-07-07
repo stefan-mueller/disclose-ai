@@ -93,16 +93,16 @@
       "id": "audiovisual",
       "label": "Audiovisual and interactive components",
       "items": [
-        { "id": "ai_visuals", "label": "AI-generated visuals or graphics" },
+        { "id": "ai_visuals", "label": "AI-generated images or videos" },
         { "id": "ai_narration", "label": "AI-generated voice-over or narration" },
         { "id": "ai_av_editing", "label": "AI-assisted video or audio editing" }
       ]
     },
     {
-      "id": "other_tasks",
-      "label": "Other tasks",
+      "id": "additional_tasks",
+      "label": "Additional tasks",
       "items": [
-        { "id": "other_task", "label": "Not listed above (please describe)", "openEnded": true }
+        { "id": "additional_tasks", "label": "Not covered above (please describe)", "openEnded": true }
       ]
     }
   ]

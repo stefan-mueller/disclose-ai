@@ -1,4 +1,4 @@
-# AI Disclosure Statement Generator
+# AI Disclosure Generator
 
 Website: <https://disclose-ai.app>
 
