@@ -20,6 +20,13 @@ body {
   overflow-x: hidden;
 }
 
+
+.navbar {
+    border-bottom: 0.5px solid #ccc; /* Adjust the color (#ccc) and thickness (1px) as needed */
+    line-height: 1em; /* Decrease this value to reduce space between lines */
+
+}
+
 .navbar .nav-link {
   font-size: 1.1rem;
   font-weight: 600;

@@ -1,8 +1,14 @@
 # AI Disclosure for University Assignments
 
-Live site: <https://disclose-ai.app>
+Website: <https://disclose-ai.app>
 
-A simplified, coursework-adapted version of the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/), built with Quarto and Observable JS instead of plain HTML and Python.
+
+> An open-source tool that helps students write a structured, task-by-task AI-use disclosure statement for assignment submissions. It’s free to use and runs entirely in your browser: nothing you enter is ever sent to a server.
+
+
+A simplified, coursework-adapted version of the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/), built with Quarto and Observable JS.
+
+Everything here is open source to keep the tool transparent: anyone can inspect exactly how declarations are generated and verify the privacy claims for themselves. Other instructors are welcome to fork it and develop their own version for their institution or module (see "Forking and reusing this tool" below). If you spot a bug or have a suggestion for improvement, please [open an issue](https://github.com/stefan-mueller/disclose-ai/issues) on GitHub.
 
 ## What changed from the original tool
 
