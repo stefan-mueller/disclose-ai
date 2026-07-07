@@ -583,15 +583,6 @@ hr {
   background: var(--gaidet-accent-tint);
 }
 
-/* Once the task box is marked done, its tool chips switch to a slightly
-   more saturated tint than the box itself, so they read as "done" too.
-   A chip whose version input is still empty (placeholder showing) stays at
-   the lighter default tint, since a tool without its model/version filled
-   in isn't really finished. */
-.gaidet-item-details-complete .gaidet-autocomplete-chip {
-  background: #ccfbf1;
-}
-
 .gaidet-item-details-complete .gaidet-autocomplete-chip:has(.gaidet-autocomplete-version-input:placeholder-shown) {
   background: var(--gaidet-accent-tint);
 }
