@@ -49,9 +49,7 @@ The core analysis, writing, and conclusions in this assignment are my own. Gener
 
 Responsibility for the submitted assignment lies entirely with the author of this declaration.
 
-Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.
-
-Declaration submitted by: Jane Doe`
+Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.`
 ```
 
 ```{ojs}
@@ -238,15 +236,9 @@ mutable showConfirmPrompt = false
 
 ```{ojs}
 //| echo: false
-mutable studentName = ""
-```
-
-```{ojs}
-//| echo: false
 //| output: false
 {
-  const hasData = studentName.trim().length > 0
-    || Object.keys(selections).length > 0;
+  const hasData = Object.keys(selections).length > 0;
 
   window.onbeforeunload = hasData ? (e) => { e.preventDefault(); e.returnValue = ""; } : null;
 }
@@ -706,8 +698,7 @@ declarationText = {
 
   const heading = `Declaration on the Use of Artificial Intelligence Tools\n\nAI tools used: ${overallToolsPart}\n`;
 
-  const signedBy = studentName.trim() || "[ADD NAME]";
-  const closing = `\n\nResponsibility for the submitted assignment lies entirely with the author of this declaration.\n\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.\n\nDeclaration submitted by: ${signedBy}`;
+  const closing = `\n\nResponsibility for the submitted assignment lies entirely with the author of this declaration.\n\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.`;
 
   if (entries.length === 0) {
     return `${heading}\nNo tasks have been ticked yet.${closing}`;
@@ -751,8 +742,7 @@ declarationHtml = {
 
   const headingHtml = `<p><strong>Declaration on the Use of Artificial Intelligence Tools</strong></p><p><strong>AI tools used:</strong> ${overallToolsPart}</p>`;
 
-  const signedBy = escapeHtml(studentName.trim() || "[ADD NAME]");
-  const closingHtml = `<p>Responsibility for the submitted assignment lies entirely with the author of this declaration.</p><p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p><p>Declaration submitted by: ${signedBy}</p>`;
+  const closingHtml = `<p>Responsibility for the submitted assignment lies entirely with the author of this declaration.</p><p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p>`;
 
   if (entries.length === 0) {
     return `${headingHtml}<p>No tasks have been ticked yet.</p>${closingHtml}`;
@@ -770,25 +760,6 @@ declarationHtml = {
 
   return `${headingHtml}<p>The following generative AI tasks were delegated as part of this assignment:</p><ul>${items.join("")}</ul>${closingHtml}`;
 }
-```
-
-```{ojs}
-//| echo: false
-nameField = preserveFocus(() => el("div", { class: "gaidet-name-field" }, [
-  el("label", {}, [
-    "Your name",
-    el("input", {
-      type: "text",
-      "data-field": "studentName",
-      "aria-label": "Your name",
-      style: "display:block;width:100%;max-width:300px;margin-top:0.5rem;",
-      placeholder: "e.g. Jane Doe",
-      value: studentName,
-      oninput: debounce((e) => { mutable studentName = e.target.value; })
-    })
-  ]),
-  el("p", { class: "gaidet-tool-instructions" }, "Optional. Used to complete the “Declaration submitted by” line at the end of the generated declaration.")
-]))
 ```
 
 ```{ojs}
@@ -954,8 +925,6 @@ ${promptsReminder}
 ${form}
 
 ${promptsToggle}
-
-${nameField}
 :::
 
 ::: {.gaidet-layout-right}
@@ -985,7 +954,6 @@ progressBox = {
         try {
           const data = JSON.parse(reader.result);
           mutable selections = data.selections ?? {};
-          mutable studentName = data.studentName ?? "";
           mutable providePrompts = data.providePrompts ?? false;
         } catch (err) {
           alert("Could not read this file. Please make sure it's a progress file saved from this tool.");
@@ -1002,7 +970,7 @@ progressBox = {
         type: "button",
         class: "gaidet-btn-secondary",
         onclick: () => {
-          const payload = { version: 1, studentName, providePrompts, selections };
+          const payload = { version: 1, providePrompts, selections };
           const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
