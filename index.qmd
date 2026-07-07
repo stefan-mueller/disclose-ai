@@ -14,7 +14,7 @@ An open-source tool that helps students create structured, task-by-task AI-use d
 ## Purpose and limits
  
 
- The use of AI tools among students c[continues to grow](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/). Some assignments prohibit generative AI entirely, while others allow it but require students to disclose how it was used. Clear guidance on how to do this is not always available.
+ The use of AI tools among students [continues to grow](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/). Some assignments prohibit generative AI entirely, while others allow it but require students to disclose how it was used. Clear guidance on how to do this is not always available.
 
 If your assignment permits AI use but requires disclosure, this tool helps you create a structured, task-by-task AI-use disclosure statement, adapted from the  [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
 
