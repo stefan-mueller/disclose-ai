@@ -109,6 +109,10 @@ function taskIsComplete(sentence, tools, openEnded, customLabel) {
     && (!openEnded || !!(customLabel && customLabel.trim()));
 }
 
+function countWords(text) {
+  return (text || "").trim().split(/\s+/).filter(Boolean).length;
+}
+
 function autoGrow(textarea, attempts = 0) {
   if (!textarea.isConnected) {
     if (attempts < 30) requestAnimationFrame(() => autoGrow(textarea, attempts + 1));
@@ -621,11 +625,14 @@ form = {
         }
       }) : null;
 
+      const sentenceWordCount = el("span", { class: "gaidet-sentence-wordcount" }, `${countWords(sel?.sentence)} words`);
+
       const detailsDiv = checked ? el("div", { class: "gaidet-item-details" }, [
         customLabelInput,
         buildToolPicker(),
         el("div", { class: "gaidet-sentence-wrap" }, [
           sentenceTextarea,
+          sentenceWordCount,
           el("button", {
             type: "button",
             class: "gaidet-sentence-enter",
@@ -642,7 +649,13 @@ form = {
 
       if (detailsDiv) {
         autoGrow(sentenceTextarea);
-        sentenceTextarea.addEventListener("input", (e) => autoGrow(e.target));
+        sentenceTextarea.addEventListener("input", (e) => {
+          autoGrow(e.target);
+          // Plain textContent update on an already-cheap, non-reactive
+          // listener: no reflow, no `mutable` commit, so this doesn't
+          // reintroduce the typing lag that was fixed earlier.
+          sentenceWordCount.textContent = `${countWords(e.target.value)} words`;
+        });
         // "Moved to the next section": once focus leaves this task's fields
         // (tabbing/clicking to the next task, or down to the declaration),
         // mark it complete if it qualifies.

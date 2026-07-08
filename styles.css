@@ -622,6 +622,15 @@ hr {
   padding-bottom: 2.2rem;
 }
 
+.gaidet-sentence-wordcount {
+  position: absolute;
+  left: 0.7rem;
+  bottom: 0.7rem;
+  font-size: 0.75rem;
+  color: var(--gaidet-text-muted);
+  pointer-events: none;
+}
+
 .gaidet-sentence-enter {
   position: absolute;
   right: 0.5rem;
