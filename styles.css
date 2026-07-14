@@ -18,6 +18,99 @@ body {
   font-family: sans-serif;
   background-color: #fbfbfc;
   overflow-x: clip;
+  /* Chrome's scroll anchoring tries to auto-correct scroll position whenever
+     content changes above the viewport. Since the checklist is fully rebuilt
+     on every commit (e.g. blurring a version field), Chrome can pick the
+     wrong anchor element and yank scroll to an unrelated spot, fighting the
+     explicit scroll handling in preserveFocus(). Disabling it site-wide
+     leaves our own logic as the only thing controlling scroll position. */
+  overflow-anchor: none;
+}
+
+/* Modern checkbox: the native input is visually hidden but stays in the tab
+   order and keeps native checked/keyboard behaviour; a sibling <span> is
+   what's actually drawn, styled via the sibling combinator off the input's
+   state. Used identically by the Step 1 gate and the per-task checklist. */
+input[type="checkbox"].gaidet-checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 1.3rem;
+  height: 1.3rem;
+  margin: 0;
+  cursor: pointer;
+}
+
+.gaidet-checkbox-box {
+  position: relative;
+  flex-shrink: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 0.15rem;
+  border-radius: 5px;
+  border: 2px solid var(--gaidet-border);
+  background: #fff;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.gaidet-checkbox-box::after {
+  content: "";
+  position: absolute;
+  left: 0.3rem;
+  top: 0.1rem;
+  width: 0.3rem;
+  height: 0.55rem;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.15s ease;
+}
+
+.gaidet-checkbox-input:hover + .gaidet-checkbox-box {
+  border-color: var(--gaidet-accent);
+}
+
+.gaidet-checkbox-input:checked + .gaidet-checkbox-box {
+  background: var(--gaidet-accent);
+  border-color: var(--gaidet-accent);
+}
+
+.gaidet-checkbox-input:checked + .gaidet-checkbox-box::after {
+  transform: rotate(45deg) scale(1);
+}
+
+.gaidet-checkbox-input:focus-visible + .gaidet-checkbox-box {
+  outline: 2px solid var(--gaidet-accent-bright);
+  outline-offset: 2px;
+}
+
+label:active .gaidet-checkbox-box {
+  transform: scale(0.92);
+}
+
+/* Checkbox+label pairs align via flex, so the box lines up with the text
+   the same way regardless of font size or surrounding context. */
+.gaidet-item-checkbox-label {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+/* The Step 1 gate sits on a dark background, so the default light border
+   would be nearly invisible until checked. */
+.gaidet-category-gate-option .gaidet-checkbox-box {
+  border-color: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.08);
+  margin-top: 0;
+}
+
+.gaidet-category-gate-option .gaidet-checkbox-input:checked + .gaidet-checkbox-box {
+  background: var(--gaidet-accent-bright);
+  border-color: var(--gaidet-accent-bright);
+}
+
+.gaidet-category-gate-option .gaidet-checkbox-input:checked + .gaidet-checkbox-box::after {
+  border-color: var(--gaidet-accent-dark);
 }
 
 
@@ -114,7 +207,7 @@ h2 {
 
 .gaidet-overview {
   background: var(--gaidet-accent);
-  border-radius: 14px;
+  border-radius: 6px;
   padding: 1.1rem 1.4rem;
   margin: 1.5rem 0;
   font-size: 1rem;
@@ -129,22 +222,6 @@ h2 {
 
 .gaidet-overview p {
   margin: 0;
-}
-
-.gaidet-byline {
-  font-size: 0.85rem;
-  color: var(--gaidet-text-muted);
-  margin-top: -0.6rem;
-  margin-bottom: 1.5rem;
-}
-
-.gaidet-byline a {
-  color: var(--gaidet-text-muted);
-  text-decoration: underline;
-}
-
-.gaidet-byline a:hover {
-  color: var(--gaidet-accent);
 }
 
 .callout {
@@ -188,11 +265,18 @@ a:hover {
   color: var(--gaidet-accent-bright);
 }
 
+.gaidet-step2-box {
+  background: var(--gaidet-accent-tint);
+  border: 1px solid var(--gaidet-border);
+  border-radius: 6px;
+  padding: 1.2rem 1.2rem 0.7rem;
+}
+
 .gaidet-category {
   background: #fff;
   border: 1px solid var(--gaidet-border);
   border-left: 4px solid var(--gaidet-accent);
-  border-radius: 16px;
+  border-radius: 6px;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
   padding: 1.1rem 1.4rem;
   margin-bottom: 1.25rem;
@@ -212,6 +296,91 @@ a:hover {
   margin-bottom: 0.85rem;
   font-size: 1.1rem;
   font-weight: 600;
+}
+
+/* One "locked" look shared by every box that isn't available yet (a Step 2
+   category, the Step 3 declaration box, the prompts question), so they
+   read as the same state rather than three slightly different treatments. */
+.gaidet-locked {
+  opacity: 0.45;
+  filter: grayscale(70%);
+}
+
+.gaidet-locked:hover {
+  transform: none;
+}
+
+.gaidet-lock-wrap {
+  position: relative;
+}
+
+.gaidet-lock-overlay {
+  position: absolute;
+  inset: 0;
+  cursor: not-allowed;
+  z-index: 5;
+}
+
+.gaidet-lock-message {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  background: var(--gaidet-accent-dark);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(16, 24, 40, 0.15);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 6;
+  max-width: 90%;
+  text-align: center;
+}
+
+.gaidet-lock-overlay:hover + .gaidet-lock-message,
+.gaidet-lock-overlay:focus-visible + .gaidet-lock-message {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.gaidet-category-gate {
+  background: var(--gaidet-accent-dark);
+  border-radius: 6px;
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
+}
+
+.gaidet-category-gate .gaidet-step-label {
+  color: #fff;
+}
+
+.gaidet-category-gate .gaidet-tool-instructions {
+  color: #ffffffcc;
+}
+
+.gaidet-category-gate-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.7rem;
+}
+
+.gaidet-category-gate-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+.gaidet-category-gate-option-checked {
+  font-weight: 700;
 }
 
 .gaidet-item {
@@ -238,19 +407,6 @@ a:hover {
 .gaidet-item-complete {
   color: var(--gaidet-accent);
   font-weight: 700;
-}
-
-.gaidet-tool-group {
-  margin-bottom: 0.85rem;
-}
-
-.gaidet-tool-group-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--gaidet-text-muted);
-  margin: 0 0 0.3rem 0;
 }
 
 .gaidet-sentence {
@@ -290,42 +446,19 @@ label.gaidet-tool-option:hover {
   color: var(--gaidet-accent);
 }
 
-.gaidet-version-input {
-  display: block;
-  box-sizing: border-box;
-  width: calc(100% - 1.4rem);
-  margin: 0.15rem 0 0.3rem 1.4rem;
-  padding: 0.1rem 0.3rem;
-  font-size: 0.8rem;
-}
-
-.gaidet-tool-other {
-  display: block;
-  font-size: 0.85rem;
-  margin-bottom: 0.3rem;
-}
-
-.gaidet-show-more {
-  display: inline-block;
-  background: none;
-  border: none;
-  color: var(--gaidet-accent);
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 0.1rem 0 0.4rem 0;
-  margin: 0;
-  cursor: pointer;
-}
-
-.gaidet-show-more:hover {
-  background: none;
-  color: var(--gaidet-accent-bright);
-  text-decoration: underline;
-}
-
 .gaidet-tool-label {
   margin-bottom: 0.2rem;
   font-size: 0.9rem;
+}
+
+/* Shared by the Step 1/2/3 headings so they can't drift out of sync with
+   each other again: one class, applied in each of the three boxes.
+   !important because Step 3's label is an <h2>, and the theme's own
+   heading styles otherwise win that fight regardless of rule order. */
+.gaidet-step-label {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  margin: 0 0 0.5rem;
 }
 
 .gaidet-prompts-question {
@@ -333,7 +466,7 @@ label.gaidet-tool-option:hover {
   background: #fff;
   border: 1px solid var(--gaidet-border);
   border-left: 4px solid var(--gaidet-accent);
-  border-radius: 16px;
+  border-radius: 6px;
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 4px rgba(16, 24, 40, 0.04);
   padding: 1.1rem 1.4rem;
   margin: 1rem 0 1.25rem;
@@ -684,12 +817,12 @@ hr {
 }
 
 .gaidet-output {
-  background: linear-gradient(#fff, #f5f7ff);
+  background: #fff;
   border: 2px solid var(--gaidet-accent);
   border-left: 6px solid var(--gaidet-accent);
-  border-radius: 16px;
+  border-radius: 6px;
   padding: 1.4rem 1.6rem;
-  margin: 1.5rem 0;
+  margin: 0 0 1.5rem;
   box-shadow: 0 6px 16px rgba(59, 91, 219, 0.12), 0 2px 6px rgba(16, 24, 40, 0.06);
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
@@ -699,15 +832,45 @@ hr {
   color: var(--gaidet-accent-dark);
 }
 
-.gaidet-output pre {
-  white-space: pre-wrap;
+.gaidet-output-note {
+  margin: 0.9rem 0 0;
+  font-size: 0.8rem;
+  color: var(--gaidet-text-muted);
+}
+
+#gaidet-output-text {
   background: #fff;
   border: 1px solid var(--gaidet-border);
   border-radius: 8px;
   padding: 1rem;
-  font-size: 0.8rem;
-  line-height: 1.4;
+  font-size: 0.85rem;
+  font-family: inherit;
+  line-height: 1.5;
   box-shadow: inset 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+#gaidet-output-text p,
+#gaidet-output-text ul,
+.gaidet-example p,
+.gaidet-example ul {
+  margin: 0 0 0.75rem;
+}
+
+#gaidet-output-text ul,
+.gaidet-example ul {
+  padding-left: 1.3rem;
+}
+
+#gaidet-output-text li,
+.gaidet-example li {
+  margin-bottom: 0.6rem;
+}
+
+#gaidet-output-text p:last-child,
+#gaidet-output-text ul:last-child,
+.gaidet-example p:last-child,
+.gaidet-example ul:last-child {
+  margin-bottom: 0;
 }
 
 @keyframes gaidet-flash {
@@ -741,15 +904,6 @@ hr {
 .gaidet-output-placeholder p {
   margin: 0;
   max-width: 32rem;
-}
-
-.gaidet-output-placeholder-icon {
-  color: var(--gaidet-accent);
-  opacity: 0.85;
-}
-
-.gaidet-output-placeholder-icon svg {
-  display: block;
 }
 
 /* Form controls */
@@ -870,30 +1024,22 @@ button:active {
 }
 
 .gaidet-example {
-  white-space: pre-wrap;
   background: #f8fafc;
   border: 1px dashed var(--gaidet-border);
   border-radius: 8px;
   padding: 0.9rem;
   margin-top: 0.6rem;
   font-size: 0.85rem;
+  font-family: inherit;
   color: var(--gaidet-text-muted);
 }
 
-.gaidet-progress-track {
-  width: 100%;
-  height: 6px;
-  background: var(--gaidet-border);
-  border-radius: 999px;
-  margin: 0.5rem 0 1.5rem;
-  overflow: hidden;
-}
-
-.gaidet-progress-fill {
-  height: 100%;
-  background: var(--gaidet-accent);
-  border-radius: 999px;
-  transition: width 0.3s ease;
+@media (min-width: 700px) {
+  .gaidet-example {
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 /* Two-column layout for the checklist + live declaration preview: only on

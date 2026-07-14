@@ -28,41 +28,34 @@ mutable showExample = false
 
 ```{ojs}
 //| echo: false
-exampleDeclarationText = `Declaration on the Use of Artificial Intelligence Tools
-
-AI tools used: ChatGPT (GPT-5.5), Claude Code (Sonnet 4.6), Grammarly
-
-The core analysis, writing, and conclusions in this assignment are my own. Generative AI assisted with the following specific, limited tasks:
-
-- Idea generation
-    Tool(s): ChatGPT (GPT-5.5)
-    Summary: I had a general research area in mind; I asked ChatGPT to suggest possible angles, then chose and developed the final research question myself.
-
-- Code generation
-    Tool(s): Claude Code (Sonnet 4.6)
-    Summary: I wrote the core analysis logic myself; Claude Code was used only to draft repetitive boilerplate (e.g. file-loading functions), which I reviewed, tested, and adapted to my dataset.
-
-- Proofreading
-    Tool(s): Grammarly
-    Summary: After completing my own final draft, I ran it through Grammarly for grammar and punctuation checks, and manually reviewed and accepted only the suggestions I agreed with.
-
-Responsibility for the submitted assignment lies entirely with the author of this declaration.
-
-Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.`
+exampleDeclarationHtml = `<p><strong>Declaration on the Use of Artificial Intelligence Tools</strong></p>
+<p><strong>AI tools used:</strong> ChatGPT (GPT-5.5), Claude Code (Sonnet 4.6), Grammarly</p>
+<p>The core analysis, writing, and conclusions in this assignment are my own. Generative AI assisted with the following specific, limited tasks:</p>
+<ul>
+<li><strong>Idea generation</strong><br>Tool: ChatGPT (GPT-5.5)<br>Summary: I had a general research area in mind; I asked ChatGPT to suggest possible angles, then chose and developed the final research question myself.</li>
+<li><strong>Code generation</strong><br>Tool: Claude Code (Sonnet 4.6)<br>Summary: I wrote the core analysis logic myself; Claude Code was used only to draft repetitive boilerplate (e.g. file-loading functions), which I reviewed, tested, and adapted to my dataset.</li>
+<li><strong>Proofreading</strong><br>Tool: Grammarly<br>Summary: After completing my own final draft, I ran it through Grammarly for grammar and punctuation checks, and manually reviewed and accepted only the suggestions I agreed with.</li>
+</ul>
+<p>Responsibility for the submitted assignment lies entirely with the author of this declaration.</p>
+<p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p>`
 ```
 
 ```{ojs}
 //| echo: false
-el("div", { class: "gaidet-example-wrap" }, [
-  el("button", {
-    class: "gaidet-example-toggle",
-    onclick: () => { mutable showExample = !showExample; }
-  }, showExample ? "Hide example declaration" : "Show example declaration"),
-  showExample ? el("pre", { class: "gaidet-example" }, [
-    el("strong", {}, "Declaration on the Use of Artificial Intelligence Tools"),
-    exampleDeclarationText.replace(/^Declaration on the Use of Artificial Intelligence Tools/, "")
-  ]) : null
-])
+{
+  const wrap = el("div", { class: "gaidet-example-wrap" }, [
+    el("button", {
+      class: "gaidet-example-toggle",
+      onclick: () => { mutable showExample = !showExample; }
+    }, showExample ? "Hide an example declaration" : "Show an example declaration")
+  ]);
+  if (showExample) {
+    const example = el("div", { class: "gaidet-example" }, []);
+    example.innerHTML = exampleDeclarationHtml;
+    wrap.append(example);
+  }
+  return wrap;
+}
 ```
 
 
@@ -128,14 +121,6 @@ function autoGrow(textarea, attempts = 0) {
   });
 }
 
-function debounce(fn, delay = 900) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
-  };
-}
-
 function preserveFocus(build) {
   const active = document.activeElement;
   const field = active?.dataset?.field;
@@ -178,6 +163,23 @@ function preserveFocus(build) {
   }
   return node;
 }
+
+// Shared "not available yet" treatment: dims contentEl, makes it fully
+// inert, and adds an overlay that explains why on hover/focus. One
+// implementation so every locked box looks the same; the message differs
+// because a Step 2 category is gated only by Step 1, while Step 3 and the
+// prompts question are gated by Step 2 (and transitively Step 1) instead.
+function lockBox(contentEl, message = "Locked. Select the relevant categories in Step 1 above first.") {
+  contentEl.classList.add("gaidet-locked");
+  contentEl.setAttribute("inert", "");
+  const lockMessage = el("div", { class: "gaidet-lock-message" }, message);
+  const overlay = el("div", {
+    class: "gaidet-lock-overlay",
+    tabindex: "0",
+    "aria-label": message
+  });
+  return el("div", { class: "gaidet-lock-wrap" }, [contentEl, overlay, lockMessage]);
+}
 ```
 
 ```{ojs}
@@ -205,6 +207,14 @@ mutable selections = ({})
 ```{ojs}
 //| echo: false
 mutable providePrompts = false
+```
+
+```{ojs}
+//| echo: false
+// Empty by default: a category only unlocks once a student actively ticks
+// it as permitted, rather than assuming everything is allowed unless
+// deselected.
+mutable allowedCategories = new Set()
 ```
 
 ```{ojs}
@@ -253,7 +263,6 @@ noVersionTools = new Set([
   "Otter.ai",
   "Grammarly",
   "QuillBot",
-  "Notion AI",
   "Canva",
   "NotebookLM",
   "Consensus",
@@ -264,35 +273,81 @@ noVersionTools = new Set([
 
 ```{ojs}
 //| echo: false
-promptsToggle = el("div", { class: "gaidet-prompts-question" }, [
-  el("p", { class: "gaidet-tool-label" }, "Provide prompts used for each task?"),
-  el("p", { class: "gaidet-tool-instructions" }, "If you choose \"Yes\", an extra box will appear under each ticked task where you can copy-paste the exact prompt(s) you used with the AI tool, for extra transparency. This is optional and off by default, but some lecturers or assignment briefs may require you to include the full prompts."),
-  el("div", { class: "gaidet-tool-grid" }, [
-    el("label", { class: "gaidet-tool-option" }, [
-      el("input", {
-        type: "radio",
-        name: "gaidet-provide-prompts",
-        checked: providePrompts === true,
-        onchange: (e) => {
-          if (e.target.checked) {
-            mutable providePrompts = true;
-            document.getElementById("generate-declaration")?.scrollIntoView({ behavior: "smooth", block: "start" });
+promptsToggle = {
+  // Stays locked until there's at least one ticked task to attach prompts
+  // to, so it doesn't feel like an active choice before Step 2 has started.
+  const locked = Object.keys(selections).length === 0;
+
+  const box = el("div", { class: "gaidet-prompts-question" }, [
+    el("p", { class: "gaidet-tool-label" }, "Provide prompts used for each task?"),
+    el("p", { class: "gaidet-tool-instructions" }, "If you choose \"Yes\", an extra box will appear under each ticked task where you can copy-paste the exact prompt(s) you used with the AI tool, for extra transparency. This is optional and off by default, but some lecturers or assignment briefs may require you to include the full prompts."),
+    el("div", { class: "gaidet-tool-grid" }, [
+      el("label", { class: "gaidet-tool-option" }, [
+        el("input", {
+          type: "radio",
+          name: "gaidet-provide-prompts",
+          checked: providePrompts === true,
+          onchange: (e) => {
+            if (e.target.checked) {
+              mutable providePrompts = true;
+              document.getElementById("generate-declaration")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
           }
+        }),
+        " Yes"
+      ]),
+      el("label", { class: "gaidet-tool-option" }, [
+        el("input", {
+          type: "radio",
+          name: "gaidet-provide-prompts",
+          checked: providePrompts === false,
+          onchange: (e) => { if (e.target.checked) mutable providePrompts = false; }
+        }),
+        " No"
+      ])
+    ])
+  ]);
+
+  // Just dimmed + inert, no hover explanation: this question is minor enough
+  // that a tooltip here would be more noise than help.
+  if (locked) {
+    box.classList.add("gaidet-locked");
+    box.setAttribute("inert", "");
+  }
+  return box;
+}
+```
+
+```{ojs}
+//| echo: false
+categoryGate = el("div", { class: "gaidet-category-gate" }, [
+  el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1: Which categories of AI use does your assignment or module permit?"),
+  el("p", { class: "gaidet-tool-instructions" }, "Check the categories your assignment brief or module instructions allow. Everything else stays locked below until you check it here, so tick only what's actually permitted."),
+  el("div", { class: "gaidet-category-gate-list" }, data.categories.map(cat => {
+    const isAllowed = allowedCategories.has(cat.id);
+    return el("label", {
+      class: isAllowed ? "gaidet-category-gate-option gaidet-category-gate-option-checked" : "gaidet-category-gate-option"
+    }, [
+      el("input", {
+        type: "checkbox",
+        class: "gaidet-checkbox-input",
+        checked: isAllowed,
+        onchange: (e) => {
+          const next = new Set(allowedCategories);
+          if (e.target.checked) next.add(cat.id); else next.delete(cat.id);
+          mutable allowedCategories = next;
         }
       }),
-      " Yes"
-    ]),
-    el("label", { class: "gaidet-tool-option" }, [
-      el("input", {
-        type: "radio",
-        name: "gaidet-provide-prompts",
-        checked: providePrompts === false,
-        onchange: (e) => { if (e.target.checked) mutable providePrompts = false; }
-      }),
-      " No"
-    ])
-  ])
+      el("span", { class: "gaidet-checkbox-box" }, []),
+      el("span", {}, cat.label)
+    ]);
+  }))
 ])
+```
+
+```{ojs}
+//| echo: false
+step2Label = el("p", { class: "gaidet-step-label" }, "Step 2: Tick every task where you used AI")
 ```
 
 ```{ojs}
@@ -310,6 +365,7 @@ form = {
   let pendingSelections = selections;
 
   return preserveFocus(() => el("div", {}, data.categories.map(cat => {
+  const locked = !allowedCategories.has(cat.id);
   const categoryEl = el("div", { class: "gaidet-category" }, [
     el("h3", {}, cat.label),
     ...cat.items.map(item => {
@@ -506,6 +562,15 @@ form = {
                   value: entry.version,
                   onblur: (e) => {
                     commit(currentSelected().map(t => t.name === entry.name ? { ...t, version: e.target.value } : t));
+                  },
+                  onkeydown: (e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      // Blur fires naturally on focus-shift, committing the
+                      // version via the handler above before we move on.
+                      sentenceTextarea.focus();
+                      sentenceTextarea.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
                   }
                 })
               ]));
@@ -524,9 +589,10 @@ form = {
         ]);
       }
 
-      const checkboxLabel = el("label", {}, [
+      const checkboxLabel = el("label", { class: "gaidet-item-checkbox-label" }, [
         el("input", {
           type: "checkbox",
+          class: "gaidet-checkbox-input",
           checked,
           onchange: (e) => {
             const next = { ...pendingSelections };
@@ -547,7 +613,8 @@ form = {
             mutable selections = next;
           }
         }),
-        el("span", { class: "gaidet-item-label" }, ` ${item.label}`),
+        el("span", { class: "gaidet-checkbox-box" }, []),
+        el("span", { class: "gaidet-item-label" }, item.label),
         isComplete ? el("span", { class: "gaidet-item-complete", "aria-label": "Sentence and tool provided" }, " ✓") : null
       ]);
 
@@ -574,6 +641,7 @@ form = {
         // which is frozen for this render and can be missing an edit that was
         // just committed a moment ago in this same render.
         const currentCustomLabel = customLabelInput ? customLabelInput.value : (pendingSelections[key]?.customLabel ?? "");
+        const currentPrompts = promptsTextarea ? promptsTextarea.value : (pendingSelections[key]?.prompts ?? "");
         const taskComplete = taskIsComplete(sentenceTextarea.value, currentTools, item.openEnded, currentCustomLabel);
         if (!taskComplete) return false;
         detailsDiv.classList.add("gaidet-item-details-complete");
@@ -584,12 +652,38 @@ form = {
             tools: currentTools,
             sentence: sentenceTextarea.value,
             customLabel: currentCustomLabel,
+            prompts: currentPrompts,
             proceeded: true
           };
           pendingSelections = next;
           mutable selections = next;
         }
         return true;
+      }
+
+      function confirmAndAdvance() {
+        if (!markCompleteIfReady()) return;
+        // Jump to the next task's description field, if there is one. The
+        // target field is captured by its data-field identifier before the
+        // commit above rebuilds the whole checklist, then located again
+        // (polling via rAF, since the rebuild isn't necessarily synchronous)
+        // once it exists in the freshly rebuilt DOM.
+        const allSentences = Array.from(document.querySelectorAll('textarea[data-field^="sentence::"]'));
+        const idx = allSentences.indexOf(sentenceTextarea);
+        const nextField = allSentences[idx + 1]?.dataset.field;
+        if (!nextField) return;
+        let attempts = 0;
+        const tryFocusNext = () => {
+          attempts += 1;
+          const next = document.querySelector(`[data-field="${CSS.escape(nextField)}"]`);
+          if (next && next.isConnected) {
+            next.focus({ preventScroll: true });
+            next.scrollIntoView({ behavior: "smooth", block: "center" });
+            return;
+          }
+          if (attempts < 30) requestAnimationFrame(tryFocusNext);
+        };
+        requestAnimationFrame(tryFocusNext);
       }
 
       const promptsTextarea = providePrompts ? el("textarea", {
@@ -636,8 +730,8 @@ form = {
           el("button", {
             type: "button",
             class: "gaidet-sentence-enter",
-            "aria-label": "Mark this task's description as done",
-            onclick: () => markCompleteIfReady()
+            "aria-label": "Mark this task's description as done and go to the next task",
+            onclick: () => confirmAndAdvance()
           }, "→")
         ]),
         providePrompts ? promptsTextarea : null
@@ -656,6 +750,14 @@ form = {
           // reintroduce the typing lag that was fixed earlier.
           sentenceWordCount.textContent = `${countWords(e.target.value)} words`;
         });
+        // Plain Enter acts like clicking the arrow (confirm + advance);
+        // Shift+Enter still inserts a newline, as usual for a text box.
+        sentenceTextarea.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            confirmAndAdvance();
+          }
+        });
         // "Moved to the next section": once focus leaves this task's fields
         // (tabbing/clicking to the next task, or down to the declaration),
         // mark it complete if it qualifies.
@@ -665,6 +767,14 @@ form = {
       if (detailsDiv && providePrompts) {
         autoGrow(promptsTextarea);
         promptsTextarea.addEventListener("input", (e) => autoGrow(e.target));
+        // Prompts is the last field for this task when shown, so Enter here
+        // confirms and advances the same way it does from the description.
+        promptsTextarea.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            confirmAndAdvance();
+          }
+        });
       }
 
       const details = detailsDiv;
@@ -673,7 +783,7 @@ form = {
     })
   ]);
 
-  return categoryEl;
+  return locked ? lockBox(categoryEl) : categoryEl;
   })));
 }
 ```
@@ -687,8 +797,11 @@ promptsReminder = providePrompts
   : null
 ```
 
-Select every task where you delegated work to AI, then add the tool(s) you used for it. Give the exact model or version where you can (e.g. GPT-5.5), since capability varies a lot between versions.
+You can create a declaration in three steps: 
 
+- **Step 1:** tell it which categories of AI use your assignment or module permits.
+- **Step 2:** go through the unlocked categories below, tick every task where you delegated work to AI, then add the tool(s) you used and a short description for each. Give the exact model or version where you can (e.g. GPT-5.5), since capability varies a lot between versions. 
+- **Step 3:** once every ticked task is filled in, generate your declaration, ready to copy or download.
 
 Before you begin, please read the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
 
@@ -828,7 +941,7 @@ outputBox = {
         }
       }, "Yes, generate declaration"),
       el("button", {
-        class: "ga <idet-btn-secondary",
+        class: "gaidet-btn-secondary",
         onclick: () => { mutable showConfirmPrompt = false; }
       }, "No, let me edit")
     ])
@@ -863,8 +976,8 @@ outputBox = {
     }
   }
 
-  return el("div", { class: "gaidet-output", id: "gaidet-output-section" }, [
-    el("h2", { class: "gaidet-output-title" }, "Your declaration"),
+  const outputDiv = el("div", { class: "gaidet-output", id: "gaidet-output-section" }, [
+    el("h2", { class: "gaidet-output-title gaidet-step-label" }, "Step 3: Your declaration"),
     el("div", { class: "gaidet-output-header-actions" }, [
       showConfirmPrompt ? null : el("button", {
         class: "gaidet-btn-primary",
@@ -908,41 +1021,50 @@ outputBox = {
     showConfirmPrompt
       ? null
       : showDeclaration
-      ? el("pre", { id: "gaidet-output-text", class: justUpdated ? "gaidet-output-flash" : "" }, [
-          el("strong", {}, "Declaration on the Use of Artificial Intelligence Tools"),
-          declarationText.replace(/^Declaration on the Use of Artificial Intelligence Tools/, "")
-        ])
-      : (() => {
-          const icon = el("div", { class: "gaidet-output-placeholder-icon" }, []);
-          icon.innerHTML = `<svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9L12 2z"/><path d="M19 14.5l0.9 2.6l2.6 0.9l-2.6 0.9L19 21.5l-0.9-2.6l-2.6-0.9l2.6-0.9L19 14.5z" opacity="0.65"/></svg>`;
-          return el("div", { class: "gaidet-output-placeholder" }, [
-            icon,
-            ...(Array.isArray(placeholderText)
-              ? placeholderText.map(t => el("p", {}, t))
-              : [el("p", {}, placeholderText)])
-          ]);
+      ? (() => {
+          const div = el("div", { id: "gaidet-output-text", class: justUpdated ? "gaidet-output-flash" : "" }, []);
+          div.innerHTML = declarationHtml;
+          return div;
         })()
+      : el("div", { class: "gaidet-output-placeholder" },
+          Array.isArray(placeholderText)
+            ? placeholderText.map(t => el("p", {}, t))
+            : [el("p", {}, placeholderText)]
+        ),
+    (showDeclaration && !showConfirmPrompt) ? el("p", { class: "gaidet-output-note" }, [
+      "This declaration is a starting point. I recommend reviewing and adjusting the generated wording to fit your own voice, your module's requirements, and your institution's referencing style before submitting. The source code for this website is available on ",
+      el("a", { href: "https://github.com/stefan-mueller/disclose-ai" }, "GitHub"),
+      "."
+    ]) : null
   ]);
+
+  // Step 3 stays visibly "off" until Step 2 has at least one ticked task,
+  // matching the locked look used for unpermitted categories.
+  return noTasks ? lockBox(outputDiv, "Step 1 and Step 2 need to be completed first before you can generate a declaration.") : outputDiv;
 }
 ```
 
 
 
+${categoryGate}
+
 ::: {.gaidet-layout}
 ::: {.gaidet-layout-left}
+::: {.gaidet-step2-box}
+${step2Label}
+
 ${promptsReminder}
 
 ${form}
 
 ${promptsToggle}
 :::
+:::
 
 ::: {.gaidet-layout-right}
 ${outputBox}
 :::
 :::
-
-This declaration is a starting point. I recommend reviewing and adjusting the generated wording to fit your own voice, your module's requirements, and your institution's referencing style before submitting. The source code for this website is available on [GitHub](https://github.com/stefan-mueller/disclose-ai).
 
 
 ## Save or resume your progress
@@ -1053,7 +1175,7 @@ The AI tools listed or suggested in this form (e.g. ChatGPT, Claude, Grammarly) 
 
 This tool is fully [open source](https://github.com/stefan-mueller/disclose-ai), so you can verify these claims yourself.
 
-**Your declaration and task details.** Everything you enter here (tasks, tools, descriptions, prompts, your name) stays in your own browser. It is never stored, transmitted, or saved anywhere, and remains only in your browser and is cleared when you refresh or close the page. The generated declaration is provided only so you can copy or download it yourself.
+**Your declaration and task details.** Everything you enter here (tasks, tools, descriptions, prompts) stays in your own browser. It is never stored, transmitted, or saved anywhere, and remains only in your browser and is cleared when you refresh or close the page. The generated declaration is provided only so you can copy or download it yourself.
 
 **Analytics.** This site uses [Cabin](https://withcabin.com), a privacy-focused analytics service, to understand overall visitor numbers. Cabin does not use cookies, does not track IP addresses, and cannot identify individual visitors — it only reports aggregate, anonymous traffic data (e.g. how many people visited, which pages). See [Cabin's privacy policy](https://withcabin.com/privacy/disclose-ai.app) for details. No data about the content you enter into this tool is ever sent to Cabin or anyone else.
 

@@ -20,7 +20,7 @@ Everything here is open source to keep the tool transparent: anyone can inspect 
 - Added an optional field to log the exact prompt(s) used per task, for extra transparency.
 - Added a per-tool version/model field (e.g. GPT-5.5, Claude Sonnet 5), since capability varies significantly across versions of the same tool.
 - Added a copy-to-clipboard and download-as-file option for the generated declaration.
-- Every generated declaration now closes with a fixed responsibility statement (final responsibility lies with the authors, AI tools are not listed as authors) and a "Declaration submitted by: ..." line, filled in from a "Your name" field on the form.
+- Every generated declaration now closes with a fixed responsibility statement: final responsibility lies with the authors, and AI tools are not listed as authors.
 - Removed the OWL ontology generation step (`generate_ontology.py` and `gaidet.owl` in the original repository), since stable term identifiers are not needed for a teaching declaration.
 
 ## Running locally

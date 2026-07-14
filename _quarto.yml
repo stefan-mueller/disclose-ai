@@ -7,7 +7,7 @@ website:
   description: "A free tool that helps students write a clear AI-use disclosure statement for university assignments."
   site-url: "https://disclose-ai.app"
   favicon: favicon.svg
-  back-to-top-navigation: true
+  back-to-top-navigation: false
   navbar:
     title: false
     logo: favicon.svg
