@@ -16,10 +16,7 @@ An open-source tool that helps students create structured, task-by-task AI-use d
 
  The use of AI tools among students [continues to grow](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/). Some assignments prohibit generative AI entirely, while others allow it but require students to disclose how it was used. Clear guidance on how to do this is not always available.
 
-If your assignment permits AI use but requires disclosure, this tool helps you create a structured, task-by-task AI-use disclosure statement, adapted from the  [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
-
-Creating your disclosure is simple: select each task where generative AI assisted you, describe what you asked it to do, explain how you used and verified the output, and copy the generated declaration.
-
+If your assignment permits AI use but requires disclosure, this tool can help — it's adapted from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
 
 ```{ojs}
 //| echo: false
@@ -65,7 +62,7 @@ Many universities do not have a single institution-wide policy on generative AI.
 
 Disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 
-Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies; for an example of what institution-specific AI guidance looks like, see [UCD Library's guide to using generative AI](https://libguides.ucd.ie/GENAI/usingAI). This tool itself is an independent personal project and is not an official University College Dublin service.
+Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies; for an example of what institution-specific AI guidance looks like, see [UCD Library's guide to using generative AI](https://libguides.ucd.ie/GENAI/usingAI).
 :::
 
 ```{ojs}
@@ -800,7 +797,7 @@ promptsReminder = providePrompts
 You can create a declaration in three steps: 
 
 - **Step 1:** tell it which categories of AI use your assignment or module permits.
-- **Step 2:** go through the unlocked categories below, tick every task where you delegated work to AI, then add the tool(s) you used and a short description for each. Give the exact model or version where you can (e.g. GPT-5.5), since capability varies a lot between versions. 
+- **Step 2:** go through the unlocked categories below, tick every task where you delegated work to AI, then add the tool(s) you used and a short description for each. Give the exact model or version where you can (e.g. GPT-5.5).
 - **Step 3:** once every ticked task is filled in, generate your declaration, ready to copy or download.
 
 Before you begin, please read the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
