@@ -818,7 +818,7 @@ declarationText = {
   ))].sort((a, b) => a.localeCompare(b));
   const overallToolsPart = overallToolNames.length > 0 ? overallToolNames.join(", ") : "[no tools ticked]";
 
-  const heading = `Declaration on the Use of Artificial Intelligence Tools\n\nAI tools used: ${overallToolsPart}\n`;
+  const heading = `**Declaration on the Use of Artificial Intelligence Tools**\n\n**AI tools used:** ${overallToolsPart}\n`;
 
   const closing = `\n\nResponsibility for the submitted assignment lies entirely with the author of this declaration.\n\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.`;
 
@@ -833,7 +833,7 @@ declarationText = {
     const toolLabel = itemToolNames.length === 1 ? "Tool" : "Tools";
     const sentencePart = e.sentence.trim() || "[please add an explainer]";
     const promptsPart = providePrompts && e.prompts && e.prompts.trim() ? `\n    Prompts: ${e.prompts.trim()}` : "";
-    return `- ${labelPart}\n    ${toolLabel}: ${itemToolsPart}\n    Summary: ${sentencePart}${promptsPart}`;
+    return `- **${labelPart}**\n    ${toolLabel}: ${itemToolsPart}\n    Summary: ${sentencePart}${promptsPart}`;
   });
 
   return `${heading}\nThe following generative AI tasks were delegated as part of this assignment:\n\n${lines.join("\n\n")}${closing}`;
@@ -844,8 +844,10 @@ declarationText = {
 //| echo: false
 declarationHtml = {
   // A rich-text twin of declarationText, for the "Copy to clipboard" button:
-  // pasted into Word/Docs/Outlook this gives a bold heading and a real
-  // bulleted list instead of plain "- " lines and asterisks.
+  // declarationText's markdown (asterisks, "- " lines) renders correctly in
+  // markdown-aware editors, but pasted as-is into Word/Docs/Outlook it would
+  // show the literal asterisks; this HTML version gives those rich-text
+  // targets a real bold heading and bulleted list instead.
   function escapeHtml(s) {
     return (s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
