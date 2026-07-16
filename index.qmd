@@ -208,6 +208,14 @@ mutable providePrompts = false
 
 ```{ojs}
 //| echo: false
+// "" means not specified. Independent of allowedCategories: it never locks
+// or unlocks anything below, it's just an optional label carried into the
+// declaration, so it's safe to change back and forth at any time.
+mutable aiasLevel = ""
+```
+
+```{ojs}
+//| echo: false
 // Empty by default: a category only unlocks once a student actively ticks
 // it as permitted, rather than assuming everything is allowed unless
 // deselected.
@@ -248,7 +256,7 @@ mutable showConfirmPrompt = false
 //| echo: false
 //| output: false
 {
-  const hasData = Object.keys(selections).length > 0;
+  const hasData = Object.keys(selections).length > 0 || !!aiasLevel;
 
   window.onbeforeunload = hasData ? (e) => { e.preventDefault(); e.returnValue = ""; } : null;
 }
@@ -312,6 +320,63 @@ promptsToggle = {
     box.setAttribute("inert", "");
   }
   return box;
+}
+```
+
+```{ojs}
+//| echo: false
+aiasSelector = {
+  // Clicking the already-selected level clears it, so there's always an
+  // obvious, one-click way back to "not specified" without a separate
+  // reset control.
+  function selectLevel(levelStr) {
+    mutable aiasLevel = (aiasLevel === levelStr) ? "" : levelStr;
+  }
+
+  const selectedEntry = data.aiasLevels.find(l => String(l.level) === aiasLevel);
+
+  // A single row of pills rather than five stacked cards: the full summary
+  // for each level lives in its tooltip, so comparing all five costs a
+  // hover instead of a page's worth of vertical space. Only the selected
+  // level's instruction is printed out below.
+  const options = data.aiasLevels.map(lvl => {
+    const levelStr = String(lvl.level);
+    const isSelected = aiasLevel === levelStr;
+    return el("span", { class: "gaidet-aias-option" }, [
+      el("button", {
+        type: "button",
+        class: isSelected ? "gaidet-aias-btn gaidet-aias-btn-selected" : "gaidet-aias-btn",
+        "aria-pressed": isSelected ? "true" : "false",
+        onclick: () => selectLevel(levelStr)
+      }, lvl.name),
+      el("span", {
+        class: "gaidet-info-icon",
+        tabindex: "0",
+        role: "img",
+        "aria-label": `What ${lvl.name} means`,
+        "data-tooltip": `${lvl.summary}\n\n${lvl.instruction}`
+      }, "ⓘ")
+    ]);
+  });
+
+  return el("div", { class: "gaidet-aias-question" }, [
+    el("p", { class: "gaidet-tool-label" }, "AI Assessment Scale level (optional)"),
+    el("p", { class: "gaidet-tool-instructions" }, [
+      "If your assignment brief or module states a level from the ",
+      el("a", { href: "https://aiassessmentscale.com", target: "_blank", rel: "noopener" }, "AI Assessment Scale"),
+      ", select the matching level below. It'll be added to your declaration."
+    ]),
+    el("div", { class: "gaidet-aias-list" }, options),
+    selectedEntry ? el("p", { class: "gaidet-aias-instruction" }, selectedEntry.instruction) : null
+  ]);
+}
+```
+
+```{ojs}
+//| echo: false
+aiasLevelLabel = {
+  const entry = data.aiasLevels.find(l => String(l.level) === aiasLevel);
+  return entry ? `${entry.level} – ${entry.name}` : "";
 }
 ```
 
@@ -818,7 +883,8 @@ declarationText = {
   ))].sort((a, b) => a.localeCompare(b));
   const overallToolsPart = overallToolNames.length > 0 ? overallToolNames.join(", ") : "[no tools ticked]";
 
-  const heading = `**Declaration on the Use of Artificial Intelligence Tools**\n\n**AI tools used:** ${overallToolsPart}\n`;
+  const aiasLine = aiasLevelLabel ? `**AIAS level:** ${aiasLevelLabel}\n` : "";
+  const heading = `**Declaration on the Use of Artificial Intelligence Tools**\n\n**AI tools used:** ${overallToolsPart}\n${aiasLine}`;
 
   const closing = `\n\nResponsibility for the submitted assignment lies entirely with the author of this declaration.\n\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.`;
 
@@ -864,7 +930,8 @@ declarationHtml = {
   ))].sort((a, b) => a.localeCompare(b));
   const overallToolsPart = overallToolNames.length > 0 ? overallToolNames.join(", ") : "[no tools ticked]";
 
-  const headingHtml = `<p><strong>Declaration on the Use of Artificial Intelligence Tools</strong></p><p><strong>AI tools used:</strong> ${overallToolsPart}</p>`;
+  const aiasLineHtml = aiasLevelLabel ? `<p><strong>AIAS level:</strong> ${escapeHtml(aiasLevelLabel)}</p>` : "";
+  const headingHtml = `<p><strong>Declaration on the Use of Artificial Intelligence Tools</strong></p><p><strong>AI tools used:</strong> ${overallToolsPart}</p>${aiasLineHtml}`;
 
   const closingHtml = `<p>Responsibility for the submitted assignment lies entirely with the author of this declaration.</p><p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p>`;
 
@@ -1045,6 +1112,8 @@ outputBox = {
 
 
 
+${aiasSelector}
+
 ${categoryGate}
 
 ::: {.gaidet-layout}
@@ -1086,6 +1155,7 @@ progressBox = {
           const data = JSON.parse(reader.result);
           mutable selections = data.selections ?? {};
           mutable providePrompts = data.providePrompts ?? false;
+          mutable aiasLevel = data.aiasLevel ?? "";
         } catch (err) {
           alert("Could not read this file. Please make sure it's a progress file saved from this tool.");
         }
@@ -1101,7 +1171,7 @@ progressBox = {
         type: "button",
         class: "gaidet-btn-secondary",
         onclick: () => {
-          const payload = { version: 1, providePrompts, selections };
+          const payload = { version: 1, providePrompts, aiasLevel, selections };
           const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
@@ -1150,12 +1220,16 @@ If you use this tool in your teaching, you can cite it as:
 
 A number of similar tools exist to support transparent AI-use disclosure, including the [AID Framework](https://aidframework.org) and the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/). All aim at the same goal: helping students and researchers disclose their AI use clearly and consistently. Use whichever fits your context best.
 
+The optional "AIAS level" field above uses the [AI Assessment Scale](https://aiassessmentscale.com), a complementary framework instructors use to specify how much AI use is permitted on a given assessment; this tool only lets you record that level, it doesn't set or enforce it.
+
 Further reading on AI-use disclosure:
 
 >Suchikova, Yana, Tsybuliak, Natalia, Teixeira da Silva, Jaime A., & Nazarovets, Serhii (2026). “GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing“. *Accountability in Research*, *33*(3). [10.1080/08989621.2025.2544331](https://doi.org/10.1080/08989621.2025.2544331)
 
 
 >Weaver, Kari D. (2024). “The Artificial Intelligence Disclosure (AID) Framework: An Introduction“. *College & Research Libraries News*, *85*(10), 407–411. [arxiv.org/abs/2408.01904](https://arxiv.org/abs/2408.01904)
+
+>Perkins, Mike, Furze, Leon, Roe, Jasper, & MacVaugh, Jason (2024). “The AI Assessment Scale (AIAS)“. [aiassessmentscale.com](https://aiassessmentscale.com)
 
 ## Disclaimer of responsibility
 

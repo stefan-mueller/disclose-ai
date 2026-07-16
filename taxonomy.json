@@ -41,6 +41,13 @@
     "Codex": "Codex (GPT-5.5)",
     "Cursor": "Cursor 3 (Composer 2)"
   },
+  "aiasLevels": [
+    { "level": 1, "name": "No AI", "summary": "The assessment is completed entirely without AI assistance in a controlled environment, ensuring that students rely solely on their existing knowledge, understanding, and skills.", "instruction": "You must not use AI at any point during the assessment. You must demonstrate your core skills and knowledge." },
+    { "level": 2, "name": "AI Planning", "summary": "AI may be used for pre-task activities such as brainstorming, outlining and initial research. This level focuses on the effective use of AI for planning, synthesis, and ideation, but assessments should emphasise the ability to develop and refine these ideas independently.", "instruction": "You may use AI for planning, idea development, and research. Your final submission should show how you have developed and refined these ideas." },
+    { "level": 3, "name": "AI Collaboration", "summary": "AI may be used to help complete the task, including idea generation, drafting, feedback, and refinement. Students should critically evaluate and modify the AI suggested outputs, demonstrating their understanding.", "instruction": "You may use AI to assist with specific tasks such as drafting text, refining and evaluating your work. You must critically evaluate and modify any AI-generated content you use." },
+    { "level": 4, "name": "Full AI", "summary": "AI may be used to complete any elements of the task, with students directing AI to achieve the assessment goals. Assessments at this level may also require engagement with AI to achieve goals and solve problems.", "instruction": "You may use AI extensively throughout your work either as you wish, or as specifically directed in your assessment. Focus on directing AI to achieve your goals while demonstrating your critical thinking." },
+    { "level": 5, "name": "AI Exploration", "summary": "AI is used creatively to enhance problem-solving, generate novel insights, or develop innovative solutions to solve problems. Students and educators co-design assessments to explore unique AI applications within the field of study.", "instruction": "You should use AI creatively to solve the task, potentially co-designing new approaches with your instructor." }
+  ],
   "categories": [
     {
       "id": "conceptualisation",

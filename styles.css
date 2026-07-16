@@ -507,6 +507,72 @@ label.gaidet-tool-option:hover {
   margin-right: 0.5rem;
 }
 
+.gaidet-aias-question {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--gaidet-border);
+  border-left: 4px solid var(--gaidet-accent);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 4px rgba(16, 24, 40, 0.04);
+  padding: 0.9rem 1.4rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.gaidet-aias-question .gaidet-tool-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.gaidet-aias-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.gaidet-aias-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.gaidet-aias-btn {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gaidet-accent-dark);
+  background: #fff;
+  border: 1px solid var(--gaidet-border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.gaidet-aias-btn:hover {
+  border-color: var(--gaidet-accent);
+  background: var(--gaidet-accent-tint);
+}
+
+.gaidet-aias-btn-selected,
+.gaidet-aias-btn-selected:hover {
+  color: #fff;
+  background: var(--gaidet-accent);
+  border-color: var(--gaidet-accent);
+}
+
+.gaidet-aias-instruction {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gaidet-accent-dark);
+}
+
+.gaidet-aias-list .gaidet-info-icon {
+  border-bottom: none;
+  font-size: 0.8em;
+}
+
 .gaidet-autocomplete {
   max-width: 340px;
 }
