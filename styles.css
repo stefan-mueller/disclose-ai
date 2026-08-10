@@ -346,6 +346,45 @@ a:hover {
   transform: translate(-50%, -50%) scale(1);
 }
 
+.gaidet-steps {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem 0 1.4rem;
+}
+
+.gaidet-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 0.3rem 0;
+}
+
+.gaidet-step-number {
+  flex-shrink: 0;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: var(--gaidet-accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.gaidet-step-body h3 {
+  margin: 0.05rem 0 0.15rem;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.gaidet-step-body p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--gaidet-text-muted);
+}
+
 .gaidet-category-gate {
   background: var(--gaidet-accent-dark);
   border-radius: 6px;
@@ -550,6 +589,10 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-aias-btn:hover {
+  /* color set explicitly, not just left to inherit from the base rule: the
+     page's global `button { color: #fff }` rule otherwise has just enough
+     specificity to win on hover, turning this text white-on-white. */
+  color: var(--gaidet-accent-dark);
   border-color: var(--gaidet-accent);
   background: var(--gaidet-accent-tint);
 }

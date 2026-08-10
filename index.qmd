@@ -16,7 +16,7 @@ An open-source tool that helps students create structured, task-by-task AI-use d
 
  The use of AI tools among students [continues to grow](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/). Some assignments prohibit generative AI entirely, while others allow it but require students to disclose how it was used. Clear guidance on how to do this is not always available.
 
-If your assignment permits AI use but requires disclosure, this tool can help — it's adapted from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
+If your assignment permits AI use but requires disclosure, this tool can help. It is adapted for student assignments from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
 
 ```{ojs}
 //| echo: false
@@ -26,12 +26,12 @@ mutable showExample = false
 ```{ojs}
 //| echo: false
 exampleDeclarationHtml = `<p><strong>Declaration on the Use of Artificial Intelligence Tools</strong></p>
-<p><strong>AI tools used:</strong> ChatGPT (GPT-5.5), Claude Code (Sonnet 4.6), Grammarly</p>
+<p><strong>AI tools used:</strong> ChatGPT (GPT-5.5), Claude Code (Sonnet 4.6), Microsoft Copilot (GPT-5.5)</p>
 <p>The core analysis, writing, and conclusions in this assignment are my own. Generative AI assisted with the following specific, limited tasks:</p>
 <ul>
 <li><strong>Idea generation</strong><br>Tool: ChatGPT (GPT-5.5)<br>Summary: I had a general research area in mind; I asked ChatGPT to suggest possible angles, then chose and developed the final research question myself.</li>
-<li><strong>Code generation</strong><br>Tool: Claude Code (Sonnet 4.6)<br>Summary: I wrote the core analysis logic myself; Claude Code was used only to draft repetitive boilerplate (e.g. file-loading functions), which I reviewed, tested, and adapted to my dataset.</li>
-<li><strong>Proofreading</strong><br>Tool: Grammarly<br>Summary: After completing my own final draft, I ran it through Grammarly for grammar and punctuation checks, and manually reviewed and accepted only the suggestions I agreed with.</li>
+<li><strong>Code review</strong><br>Tool: Claude Code (Sonnet 4.6)<br>Summary: I wrote the core analysis logic myself; Claude Code was used only to draft repetitive boilerplate (e.g. file-loading functions), which I reviewed, tested, and adapted to my dataset.</li>
+<li><strong>Proofreading</strong><br>Tool: Microsoft Copilot (GPT-5.5)<br>Summary: After completing my own final draft, I asked Copilot to flag grammar and punctuation issues, and manually reviewed and accepted only the suggestions I agreed with.</li>
 </ul>
 <p>Responsibility for the submitted assignment lies entirely with the author of this declaration.</p>
 <p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p>`
@@ -62,7 +62,7 @@ Many universities do not have a single institution-wide policy on generative AI.
 
 Disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief. You are ultimately responsible for complying with your institution's and module's policies; see the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 
-Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies; for an example of what institution-specific AI guidance looks like, see [UCD Library's guide to using generative AI](https://libguides.ucd.ie/GENAI/usingAI).
+Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies. For an example of what institution-specific AI guidance looks like, see [UCD Library's guide to using generative AI](https://libguides.ucd.ie/GENAI/usingAI).
 :::
 
 ```{ojs}
@@ -364,7 +364,7 @@ aiasSelector = {
     el("p", { class: "gaidet-tool-instructions" }, [
       "If your assignment brief or module states a level from the ",
       el("a", { href: "https://aiassessmentscale.com", target: "_blank", rel: "noopener" }, "AI Assessment Scale"),
-      ", select the matching level below. It'll be added to your declaration."
+      ", select the matching level below. It will be added to your declaration."
     ]),
     el("div", { class: "gaidet-aias-list" }, options),
     selectedEntry ? el("p", { class: "gaidet-aias-instruction" }, selectedEntry.instruction) : null
@@ -384,7 +384,7 @@ aiasLevelLabel = {
 //| echo: false
 categoryGate = el("div", { class: "gaidet-category-gate" }, [
   el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1: Which categories of AI use does your assignment or module permit?"),
-  el("p", { class: "gaidet-tool-instructions" }, "Check the categories your assignment brief or module instructions allow. Everything else stays locked below until you check it here, so tick only what's actually permitted."),
+  el("p", { class: "gaidet-tool-instructions" }, "Check the categories your assignment brief or module instructions allow. Everything else stays locked below until you check it here, so tick only what is permitted."),
   el("div", { class: "gaidet-category-gate-list" }, data.categories.map(cat => {
     const isAllowed = allowedCategories.has(cat.id);
     return el("label", {
@@ -859,11 +859,38 @@ promptsReminder = providePrompts
   : null
 ```
 
-You can create a declaration in three steps: 
+```{ojs}
+//| echo: false
+// Built via el() rather than as a raw HTML block: this document mixes
+// executable ojs cells with plain markdown, and pandoc's raw-HTML-block
+// passthrough is unreliable in that mix, so every other custom-styled piece
+// on this page already goes through el() — this keeps that one convention.
+stepsIntro = el("div", { class: "gaidet-steps" }, [
+  el("div", { class: "gaidet-step" }, [
+    el("div", { class: "gaidet-step-number" }, "1"),
+    el("div", { class: "gaidet-step-body" }, [
+      el("h3", {}, "Choose what is allowed"),
+      el("p", {}, "Tick the categories of AI use your assignment or module permits.")
+    ])
+  ]),
+  el("div", { class: "gaidet-step" }, [
+    el("div", { class: "gaidet-step-number" }, "2"),
+    el("div", { class: "gaidet-step-body" }, [
+      el("h3", {}, "Describe your AI use"),
+      el("p", {}, "For each task you used AI for, name the tool, explain what you did, and how you validated the output.")
+    ])
+  ]),
+  el("div", { class: "gaidet-step" }, [
+    el("div", { class: "gaidet-step-number" }, "3"),
+    el("div", { class: "gaidet-step-body" }, [
+      el("h3", {}, "Create your declaration"),
+      el("p", {}, "Review it, then copy it into your assignment.")
+    ])
+  ])
+])
+```
 
-- **Step 1:** tell it which categories of AI use your assignment or module permits.
-- **Step 2:** go through the unlocked categories below, tick every task where you delegated work to AI, then add the tool(s) you used and a short description for each. Give the exact model or version where you can (e.g. GPT-5.5).
-- **Step 3:** once every ticked task is filled in, generate your declaration, ready to copy or download.
+${stepsIntro}
 
 Before you begin, please read the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
 
@@ -1098,9 +1125,7 @@ outputBox = {
             : [el("p", {}, placeholderText)]
         ),
     (showDeclaration && !showConfirmPrompt) ? el("p", { class: "gaidet-output-note" }, [
-      "This declaration is a starting point. I recommend reviewing and adjusting the generated wording to fit your own voice, your module's requirements, and your institution's referencing style before submitting. The source code for this website is available on ",
-      el("a", { href: "https://github.com/stefan-mueller/disclose-ai" }, "GitHub"),
-      "."
+      "This declaration is a starting point. I recommend reviewing and adjusting the generated wording to fit your own voice, your module's requirements, and your institution's referencing style before submitting."
     ]) : null
   ]);
 
@@ -1111,8 +1136,6 @@ outputBox = {
 ```
 
 
-
-${aiasSelector}
 
 ${categoryGate}
 
@@ -1126,6 +1149,8 @@ ${promptsReminder}
 ${form}
 
 ${promptsToggle}
+
+${aiasSelector}
 :::
 :::
 
@@ -1201,7 +1226,7 @@ ${progressBox}
 ## About the maintainer
 
 
-This tool was built by [Stefan Müller](https://muellerstefan.net) with substantial assistance from Claude Code, under the maintainer's direction.
+This tool was built by [Stefan Müller](https://stefanmueller.ie) with assistance from Claude Code, under the maintainer's direction.
 
 I'd love to hear how you're using this tool and any suggestions for improving it. Please share your thoughts via this [short feedback form](https://forms.cloud.microsoft/e/nSGgCVHRQg).
 
