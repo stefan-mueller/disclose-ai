@@ -883,7 +883,7 @@ stepsIntro = el("div", { class: "gaidet-steps" }, [
   el("div", { class: "gaidet-step" }, [
     el("div", { class: "gaidet-step-number" }, "3"),
     el("div", { class: "gaidet-step-body" }, [
-      el("h3", {}, "Create your declaration"),
+      el("h3", {}, "Automatically generate your declaration"),
       el("p", {}, "Review it, then copy it into your assignment.")
     ])
   ])
