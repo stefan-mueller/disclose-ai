@@ -18,6 +18,40 @@ An open-source tool that helps students create structured, task-by-task AI-use d
 
 If your assignment permits AI use but requires disclosure, this tool can help. It is adapted for student assignments from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
 
+
+```{ojs}
+//| echo: false
+// Built via el() rather than as a raw HTML block: this document mixes
+// executable ojs cells with plain markdown, and pandoc's raw-HTML-block
+// passthrough is unreliable in that mix, so every other custom-styled piece
+// on this page already goes through el() — this keeps that one convention.
+stepsIntro = el("div", { class: "gaidet-steps" }, [
+  el("div", { class: "gaidet-step" }, [
+    el("div", { class: "gaidet-step-number" }, "1"),
+    el("div", { class: "gaidet-step-body" }, [
+      el("h3", {}, "Choose what is allowed"),
+      el("p", {}, "Tick the categories of AI use your assignment or module permits.")
+    ])
+  ]),
+  el("div", { class: "gaidet-step" }, [
+    el("div", { class: "gaidet-step-number" }, "2"),
+    el("div", { class: "gaidet-step-body" }, [
+      el("h3", {}, "Describe your AI use"),
+      el("p", {}, "For each task you used AI for, name the tool, explain what you did, and how you validated the output.")
+    ])
+  ]),
+  el("div", { class: "gaidet-step" }, [
+    el("div", { class: "gaidet-step-number" }, "3"),
+    el("div", { class: "gaidet-step-body" }, [
+      el("h3", {}, "Automatically generate your declaration"),
+      el("p", {}, "Review declaration, then copy it into your assignment.")
+    ])
+  ])
+])
+```
+
+${stepsIntro}
+
 ```{ojs}
 //| echo: false
 mutable showExample = false
@@ -383,7 +417,7 @@ aiasLevelLabel = {
 ```{ojs}
 //| echo: false
 categoryGate = el("div", { class: "gaidet-category-gate" }, [
-  el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1: Which categories of AI use does your assignment or module permit?"),
+  el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1: Which categories of AI use does your assignment permit?"),
   el("p", { class: "gaidet-tool-instructions" }, "Check the categories your assignment brief or module instructions allow. Everything else stays locked below until you check it here, so tick only what is permitted."),
   el("div", { class: "gaidet-category-gate-list" }, data.categories.map(cat => {
     const isAllowed = allowedCategories.has(cat.id);
@@ -409,7 +443,10 @@ categoryGate = el("div", { class: "gaidet-category-gate" }, [
 
 ```{ojs}
 //| echo: false
-step2Label = el("p", { class: "gaidet-step-label" }, "Step 2: Tick every task where you used AI")
+step2Label = el("div", {}, [
+  el("p", { class: "gaidet-step-label" }, "Step 2: Tick every task where you used AI"),
+  el("p", { class: "gaidet-tool-instructions" }, "First specify in Step 1 what you're allowed to do with AI. Then select and describe your use of AI for one or more tasks below.")
+])
 ```
 
 ```{ojs}
@@ -845,7 +882,7 @@ form = {
     })
   ]);
 
-  return locked ? lockBox(categoryEl) : categoryEl;
+  return locked ? lockBox(categoryEl, `Locked — tick "${cat.label}" in Step 1 above to unlock this category.`) : categoryEl;
   })));
 }
 ```
@@ -858,39 +895,6 @@ promptsReminder = providePrompts
   ? el("p", { class: "gaidet-prompts-reminder" }, "Please add your prompts for each task below.")
   : null
 ```
-
-```{ojs}
-//| echo: false
-// Built via el() rather than as a raw HTML block: this document mixes
-// executable ojs cells with plain markdown, and pandoc's raw-HTML-block
-// passthrough is unreliable in that mix, so every other custom-styled piece
-// on this page already goes through el() — this keeps that one convention.
-stepsIntro = el("div", { class: "gaidet-steps" }, [
-  el("div", { class: "gaidet-step" }, [
-    el("div", { class: "gaidet-step-number" }, "1"),
-    el("div", { class: "gaidet-step-body" }, [
-      el("h3", {}, "Choose what is allowed"),
-      el("p", {}, "Tick the categories of AI use your assignment or module permits.")
-    ])
-  ]),
-  el("div", { class: "gaidet-step" }, [
-    el("div", { class: "gaidet-step-number" }, "2"),
-    el("div", { class: "gaidet-step-body" }, [
-      el("h3", {}, "Describe your AI use"),
-      el("p", {}, "For each task you used AI for, name the tool, explain what you did, and how you validated the output.")
-    ])
-  ]),
-  el("div", { class: "gaidet-step" }, [
-    el("div", { class: "gaidet-step-number" }, "3"),
-    el("div", { class: "gaidet-step-body" }, [
-      el("h3", {}, "Automatically generate your declaration"),
-      el("p", {}, "Review it, then copy it into your assignment.")
-    ])
-  ])
-])
-```
-
-${stepsIntro}
 
 Before you begin, please read the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
 
@@ -1238,7 +1242,7 @@ If you use this tool in your teaching, you can cite it as:
 
 >Müller, Stefan (2026). *AI Disclosure Generator*. <https://disclose-ai.app>
 
-
+If you are using this tool in your teaching, it would be great if you could [let me know](https://stefanmueller.ie)
 
 ## Related literature and tools
 
