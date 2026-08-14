@@ -11,7 +11,7 @@ format:
 An open-source tool that helps students create structured, task-by-task AI-use disclosure statements for assignment submissions. It’s free, runs entirely in your browser, and never sends anything you enter to a server.
 :::
 
-## Purpose and limits
+## About this tool
  
 
  The use of AI tools among students [continues to grow](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/). Some assignments prohibit generative AI entirely, while others allow it but require students to disclose how it was used. Clear guidance on how to do this is not always available.
@@ -417,7 +417,7 @@ aiasLevelLabel = {
 ```{ojs}
 //| echo: false
 categoryGate = el("div", { class: "gaidet-category-gate" }, [
-  el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1 (What's allowed): Which categories of AI use does your assignment permit?"),
+  el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1 (What is allowed): Which categories of AI use does your assignment permit?"),
   el("p", { class: "gaidet-tool-instructions" }, "Check the categories your assignment brief or module instructions allow. Everything else stays locked below until you check it here, so tick only what is permitted."),
   el("div", { class: "gaidet-category-gate-list" }, data.categories.map(cat => {
     const isAllowed = allowedCategories.has(cat.id);

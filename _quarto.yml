@@ -16,8 +16,8 @@ website:
     background: "white"
     pinned: true
     right:
-      - href: "#purpose-and-limits"
-        text: Purpose
+      - href: "#about-this-tool"
+        text: Overview
       - href: "#generate-declaration"
         text: Generate Declaration
       - href: "#about-the-maintainer"
