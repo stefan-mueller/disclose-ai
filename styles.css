@@ -1072,6 +1072,23 @@ button:active {
   transform: translateY(1px);
 }
 
+/* Quarto's built-in back-to-top link (enabled via back-to-top-navigation in
+   _quarto.yml). It's an <a>, not a <button>, so it doesn't inherit the
+   button rules above — restyled by ID to match the site's own primary
+   button rather than Quarto's default grey pill. */
+#quarto-back-to-top {
+  background-color: var(--gaidet-accent-dark);
+  color: #fff;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(16, 24, 40, 0.15), 0 2px 4px rgba(16, 24, 40, 0.08);
+  font-weight: 600;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+#quarto-back-to-top:hover {
+  text-decoration: none;
+}
+
 .gaidet-output-actions {
   display: flex;
   gap: 0.6rem;

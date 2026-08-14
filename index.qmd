@@ -60,10 +60,10 @@ mutable showExample = false
 ```{ojs}
 //| echo: false
 exampleDeclarationHtml = `<p><strong>Declaration on the Use of Artificial Intelligence Tools</strong></p>
-<p><strong>AI tools used:</strong> ChatGPT (GPT-5.5), Claude Code (Sonnet 4.6), Microsoft Copilot (GPT-5.5)</p>
+<p><strong>AI tools used:</strong> Claude (Sonnet 5), Claude Code (Sonnet 4.6), Microsoft Copilot (GPT-5.5)</p>
 <p>The core analysis, writing, and conclusions in this assignment are my own. Generative AI assisted with the following specific, limited tasks:</p>
 <ul>
-<li><strong>Idea generation</strong><br>Tool: ChatGPT (GPT-5.5)<br>Summary: I had a general research area in mind; I asked ChatGPT to suggest possible angles, then chose and developed the final research question myself.</li>
+<li><strong>Clarifying definitions or concepts</strong><br>Tool: Claude (Sonnet 5)<br>Summary: I asked Claude to explain a few concepts I was unsure about, then checked the literature it pointed me to against the original sources before relying on it.</li>
 <li><strong>Code review</strong><br>Tool: Claude Code (Sonnet 4.6)<br>Summary: I wrote the core analysis logic myself; Claude Code was used only to draft repetitive boilerplate (e.g. file-loading functions), which I reviewed, tested, and adapted to my dataset.</li>
 <li><strong>Proofreading</strong><br>Tool: Microsoft Copilot (GPT-5.5)<br>Summary: After completing my own final draft, I asked Copilot to flag grammar and punctuation issues, and manually reviewed and accepted only the suggestions I agreed with.</li>
 </ul>
@@ -417,7 +417,7 @@ aiasLevelLabel = {
 ```{ojs}
 //| echo: false
 categoryGate = el("div", { class: "gaidet-category-gate" }, [
-  el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1: Which categories of AI use does your assignment permit?"),
+  el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1 (What's allowed): Which categories of AI use does your assignment permit?"),
   el("p", { class: "gaidet-tool-instructions" }, "Check the categories your assignment brief or module instructions allow. Everything else stays locked below until you check it here, so tick only what is permitted."),
   el("div", { class: "gaidet-category-gate-list" }, data.categories.map(cat => {
     const isAllowed = allowedCategories.has(cat.id);
@@ -444,7 +444,7 @@ categoryGate = el("div", { class: "gaidet-category-gate" }, [
 ```{ojs}
 //| echo: false
 step2Label = el("div", {}, [
-  el("p", { class: "gaidet-step-label" }, "Step 2: Tick every task where you used AI"),
+  el("p", { class: "gaidet-step-label" }, "Step 2 (What you used): Tick every task where you used AI"),
   el("p", { class: "gaidet-tool-instructions" }, "First specify in Step 1 what you're allowed to do with AI. Then select and describe your use of AI for one or more tasks below.")
 ])
 ```
@@ -882,7 +882,7 @@ form = {
     })
   ]);
 
-  return locked ? lockBox(categoryEl, `Locked — tick "${cat.label}" in Step 1 above to unlock this category.`) : categoryEl;
+  return locked ? lockBox(categoryEl, `Locked – tick “${cat.label} in Step 1 above to unlock this category.`) : categoryEl;
   })));
 }
 ```
@@ -1251,6 +1251,8 @@ A number of similar tools exist to support transparent AI-use disclosure, includ
 
 The optional "AIAS level" field above uses the [AI Assessment Scale](https://aiassessmentscale.com), a complementary framework instructors use to specify how much AI use is permitted on a given assessment; this tool only lets you record that level, it doesn't set or enforce it.
 
+This tool's approach is comparable to the [American Journal of Political Science's AI Policy](https://ajps.org/ajps-ai-policy/), which asks authors to describe how AI was used rather than reproduce full transcripts. If you're an instructor who wants students to submit the entire output of their AI conversations, not just a summary and the prompts used, ask for that separately.
+
 Further reading on AI-use disclosure:
 
 >Suchikova, Yana, Tsybuliak, Natalia, Teixeira da Silva, Jaime A., & Nazarovets, Serhii (2026). “GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing“. *Accountability in Research*, *33*(3). [10.1080/08989621.2025.2544331](https://doi.org/10.1080/08989621.2025.2544331)
@@ -1259,6 +1261,8 @@ Further reading on AI-use disclosure:
 >Weaver, Kari D. (2024). “The Artificial Intelligence Disclosure (AID) Framework: An Introduction“. *College & Research Libraries News*, *85*(10), 407–411. [arxiv.org/abs/2408.01904](https://arxiv.org/abs/2408.01904)
 
 >Perkins, Mike, Furze, Leon, Roe, Jasper, & MacVaugh, Jason (2024). “The AI Assessment Scale (AIAS)“. [aiassessmentscale.com](https://aiassessmentscale.com)
+
+>American Journal of Political Science (2026). “AJPS AI Policy“. Updated 11 August 2026. [ajps.org/ajps-ai-policy](https://ajps.org/ajps-ai-policy/)
 
 ## Disclaimer of responsibility
 
@@ -1270,7 +1274,7 @@ You are solely responsible for checking your own university's and module's speci
 
 This tool is an independent personal project of the author and is not an official service of, or endorsed by, University College Dublin or any other institution.
 
-The AI tools listed or suggested in this form (e.g. ChatGPT, Claude, Grammarly) are trademarks of their respective owners. Their appearance here, including in the autocomplete suggestions, is for identification purposes only and does not imply any affiliation with, or endorsement of, this tool by those companies, nor endorsement of those tools by the author.
+The AI tools listed or suggested in this tool are trademarks of their respective owners. Their appearance here, including in the autocomplete suggestions, is for identification purposes only and does not imply any affiliation with, or endorsement of, this tool by those companies, nor endorsement of those tools by the author.
 
 
 ## Privacy policy
