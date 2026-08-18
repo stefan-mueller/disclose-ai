@@ -1256,7 +1256,7 @@ I'd love to hear how you're using this tool and any suggestions for improving it
 
 If you use this tool in your teaching, you can cite it as:
 
->Müller, Stefan (2026). *AI Disclosure Generator*. <https://disclose-ai.app>
+>Müller, Stefan. *AI Disclosure Generator*. <https://disclose-ai.app>
 
 If you are using this tool in your teaching, it would be great if you could [let me know](https://stefanmueller.ie)
 
