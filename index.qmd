@@ -494,7 +494,7 @@ categoryGate = {
       }
     }),
     el("span", { class: "gaidet-checkbox-box" }, []),
-    el("span", {}, "My assignment allows using AI without limiting it to specific catewgories — select all")
+    el("span", {}, "My assignment allows using AI without limiting it to specific categories — select all")
   ]);
 
   const noGuidanceOption = el("label", {
@@ -516,7 +516,7 @@ categoryGate = {
   const noGuidanceWarning = noGuidance
     ? el("div", { class: "gaidet-category-gate-warning" }, [
         el("strong", {}, "Don’t guess. "),
-        "Without any guidance from your assignment brief or module, this tool can’t help you work out whether AI use is even allowed. Ask your lecturer whether (and how) AI may be used before doing anything else."
+        "This tool can’t tell you whether AI use is allowed on your assignment. Check thr syllabus or ask your lecturer before generating a declaration."
       ])
     : null;
 
