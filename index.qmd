@@ -516,7 +516,7 @@ categoryGate = {
   const noGuidanceWarning = noGuidance
     ? el("div", { class: "gaidet-category-gate-warning" }, [
         el("strong", {}, "Don’t guess. "),
-        "This tool can’t tell you whether AI use is allowed on your assignment. Check thr syllabus or ask your lecturer before generating a declaration."
+        "This tool can’t tell you whether AI use is allowed on your assignment. Check the syllabus or ask your lecturer before using AI or generating a declaration."
       ])
     : null;
 
