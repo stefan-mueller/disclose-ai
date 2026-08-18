@@ -438,6 +438,36 @@ a:hover {
   font-weight: 700;
 }
 
+.gaidet-category-gate-option-all {
+  margin-top: 0.35rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid #ffffff33;
+}
+
+.gaidet-category-gate-option-noguidance {
+  margin-top: 0;
+}
+
+.gaidet-category-gate-option-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.gaidet-category-gate-warning {
+  margin-top: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  background: var(--gaidet-warning-bg);
+  border: 1px solid var(--gaidet-warning-border);
+  border-radius: 4px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--gaidet-warning-text);
+}
+
+.gaidet-category-gate-warning strong {
+  color: var(--gaidet-warning-text);
+}
+
 .gaidet-item {
   margin-bottom: 0.6rem;
 }

@@ -112,7 +112,7 @@ function el(tag, props = {}, children = []) {
     if (v === undefined || v === null) continue;
     if (k.startsWith("on") && typeof v === "function") {
       node.addEventListener(k.slice(2), v);
-    } else if (k === "checked" || k === "value") {
+    } else if (k === "checked" || k === "value" || k === "disabled") {
       node[k] = v;
     } else if (k === "class") {
       node.className = v;
@@ -278,6 +278,15 @@ mutable allowedCategories = new Set()
 
 ```{ojs}
 //| echo: false
+// When true, the assignment/module gives no guidance at all on AI use.
+// This overrides allowedCategories: the category gate is disabled and
+// cleared, and a warning tells the student to check with their lecturer
+// before using this tool, rather than letting them guess at what's allowed.
+mutable noGuidance = false
+```
+
+```{ojs}
+//| echo: false
 mutable copyWarning = false
 ```
 
@@ -436,18 +445,26 @@ aiasLevelLabel = {
 
 ```{ojs}
 //| echo: false
-categoryGate = el("div", { class: "gaidet-category-gate" }, [
-  el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1 (What is allowed): Which categories of AI use does your assignment permit?"),
-  el("p", { class: "gaidet-tool-instructions" }, "Check the categories your assignment brief or module instructions allow. Everything else stays locked below until you check it here, so tick only what is permitted."),
-  el("div", { class: "gaidet-category-gate-list" }, data.categories.map(cat => {
+categoryGate = {
+  const allCatIds = data.categories.map(cat => cat.id);
+  const allSelected = allCatIds.every(id => allowedCategories.has(id));
+
+  const optionClass = (base, checked) =>
+    checked ? `${base} gaidet-category-gate-option-checked` : base;
+
+  const categoryOptions = data.categories.map(cat => {
     const isAllowed = allowedCategories.has(cat.id);
     return el("label", {
-      class: isAllowed ? "gaidet-category-gate-option gaidet-category-gate-option-checked" : "gaidet-category-gate-option"
+      class: optionClass(
+        noGuidance ? "gaidet-category-gate-option gaidet-category-gate-option-disabled" : "gaidet-category-gate-option",
+        isAllowed
+      )
     }, [
       el("input", {
         type: "checkbox",
         class: "gaidet-checkbox-input",
         checked: isAllowed,
+        disabled: noGuidance,
         onchange: (e) => {
           const next = new Set(allowedCategories);
           if (e.target.checked) next.add(cat.id); else next.delete(cat.id);
@@ -457,8 +474,59 @@ categoryGate = el("div", { class: "gaidet-category-gate" }, [
       el("span", { class: "gaidet-checkbox-box" }, []),
       el("span", {}, cat.label)
     ]);
-  }))
-])
+  });
+
+  const selectAllOption = el("label", {
+    class: optionClass(
+      noGuidance
+        ? "gaidet-category-gate-option gaidet-category-gate-option-all gaidet-category-gate-option-disabled"
+        : "gaidet-category-gate-option gaidet-category-gate-option-all",
+      allSelected
+    )
+  }, [
+    el("input", {
+      type: "checkbox",
+      class: "gaidet-checkbox-input",
+      checked: allSelected,
+      disabled: noGuidance,
+      onchange: (e) => {
+        mutable allowedCategories = e.target.checked ? new Set(allCatIds) : new Set();
+      }
+    }),
+    el("span", { class: "gaidet-checkbox-box" }, []),
+    el("span", {}, "My assignment allows using AI without limiting it to specific catewgories — select all")
+  ]);
+
+  const noGuidanceOption = el("label", {
+    class: optionClass("gaidet-category-gate-option gaidet-category-gate-option-noguidance", noGuidance)
+  }, [
+    el("input", {
+      type: "checkbox",
+      class: "gaidet-checkbox-input",
+      checked: noGuidance,
+      onchange: (e) => {
+        mutable noGuidance = e.target.checked;
+        if (e.target.checked) mutable allowedCategories = new Set();
+      }
+    }),
+    el("span", { class: "gaidet-checkbox-box" }, []),
+    el("span", {}, "My assignment/module gives no guidance at all on AI use")
+  ]);
+
+  const noGuidanceWarning = noGuidance
+    ? el("div", { class: "gaidet-category-gate-warning" }, [
+        el("strong", {}, "Don’t guess. "),
+        "Without any guidance from your assignment brief or module, this tool can’t help you work out whether AI use is even allowed. Ask your lecturer whether (and how) AI may be used before doing anything else."
+      ])
+    : null;
+
+  return el("div", { class: "gaidet-category-gate" }, [
+    el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1 (What is allowed): Which categories of AI use does your assignment permit?"),
+    el("p", { class: "gaidet-tool-instructions" }, "Check the categories your assignment brief or module instructions allow. Everything else stays locked below until you check it here, so tick only what is permitted."),
+    el("div", { class: "gaidet-category-gate-list" }, [...categoryOptions, selectAllOption, noGuidanceOption]),
+    noGuidanceWarning
+  ]);
+}
 ```
 
 ```{ojs}
