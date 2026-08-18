@@ -494,7 +494,7 @@ categoryGate = {
       }
     }),
     el("span", { class: "gaidet-checkbox-box" }, []),
-    el("span", {}, "My assignment allows using AI without limiting it to specific categories — select all")
+    el("span", {}, "My assignment allows using AI without limiting it to specific categories")
   ]);
 
   const noGuidanceOption = el("label", {
