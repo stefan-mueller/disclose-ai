@@ -1,6 +1,8 @@
 project:
   type: website
   output-dir: docs
+  resources:
+    - "count/"
 
 website:
   title: "AI Disclosure Generator"
@@ -23,7 +25,7 @@ website:
       - href: "#about-the-maintainer"
         text: About
   page-footer:
-    center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)), [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net) and Claude Code with [Quarto](https://quarto.org). Privacy with [Cabin](https://withcabin.com/privacy/disclose-ai.app)"
+    center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/)  and the [Artificial Intelligence Disclosure (AID) Framework](https://arxiv.org/pdf/2408.01904). [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net). Privacy with [Cabin](https://withcabin.com/privacy/disclose-ai.app)"
 
 format:
   html:

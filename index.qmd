@@ -16,7 +16,7 @@ An open-source tool that helps students create structured, task-by-task AI-use d
 
  The use of AI tools among students [continues to grow](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/). Some assignments prohibit generative AI entirely, while others allow it but require students to disclose how it was used. Clear guidance on how to do this is not always available.
 
-If your assignment permits AI use but requires disclosure, this tool can help. It is adapted for student assignments from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) ([Suchikova et al. 2026](https://doi.org/10.1080/08989621.2025.2544331)).
+If your assignment permits AI use but requires disclosure, this tool can help. It is adapted for student assignments from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/)  and the [Artificial Intelligence Disclosure (AID) Framework](https://arxiv.org/pdf/2408.01904).
 
 
 ```{ojs}
@@ -125,6 +125,21 @@ function el(tag, props = {}, children = []) {
     node.append(child instanceof Node ? child : document.createTextNode(child));
   }
   return node;
+}
+
+// Cabin's free tier only reports page views, not custom events, so this
+// piggybacks a "did someone actually generate a declaration" conversion
+// signal on top of page-view tracking: a hidden iframe requests a dummy
+// static page (count/generate-declaration.html) that carries Cabin's
+// tracking script, and Cabin logs that as a page view. It's not dead code —
+// see the "Analytics" section of the Privacy policy below, which discloses
+// this. Fires once per confirmed declaration (not on "Update declaration").
+function trackGenerateClick() {
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = 'https://disclose-ai.app/count/generate-declaration.html?t=' + Date.now();
+  document.body.appendChild(iframe);
+  setTimeout(() => iframe.remove(), 3000);
 }
 
 function taskIsComplete(sentence, tools, openEnded, customLabel) {
@@ -1032,6 +1047,7 @@ outputBox = {
       el("button", {
         class: "gaidet-btn-primary",
         onclick: () => {
+          trackGenerateClick();
           mutable declarationConfirmed = true;
           mutable showConfirmPrompt = false;
           mutable copySuccess = false;
@@ -1283,7 +1299,7 @@ This tool is fully [open source](https://github.com/stefan-mueller/disclose-ai),
 
 **Your declaration and task details.** Everything you enter here (tasks, tools, descriptions, prompts) stays in your own browser. It is never stored, transmitted, or saved anywhere, and remains only in your browser and is cleared when you refresh or close the page. The generated declaration is provided only so you can copy or download it yourself.
 
-**Analytics.** This site uses [Cabin](https://withcabin.com), a privacy-focused analytics service, to understand overall visitor numbers. Cabin does not use cookies, does not track IP addresses, and cannot identify individual visitors — it only reports aggregate, anonymous traffic data (e.g. how many people visited, which pages). See [Cabin's privacy policy](https://withcabin.com/privacy/disclose-ai.app) for details. No data about the content you enter into this tool is ever sent to Cabin or anyone else.
+**Analytics.** This site uses [Cabin](https://withcabin.com), a privacy-focused analytics service, to understand overall visitor numbers. Cabin does not use cookies, does not track IP addresses, and cannot identify individual visitors — it only reports aggregate, anonymous traffic data (e.g. how many people visited, which pages). In addition to page views, we log one aggregate, anonymous count each time someone clicks "Yes, generate declaration" (not on subsequent edits), so we can tell how many visitors complete a declaration; this is technically recorded as a page view to a dummy page (`/count/generate-declaration.html`) because Cabin's plan does not support custom events. See [Cabin's privacy policy](https://withcabin.com/privacy/disclose-ai.app) for details. No data about the content you enter into this tool is ever sent to Cabin or anyone else.
 
 **Questions or feedback.** If you have questions about this policy, contact [Stefan Müller](https://muellerstefan.net). If you spot an error or have an improvement suggestion, feel free to open an issue or pull request on [GitHub](https://github.com/stefan-mueller/disclose-ai).
 
