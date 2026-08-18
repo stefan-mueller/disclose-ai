@@ -1129,7 +1129,7 @@ outputBox = {
             : [el("p", {}, placeholderText)]
         ),
     (showDeclaration && !showConfirmPrompt) ? el("p", { class: "gaidet-output-note" }, [
-      "This declaration is a starting point. I recommend reviewing and adjusting the generated wording to fit your own voice, your module's requirements, and your institution's referencing style before submitting."
+      "I recommend reviewing and adjusting the declaration to fit your own voice and your module's requirements before submitting."
     ]) : null
   ]);
 
