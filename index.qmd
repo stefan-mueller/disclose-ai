@@ -1254,9 +1254,9 @@ I'd love to hear how you're using this tool and any suggestions for improving it
 
 ## How to cite this tool
 
-If you use this tool in your teaching, you can cite it as:
+If you use this tool in your teaching, you can cite it as: 
 
->Müller, Stefan. *AI Disclosure Generator*. <https://disclose-ai.app>
+> Müller, Stefan. *AI Disclosure Generator*. <https://disclose-ai.app>
 
 If you are using this tool in your teaching, it would be great if you could [let me know](https://stefanmueller.ie)
 
@@ -1271,14 +1271,10 @@ This tool's approach is comparable to the [American Journal of Political Science
 
 Further reading on AI-use disclosure:
 
->Suchikova, Yana, Tsybuliak, Natalia, Teixeira da Silva, Jaime A., & Nazarovets, Serhii (2026). “GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing“. *Accountability in Research*, *33*(3). [10.1080/08989621.2025.2544331](https://doi.org/10.1080/08989621.2025.2544331)
-
-
->Weaver, Kari D. (2024). “The Artificial Intelligence Disclosure (AID) Framework: An Introduction“. *College & Research Libraries News*, *85*(10), 407–411. [arxiv.org/abs/2408.01904](https://arxiv.org/abs/2408.01904)
-
->Perkins, Mike, Furze, Leon, Roe, Jasper, & MacVaugh, Jason (2024). “The AI Assessment Scale (AIAS)“. [aiassessmentscale.com](https://aiassessmentscale.com)
-
->American Journal of Political Science (2026). “AJPS AI Policy“. Updated 11 August 2026. [ajps.org/ajps-ai-policy](https://ajps.org/ajps-ai-policy/)
+- Suchikova, Yana, Tsybuliak, Natalia, Teixeira da Silva, Jaime A., & Nazarovets, Serhii (2026). “GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing“. *Accountability in Research*, *33*(3). [10.1080/08989621.2025.2544331](https://doi.org/10.1080/08989621.2025.2544331)
+- Weaver, Kari D. (2024). “The Artificial Intelligence Disclosure (AID) Framework: An Introduction“. *College & Research Libraries News*, *85*(10), 407–411. [arxiv.org/abs/2408.01904](https://arxiv.org/abs/2408.01904)
+- Perkins, Mike, Furze, Leon, Roe, Jasper, & MacVaugh, Jason (2024). “The AI Assessment Scale (AIAS)“. [aiassessmentscale.com](https://aiassessmentscale.com)
+- American Journal of Political Science (2026). “AJPS AI Policy“. Updated 11 August 2026. [ajps.org/ajps-ai-policy](https://ajps.org/ajps-ai-policy/)
 
 ## Disclaimer of responsibility
 

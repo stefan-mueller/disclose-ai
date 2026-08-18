@@ -10,6 +10,16 @@
   --gaidet-warning-text: #9a3412;
 }
 
+/* Quarto's default blockquote text is a light grey; darken it to match the
+   rest of the body copy so quoted text (e.g. the citation) doesn't read as
+   de-emphasised or muted. Bootstrap also adds a `.blockquote` class to every
+   rendered blockquote, and that class rule beats a plain `blockquote`
+   element selector on specificity — so this has to target both. */
+blockquote,
+.blockquote {
+  color: #212529;
+}
+
 html {
   overflow-x: clip;
 }
@@ -1168,6 +1178,14 @@ button:active {
   }
 }
 
+/* Below the two-column breakpoint, the step 2 and step 3 boxes just stack in
+   normal document order with no gap between them (neither box carries its
+   own margin, since the grid `gap` below normally handles that spacing).
+   Match the step 1 → step 2 gap so step 2 → step 3 isn't flush too. */
+.gaidet-layout-right {
+  margin-top: 1.25rem;
+}
+
 /* Two-column layout for the checklist + live declaration preview: only on
    screens wide enough that a sidebar doesn't cramp the checklist itself.
    Below the breakpoint, .gaidet-layout has no special rules at all, so the
@@ -1184,6 +1202,7 @@ button:active {
   .gaidet-layout-right {
     position: sticky;
     top: 4.5rem;
+    margin-top: 0;
   }
 
 }
