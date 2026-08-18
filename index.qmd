@@ -949,7 +949,7 @@ declarationText = {
     const itemToolsPart = itemToolNames.length > 0 ? itemToolNames.join(", ") : "[no tool specified]";
     const toolLabel = itemToolNames.length === 1 ? "Tool" : "Tools";
     const sentencePart = e.sentence.trim() || "[please add an explainer]";
-    const promptsPart = providePrompts && e.prompts && e.prompts.trim() ? `\n    Prompts: ${e.prompts.trim()}` : "";
+    const promptsPart = providePrompts && e.prompts && e.prompts.trim() ? `\n    Prompt: ${e.prompts.trim()}` : "";
     return `- **${labelPart}**\n    ${toolLabel}: ${itemToolsPart}\n    Summary: ${sentencePart}${promptsPart}`;
   });
 
@@ -996,7 +996,7 @@ declarationHtml = {
     const itemToolsPart = itemToolNames.length > 0 ? itemToolNames.join(", ") : "[no tool specified]";
     const toolLabel = itemToolNames.length === 1 ? "Tool" : "Tools";
     const sentencePart = escapeHtml(e.sentence.trim() || "[please add an explainer]");
-    const promptsPart = providePrompts && e.prompts && e.prompts.trim() ? `<br>Prompts: ${escapeHtml(e.prompts.trim())}` : "";
+    const promptsPart = providePrompts && e.prompts && e.prompts.trim() ? `<br>Prompt: ${escapeHtml(e.prompts.trim())}` : "";
     return `<li><strong>${labelPart}</strong><br>${toolLabel}: ${itemToolsPart}<br>Summary: ${sentencePart}${promptsPart}</li>`;
   });
 
