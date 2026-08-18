@@ -897,7 +897,7 @@ form = {
     })
   ]);
 
-  return locked ? lockBox(categoryEl, `Locked – tick “${cat.label} in Step 1 above to unlock this category.`) : categoryEl;
+  return locked ? lockBox(categoryEl, `Locked – if you're allowed to use AI for “${cat.label}”, tick it in Step 1 above to unlock this category.`) : categoryEl;
   })));
 }
 ```
