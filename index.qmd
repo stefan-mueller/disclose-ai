@@ -218,7 +218,12 @@ function preserveFocus(build) {
 function lockBox(contentEl, message = "Locked. Select the relevant categories in Step 1 above first.") {
   contentEl.classList.add("gaidet-locked");
   contentEl.setAttribute("inert", "");
-  const lockMessage = el("div", { class: "gaidet-lock-message" }, message);
+  // Small solid-padlock glyph, drawn inline (no icon font/package) so it
+  // just inherits text color via currentColor. Purely decorative — the
+  // accessible name still comes from the plain-text `message` below.
+  const lockIcon = el("span", { class: "gaidet-lock-icon", "aria-hidden": "true" });
+  lockIcon.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V11a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm-3 8V6a3 3 0 0 1 6 0v3zm3 4a2 2 0 0 1 1 3.73V19a1 1 0 1 1-2 0v-2.27A2 2 0 0 1 12 13z"/></svg>`;
+  const lockMessage = el("div", { class: "gaidet-lock-message" }, [lockIcon, message]);
   const overlay = el("div", {
     class: "gaidet-lock-overlay",
     tabindex: "0",
@@ -897,7 +902,7 @@ form = {
     })
   ]);
 
-  return locked ? lockBox(categoryEl, `Locked – if you're allowed to use AI for “${cat.label}”, tick it in Step 1 above to unlock this category.`) : categoryEl;
+  return locked ? lockBox(categoryEl, `Locked: if you're allowed to use AI for “${cat.label}”, tick it in Step 1 above to unlock this category.`) : categoryEl;
   })));
 }
 ```

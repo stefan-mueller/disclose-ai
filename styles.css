@@ -356,6 +356,12 @@ a:hover {
   transform: translate(-50%, -50%) scale(1);
 }
 
+.gaidet-lock-icon {
+  display: inline-flex;
+  vertical-align: -2px;
+  margin-right: 0.3rem;
+}
+
 .gaidet-steps {
   display: flex;
   flex-direction: column;
