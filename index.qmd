@@ -1236,7 +1236,7 @@ outputBox = {
 
 
 ::: {.callout-note}
-**Where do these categories come from?** The list below is drawn from the task categories used in the [2026 HEPI Student Generative AI Survey](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/), which asked students what they use AI for. It is a checklist of common use cases, not a recommendation to use AI for all (or indeed any) of them. Whether AI is appropriate for a given category still depends entirely on your assignment brief and your lecturer's instructions.
+**Where do these categories come from?** The list below is drawn from the task categories from student surveys and existing AI disclosure guidelines. It is a checklist of common use cases, not a recommendation to use AI for all (or indeed any) of them. Whether AI is appropriate for a given category still depends entirely on your assignment brief and your lecturer’s instructions.
 
 Ticking Step 1 below is the crucial filtering step: it should reflect only what your assignment or module actually permits, not everything AI happens to be capable of. If you are unsure whether a category applies, leave it unticked and ask your lecturer rather than guessing.
 :::
