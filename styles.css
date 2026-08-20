@@ -1175,7 +1175,12 @@ button:active {
 }
 
 .gaidet-btn-secondary:hover {
+  /* color set explicitly, not just left to inherit: the page's global
+     `button { color: #fff }` rule otherwise has just enough specificity to
+     win on hover, turning this text white-on-white (see .gaidet-aias-btn:hover
+     above, where the same fix was needed). */
   background-color: var(--gaidet-accent-tint);
+  color: var(--gaidet-accent);
 }
 
 .gaidet-example-wrap {
