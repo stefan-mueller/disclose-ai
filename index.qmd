@@ -533,7 +533,7 @@ categoryGate = {
 //| echo: false
 step2Label = el("div", {}, [
   el("p", { class: "gaidet-step-label" }, "Step 2 (What you used): Tick every task where you used AI"),
-  el("p", { class: "gaidet-tool-instructions" }, "First specify in Step 1 what you're allowed to do with AI. Then select and describe your use of AI for one or more tasks below.")
+  el("p", { class: "gaidet-tool-instructions" }, "Select and describe your use of AI for one or more tasks below.")
 ])
 ```
 
@@ -551,8 +551,13 @@ form = {
   // `selections` (starting the next render) as their last step.
   let pendingSelections = selections;
 
-  return preserveFocus(() => el("div", {}, data.categories.map(cat => {
-  const locked = !allowedCategories.has(cat.id);
+  if (allowedCategories.size === 0) {
+    return el("div", { class: "gaidet-output-placeholder" }, [
+      el("p", {}, "Complete Step 1 above first. Once you tick the categories of AI use your assignment allows, they’ll appear here for you to describe.")
+    ]);
+  }
+
+  return preserveFocus(() => el("div", {}, data.categories.filter(cat => allowedCategories.has(cat.id)).map(cat => {
   const categoryEl = el("div", { class: "gaidet-category" }, [
     el("h3", {}, cat.label),
     ...cat.items.map(item => {
@@ -970,7 +975,7 @@ form = {
     })
   ]);
 
-  return locked ? lockBox(categoryEl, `Locked: if you're allowed to use AI for “${cat.label}”, tick it in Step 1 above to unlock this category.`) : categoryEl;
+  return categoryEl;
   })));
 }
 ```
@@ -1229,6 +1234,12 @@ outputBox = {
 ```
 
 
+
+::: {.callout-note}
+**Where do these categories come from?** The list below is drawn from the task categories used in the [2026 HEPI Student Generative AI Survey](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/), which asked students what they use AI for. It is a checklist of common use cases, not a recommendation to use AI for all (or indeed any) of them. Whether AI is appropriate for a given category still depends entirely on your assignment brief and your lecturer's instructions.
+
+Ticking Step 1 below is the crucial filtering step: it should reflect only what your assignment or module actually permits, not everything AI happens to be capable of. If you are unsure whether a category applies, leave it unticked and ask your lecturer rather than guessing.
+:::
 
 ${categoryGate}
 
