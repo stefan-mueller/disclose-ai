@@ -80,7 +80,7 @@
     },
     {
       "id": "software_development",
-      "label": "Software development and automation",
+      "label": "Coding and automation",
       "items": [
         { "id": "code_generation", "label": "Code generation" },
         { "id": "code_review", "label": "Code review" },
