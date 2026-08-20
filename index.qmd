@@ -67,6 +67,7 @@ exampleDeclarationHtml = `<p><strong>Declaration on the Use of Artificial Intell
 <li><strong>Code review</strong><br>Tool: Claude Code (Sonnet 4.6)<br>Summary: I wrote the core analysis logic myself; Claude Code was used only to draft repetitive boilerplate (e.g. file-loading functions), which I reviewed, tested, and adapted to my dataset.</li>
 <li><strong>Proofreading</strong><br>Tool: Microsoft Copilot (GPT-5.5)<br>Summary: After completing my own final draft, I asked Copilot to flag grammar and punctuation issues, and manually reviewed and accepted only the suggestions I agreed with.</li>
 </ul>
+<p>The author confirms that this AI use falls within what was permitted for this assignment, and complies with any other applicable rules, such as their institution's Declaration of Authorship.</p>
 <p>Responsibility for the submitted assignment lies entirely with the author of this declaration.</p>
 <p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p>`
 ```
@@ -1010,7 +1011,7 @@ declarationText = {
   const aiasLine = aiasLevelLabel ? `**AIAS level:** ${aiasLevelLabel}\n` : "";
   const heading = `**Declaration on the Use of Artificial Intelligence Tools**\n\n**AI tools used:** ${overallToolsPart}\n${aiasLine}`;
 
-  const closing = `\n\nResponsibility for the submitted assignment lies entirely with the author of this declaration.\n\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.`;
+  const closing = `\n\nThe author confirms that this AI use falls within what was permitted for this assignment, and complies with any other applicable rules, such as their institution's Declaration of Authorship.\n\nResponsibility for the submitted assignment lies entirely with the author of this declaration.\n\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.`;
 
   if (entries.length === 0) {
     return `${heading}\nNo tasks have been ticked yet.${closing}`;
@@ -1057,7 +1058,7 @@ declarationHtml = {
   const aiasLineHtml = aiasLevelLabel ? `<p><strong>AIAS level:</strong> ${escapeHtml(aiasLevelLabel)}</p>` : "";
   const headingHtml = `<p><strong>Declaration on the Use of Artificial Intelligence Tools</strong></p><p><strong>AI tools used:</strong> ${overallToolsPart}</p>${aiasLineHtml}`;
 
-  const closingHtml = `<p>Responsibility for the submitted assignment lies entirely with the author of this declaration.</p><p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p>`;
+  const closingHtml = `<p>The author confirms that this AI use falls within what was permitted for this assignment, and complies with any other applicable rules, such as their institution's Declaration of Authorship.</p><p>Responsibility for the submitted assignment lies entirely with the author of this declaration.</p><p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p>`;
 
   if (entries.length === 0) {
     return `${headingHtml}<p>No tasks have been ticked yet.</p>${closingHtml}`;

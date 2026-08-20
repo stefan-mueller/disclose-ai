@@ -55,17 +55,18 @@
       "items": [
         { "id": "brainstorming", "label": "Brainstorming and generating ideas" },
         { "id": "defining_objectives", "label": "Defining the objective or question" },
-        { "id": "structuring_approach", "label": "Helping shape the overall approach or argument" }
+        { "id": "structuring_approach", "label": "Helping shape the overall approach or argument" },
+        { "id": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
       "id": "literature_review",
-      "label": "Literature review",
+      "label": "Initial literature screening",
       "items": [
-        { "id": "finding_sources", "label": "Finding sources" },
-        { "id": "summarising_sources", "label": "Summarising sources" },
+        { "id": "finding_sources", "label": "Finding potentially relevant literature and sources" },
         { "id": "identifying_gaps", "label": "Identifying gaps in the argument or literature" },
-        { "id": "clarifying_definitions", "label": "Clarifying definitions or concepts" }
+        { "id": "clarifying_definitions", "label": "Clarifying definitions or concepts" },
+        { "id": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
@@ -73,7 +74,8 @@
       "label": "Data management",
       "items": [
         { "id": "data_collection", "label": "Data collection" },
-        { "id": "data_visualisation", "label": "Data visualisation" }
+        { "id": "data_visualisation", "label": "Data visualisation" },
+        { "id": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
@@ -82,18 +84,19 @@
       "items": [
         { "id": "code_generation", "label": "Code generation" },
         { "id": "code_review", "label": "Code review" },
-        { "id": "code_optimisation", "label": "Code optimisation or debugging" }
+        { "id": "code_optimisation", "label": "Code optimisation or debugging" },
+        { "id": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
       "id": "writing_editing",
       "label": "Writing and editing",
       "items": [
-        { "id": "text_generation", "label": "Text generation" },
         { "id": "proofreading", "label": "Proofreading" },
         { "id": "summarising_own_text", "label": "Summarising your own draft" },
         { "id": "tone_adjustment", "label": "Tone or style adjustment" },
-        { "id": "translation", "label": "Translation" }
+        { "id": "translation", "label": "Translation" },
+        { "id": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
@@ -102,7 +105,8 @@
       "items": [
         { "id": "ai_visuals", "label": "AI-generated images or videos" },
         { "id": "ai_narration", "label": "AI-generated voice-over or narration" },
-        { "id": "ai_av_editing", "label": "AI-assisted video or audio editing" }
+        { "id": "ai_av_editing", "label": "AI-assisted video or audio editing" },
+        { "id": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
