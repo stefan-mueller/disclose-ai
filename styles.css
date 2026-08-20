@@ -658,7 +658,6 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-aias-list .gaidet-info-icon {
-  border-bottom: none;
   font-size: 0.8em;
 }
 
@@ -795,7 +794,14 @@ label.gaidet-tool-option:hover {
   color: var(--gaidet-accent);
   font-style: normal;
   cursor: help;
-  border-bottom: 1px dotted var(--gaidet-accent);
+}
+
+/* Bigger and in the bright accent (not the plain teal, which is too close
+   in tone to the dark green .gaidet-category-gate card behind it) so the
+   icon actually stands out against Step 1's dark background. */
+.gaidet-category-gate-option .gaidet-info-icon {
+  font-size: 0.8em;
+  color: var(--gaidet-accent-bright);
 }
 
 .gaidet-info-icon::after {
@@ -806,13 +812,19 @@ label.gaidet-tool-option:hover {
   transform: translateX(-50%);
   width: 240px;
   max-width: calc(100vw - 2.5rem);
-  background: #1f2430;
-  color: #fff;
+  /* Same light-tint-plus-accent-text pairing used for buttons and callouts
+     elsewhere on the site (e.g. .gaidet-btn-secondary:hover), rather than a
+     dark panel — a light box also reads clearly against the dark green
+     .gaidet-category-gate card the icon sits on in Step 1. */
+  background: var(--gaidet-accent-tint);
+  color: var(--gaidet-accent-dark);
   font-weight: 400;
   font-size: 0.78rem;
   line-height: 1.4;
   padding: 0.55rem 0.7rem;
-  border-radius: 6px;
+  border-radius: 8px;
+  border: 1px solid var(--gaidet-accent);
+  box-shadow: 0 6px 16px rgba(16, 24, 40, 0.18);
   white-space: pre-line;
   opacity: 0;
   visibility: hidden;
@@ -1059,6 +1071,16 @@ hr {
 .gaidet-output-placeholder p {
   margin: 0;
   max-width: 32rem;
+}
+
+/* Same orange treatment as .gaidet-category-gate-warning and .gaidet-warning,
+   for the one placeholder that's really an instruction to go back and finish
+   Step 1, not just a neutral "nothing here yet" note (e.g. the Step 3
+   "no declaration yet" placeholder keeps the default teal look). */
+.gaidet-output-placeholder-warning {
+  background: var(--gaidet-warning-bg);
+  border-color: var(--gaidet-warning-border);
+  color: var(--gaidet-warning-text);
 }
 
 /* Form controls */
