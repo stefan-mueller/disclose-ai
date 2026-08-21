@@ -804,6 +804,17 @@ label.gaidet-tool-option:hover {
   color: var(--gaidet-accent-bright);
 }
 
+/* The default tooltip centres itself on the icon, which is fine when the
+   icon sits mid-row (e.g. the AIAS pills), but in Step 1 the icon trails
+   the category label near the right edge of a narrow mobile viewport, so a
+   centred 240px box overflows off-screen and gets clipped. Anchoring its
+   right edge to the icon instead keeps the whole box on screen. */
+.gaidet-category-gate-option .gaidet-info-icon::after {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
 .gaidet-info-icon::after {
   content: attr(data-tooltip);
   position: absolute;
