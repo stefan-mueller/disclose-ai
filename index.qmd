@@ -18,6 +18,8 @@ An open-source tool that helps students create structured, task-by-task AI-use d
 
 If your assignment permits AI use but requires disclosure, this tool can help. It is adapted for student assignments from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/)  and the [Artificial Intelligence Disclosure (AID) Framework](https://arxiv.org/pdf/2408.01904).
 
+This tool is built specifically for student coursework. If you're a researcher looking to document AI use in a publication or grant application, check out the [related literature and tools](#related-literature-and-tools) below for options aimed at research rather than teaching.
+
 
 ```{ojs}
 //| echo: false
@@ -1362,7 +1364,7 @@ If you are using this tool in your teaching, it would be great if you could [let
 ## Related literature and tools
 
 
-A number of similar tools exist to support transparent AI-use disclosure, including the [AID Framework](https://aidframework.org) and the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/). All aim at the same goal: helping students and researchers disclose their AI use clearly and consistently. Use whichever fits your context best.
+A number of similar tools exist to support transparent AI-use disclosure, including the [AID Framework](https://aidframework.org), the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/), and [sIfA](https://github.com/mareikeschomerus-ctrl/sIfA) (Statement of Intellectual Fellowship and Accountability), a browser-based tool from Busara that maps AI contributions onto the 14 CRediT contributor roles and is aimed more at researchers documenting a publication than at student coursework. All aim at the same goal: helping students and researchers disclose their AI use clearly and consistently. Use whichever fits your context best.
 
 The optional "AIAS level" field above uses the [AI Assessment Scale](https://aiassessmentscale.com), a complementary framework instructors use to specify how much AI use is permitted on a given assessment; this tool only lets you record that level, it doesn't set or enforce it.
 
@@ -1374,6 +1376,8 @@ Further reading on AI-use disclosure:
 - Weaver, Kari D. (2024). “The Artificial Intelligence Disclosure (AID) Framework: An Introduction“. *College & Research Libraries News*, *85*(10), 407–411. [arxiv.org/abs/2408.01904](https://arxiv.org/abs/2408.01904)
 - Perkins, Mike, Furze, Leon, Roe, Jasper, & MacVaugh, Jason (2024). “The AI Assessment Scale (AIAS)“. [aiassessmentscale.com](https://aiassessmentscale.com)
 - American Journal of Political Science (2026). “AJPS AI Policy“. Updated 11 August 2026. [ajps.org/ajps-ai-policy](https://ajps.org/ajps-ai-policy/)
+- Saleh, Engy, & Schomerus, Mareike (2026). “The sIfA Tool for a Statement of Intellectual Fellowship and Accountability: An Invitation to Reflect on How Humans and AI Interact in Producing Knowledge“. *Busara*. [10.62372/IUPB2137](https://doi.org/10.62372/IUPB2137)
+- Schomerus, Mareike. *sIfA Tool (Tool to create a Statement of Intellectual Fellowship and Accountability)*. Version 1.4. 2026. *Busara*. [10.5281/zenodo.20285993](https://doi.org/10.5281/zenodo.20285993)
 
 ## Disclaimer of responsibility
 
