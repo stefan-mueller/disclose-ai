@@ -533,7 +533,7 @@ categoryGate = {
   const noGuidanceWarning = noGuidance
     ? el("div", { class: "gaidet-category-gate-warning" }, [
         el("strong", {}, "Don’t assume. "),
-        "No guidance does not mean AI use is allowed. Ask your module coordinator before using AI or generating a declaration, rather than assuming you can use it."
+        "Treat no guidance as AI not being permitted until your module coordinator confirms otherwise, not as permission by default. Ask before using AI or generating a declaration."
       ])
     : null;
 
@@ -1351,6 +1351,15 @@ This tool was built by [Stefan Müller](https://stefanmueller.ie) with assistanc
 
 I'd love to hear how you're using this tool and any suggestions for improving it. Please share your thoughts via this [short feedback form](https://forms.cloud.microsoft/e/nSGgCVHRQg).
 
+## Suggestions for lecturers
+
+The suggestions below come out of conversations with lecturers who tested the tool and shared feedback on how they were thinking of using it with their own students.
+
+Some lecturers find it useful for students when an assignment brief names the same categories as the ones in Step 1 above, rather than describing permitted and prohibited AI use in separate wording. Students can then tick exactly what's been permitted without having to interpret how a general policy applies to their situation.
+
+One way this can look in an assignment brief: "For this assignment, you may use AI for _Conceptualisation_ and _Initial literature screening_, for instance to brainstorm ideas or locate relevant sources. AI must **not** be used for _Data management_, _Coding and automation_, _Writing and editing_, or _Audiovisual and interactive components_, as these should be your own unassisted work. Anything else can be recorded under _Additional tasks_. Please use the AI Disclosure Generator to record your AI use and attach the generated declaration to your assignment submission: [https://disclose-ai.app](https://disclose-ai.app)."
+
+Where a policy hasn't been settled yet, a student who ticks "no guidance" in Step 1 is told to treat that as AI not being permitted, rather than as permission by default.
 
 
 ## How to cite this tool
