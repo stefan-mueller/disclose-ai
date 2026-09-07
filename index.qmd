@@ -32,7 +32,7 @@ stepsIntro = el("div", { class: "gaidet-steps" }, [
     el("div", { class: "gaidet-step-number" }, "1"),
     el("div", { class: "gaidet-step-body" }, [
       el("h3", {}, "Choose what is allowed"),
-      el("p", {}, "Tick the categories of AI use your assignment or module permits.")
+      el("p", {}, "Tick the categories of AI use your assignment or course/module permits.")
     ])
   ]),
   el("div", { class: "gaidet-step" }, [
@@ -95,9 +95,9 @@ exampleDeclarationHtml = `<p><strong>Declaration on the Use of Artificial Intell
 
 
 ::: {.callout-warning}
-Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual module or assessment. Before using any AI tool, check your module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or allow AI use only for a subset of tasks. Some institutions also limit which AI tools students may use, for example restricting you to a specific, approved list.
+Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual course/module or assessment. Before using any AI tool, check your course/module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or allow AI use only for a subset of tasks. Some institutions also limit which AI tools students may use, for example restricting you to a specific, approved list.
 
-Disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, module, or assessment brief. You are ultimately responsible for complying with your institution's and module's policies, including any separate declaration of authorship or originality statement you must sign. See the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
+Disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, course/module, or assessment brief. You are ultimately responsible for complying with your institution's and course/module's policies, including any separate declaration of authorship or originality statement you must sign. See the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 
 Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies. For an example of what institution-specific AI guidance looks like, see [UCD Library's guide to using generative AI](https://libguides.ucd.ie/GENAI/usingAI).
 :::
@@ -281,7 +281,7 @@ mutable allowedCategories = new Set()
 
 ```{ojs}
 //| echo: false
-// When true, the assignment/module gives no guidance at all on AI use.
+// When true, the assignment/course/module gives no guidance at all on AI use.
 // This overrides allowedCategories: the category gate is disabled and
 // cleared, and a warning tells the student to check with their lecturer
 // before using this tool, rather than letting them guess at what's allowed.
@@ -428,7 +428,7 @@ aiasSelector = {
   return el("div", { class: "gaidet-aias-question" }, [
     el("p", { class: "gaidet-tool-label" }, "AI Assessment Scale level (optional)"),
     el("p", { class: "gaidet-tool-instructions" }, [
-      "If your assignment brief or module states a level from the ",
+      "If your assignment brief or course/module states a level from the ",
       el("a", { href: "https://aiassessmentscale.com", target: "_blank", rel: "noopener" }, "AI Assessment Scale"),
       ", select the matching level below. It will be added to your declaration."
     ]),
@@ -527,19 +527,19 @@ categoryGate = {
       }
     }),
     el("span", { class: "gaidet-checkbox-box" }, []),
-    el("span", {}, "My assignment/module gives no guidance at all on AI use")
+    el("span", {}, "My assignment/course/module gives no guidance at all on AI use")
   ]);
 
   const noGuidanceWarning = noGuidance
     ? el("div", { class: "gaidet-category-gate-warning" }, [
         el("strong", {}, "Don’t assume. "),
-        "Treat no guidance as AI not being permitted until your module coordinator confirms otherwise, not as permission by default. Ask before using AI or generating a declaration."
+        "Treat no guidance as AI not being permitted until your course/module coordinator confirms otherwise, not as permission by default. Ask before using AI or generating a declaration."
       ])
     : null;
 
   return el("div", { class: "gaidet-category-gate" }, [
     el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1 (What is allowed): Which categories of AI use does your assignment permit?"),
-    el("p", { class: "gaidet-tool-instructions" }, "Check the categories your assignment brief or module instructions allow. Everything else stays locked below until you check it here, so tick only what is permitted."),
+    el("p", { class: "gaidet-tool-instructions" }, "Check the categories your assignment brief or course/module instructions allow. Everything else stays locked below until you check it here, so tick only what is permitted."),
     el("div", { class: "gaidet-category-gate-list" }, [...categoryOptions, selectAllOption, noGuidanceOption]),
     noGuidanceWarning
   ]);
@@ -1240,7 +1240,7 @@ outputBox = {
             : [el("p", {}, placeholderText)]
         ),
     (showDeclaration && !showConfirmPrompt) ? el("p", { class: "gaidet-output-note" }, [
-      "I recommend reviewing and adjusting the declaration to fit your own voice and your module's requirements before submitting."
+      "I recommend reviewing and adjusting the declaration to fit your own voice and your course/module's requirements before submitting."
     ]) : null
   ]);
 
@@ -1255,7 +1255,7 @@ outputBox = {
 ::: {.callout-note}
 **Where do these categories come from?** The list below is drawn from the task categories from student surveys and existing AI disclosure guidelines. It is a checklist of common use cases, not a recommendation to use AI for all (or indeed any) of them. Whether AI is appropriate for a given category still depends entirely on your assignment brief and your lecturer’s instructions.
 
-Ticking Step 1 below is the crucial filtering step: it should reflect only what your assignment or module actually permits, not everything AI happens to be capable of. If you are unsure whether a category applies, leave it unticked and ask your lecturer rather than guessing.
+Ticking Step 1 below is the crucial filtering step: it should reflect only what your assignment or course/module actually permits, not everything AI happens to be capable of. If you are unsure whether a category applies, leave it unticked and ask your lecturer rather than guessing.
 :::
 
 ${categoryGate}
@@ -1390,11 +1390,11 @@ Further reading on AI-use disclosure:
 
 ## Disclaimer of responsibility
 
-This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is not legal, academic, or official institutional guidance, and using it does not constitute compliance with any university, School, programme, or module policy. 
+This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is not legal, academic, or official institutional guidance, and using it does not constitute compliance with any university, School, programme, or course/module policy.
 
 The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. 
 
-You are solely responsible for checking your own university's and module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or module coordinator whether, and how, AI tools may be used before you submit any work. The author cannot be held legally accountable for any reliance placed on this tool.
+You are solely responsible for checking your own university's and course/module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or course/module coordinator whether, and how, AI tools may be used before you submit any work. The author cannot be held legally accountable for any reliance placed on this tool.
 
 This tool is an independent personal project of the author and is not an official service of, or endorsed by, University College Dublin or any other institution.
 
