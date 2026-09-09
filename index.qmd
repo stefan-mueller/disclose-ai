@@ -16,9 +16,9 @@ An open-source tool that helps students create structured, task-by-task AI-use d
 
  The use of AI tools among students [continues to grow](https://www.hepi.ac.uk/reports/student-generative-ai-survey-2026/). Some assignments prohibit generative AI entirely, while others allow it but require students to disclose how it was used. Clear guidance on how to do this is not always available.
 
-If your assignment permits AI use but requires disclosure, this tool can help. It is adapted for student assignments from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/)  and the [Artificial Intelligence Disclosure (AID) Framework](https://arxiv.org/pdf/2408.01904).
+If your assignment permits AI use but requires disclosure, this tool can help. It is adapted for student assignments from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) and the [Artificial Intelligence Disclosure (AID) Framework](https://arxiv.org/pdf/2408.01904).
 
-This tool is built specifically for student coursework. If you're a researcher looking to document AI use in a publication or grant application, check out the [related literature and tools](#related-literature-and-tools) below for options aimed at research rather than teaching.
+This tool is built specifically for student coursework. If you're a researcher looking to document AI use in a publication or grant application, check out the [related literature and tools](#related-literature-and-advice) below for options aimed at research rather than teaching.
 
 
 ```{ojs}
@@ -361,7 +361,7 @@ promptsToggle = {
           onchange: (e) => {
             if (e.target.checked) {
               mutable providePrompts = true;
-              document.getElementById("generate-declaration")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              document.getElementById("gaidet-output-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
             }
           }
         }),
@@ -830,7 +830,7 @@ form = {
       const sentenceTextarea = el("textarea", {
         class: "gaidet-sentence",
         "data-field": `sentence::${key}`,
-        "aria-label": "Description of what you asked the AI to do and how you used  and validated the output",
+        "aria-label": "Description of what you asked the AI to do and how you used and validated the output",
         placeholder: "What did you ask the AI to do, and how did you use and validate the output?",
         maxlength: "3000",
         value: sel?.sentence ?? "",
@@ -1344,12 +1344,14 @@ ${progressBox}
 ---
 
 
-## About the maintainer
+## About the maintainer and tool
 
 
 This tool was built by [Stefan Müller](https://stefanmueller.ie) with assistance from Claude Code, under the maintainer's direction.
 
-I'd love to hear how you're using this tool and any suggestions for improving it. Please share your thoughts via this [short feedback form](https://forms.cloud.microsoft/e/nSGgCVHRQg).
+I would love to hear how you are using this tool and any suggestions for improving it. Please share your thoughts via this [short feedback form](https://forms.cloud.microsoft/e/nSGgCVHRQg).
+
+
 
 ## Suggestions for lecturers
 
@@ -1362,15 +1364,11 @@ One way this can look in an assignment brief: "For this assignment, you may use 
 Where a policy hasn't been settled yet, a student who ticks "no guidance" in Step 1 is told to treat that as AI not being permitted, rather than as permission by default.
 
 
-## How to cite this tool
-
-If you use this tool in your teaching, you can cite it as: 
+If you are using this tool in your teaching, you can cite it as:
 
 > Müller, Stefan. *AI Disclosure Generator*. <https://disclose-ai.app>
 
-If you are using this tool in your teaching, it would be great if you could [let me know](https://stefanmueller.ie)
-
-## Related literature and tools
+## Related literature and advice
 
 
 A number of similar tools exist to support transparent AI-use disclosure, including the [AID Framework](https://aidframework.org), the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/), and [sIfA](https://github.com/mareikeschomerus-ctrl/sIfA) (Statement of Intellectual Fellowship and Accountability), a browser-based tool from Busara that maps AI contributions onto the 14 CRediT contributor roles and is aimed more at researchers documenting a publication than at student coursework. All aim at the same goal: helping students and researchers disclose their AI use clearly and consistently. Use whichever fits your context best.
