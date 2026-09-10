@@ -990,7 +990,7 @@ hr {
   color: #166534;
   border-radius: 8px;
   padding: 0.6rem 0.9rem;
-  margin-bottom: 0.9rem;
+  margin: 0.9rem 0;
   font-size: 0.9rem;
 }
 
@@ -1186,11 +1186,12 @@ button:active {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  margin-top: 0.9rem;
 }
 
 .gaidet-btn-small {
-  padding: 0.35rem 0.7rem;
-  font-size: 0.8rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
 }
 
 .gaidet-btn-primary {

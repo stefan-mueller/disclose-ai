@@ -1190,42 +1190,10 @@ outputBox = {
       showConfirmPrompt ? null : el("button", {
         class: "gaidet-btn-primary",
         onclick: onCreateClick
-      }, declarationConfirmed ? "Update declaration" : "Create declaration"),
-      el("div", { class: "gaidet-output-actions-secondary" }, [
-        showDeclaration ? el("button", {
-          class: "gaidet-btn-secondary gaidet-btn-small",
-          onclick: () => {
-            const item = new ClipboardItem({
-              "text/plain": new Blob([declarationText], { type: "text/plain" }),
-              "text/html": new Blob([declarationHtml], { type: "text/html" })
-            });
-            navigator.clipboard.write([item]).catch(() => {
-              // Older/other browsers without rich-clipboard support.
-              navigator.clipboard.writeText(declarationText);
-            });
-            mutable copySuccess = "copy";
-            mutable copiedText = declarationText;
-          }
-        }, "Copy to clipboard") : null,
-        showDeclaration ? el("button", {
-          class: "gaidet-btn-secondary gaidet-btn-small",
-          onclick: () => {
-            const blob = new Blob([declarationText], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "ai-disclosure-declaration.txt";
-            a.click();
-            URL.revokeObjectURL(url);
-            mutable copySuccess = "download";
-            mutable copiedText = declarationText;
-          }
-        }, "Download as txt file") : null
-      ])
+      }, declarationConfirmed ? "Update declaration" : "Create declaration")
     ]),
     warning,
     confirmBox,
-    success,
     showConfirmPrompt
       ? null
       : showDeclaration
@@ -1239,6 +1207,40 @@ outputBox = {
             ? placeholderText.map(t => el("p", {}, t))
             : [el("p", {}, placeholderText)]
         ),
+    // Copy/download sit below the declaration, not above it, so a student
+    // reads what was generated before acting on it.
+    (showDeclaration && !showConfirmPrompt) ? el("div", { class: "gaidet-output-actions-secondary" }, [
+      el("button", {
+        class: "gaidet-btn-secondary gaidet-btn-small",
+        onclick: () => {
+          const item = new ClipboardItem({
+            "text/plain": new Blob([declarationText], { type: "text/plain" }),
+            "text/html": new Blob([declarationHtml], { type: "text/html" })
+          });
+          navigator.clipboard.write([item]).catch(() => {
+            // Older/other browsers without rich-clipboard support.
+            navigator.clipboard.writeText(declarationText);
+          });
+          mutable copySuccess = "copy";
+          mutable copiedText = declarationText;
+        }
+      }, "Copy to clipboard"),
+      el("button", {
+        class: "gaidet-btn-secondary gaidet-btn-small",
+        onclick: () => {
+          const blob = new Blob([declarationText], { type: "text/plain" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "ai-disclosure-declaration.txt";
+          a.click();
+          URL.revokeObjectURL(url);
+          mutable copySuccess = "download";
+          mutable copiedText = declarationText;
+        }
+      }, "Download as txt file")
+    ]) : null,
+    success,
     (showDeclaration && !showConfirmPrompt) ? el("p", { class: "gaidet-output-note" }, [
       "I recommend reviewing and adjusting the declaration to fit your own voice and your course/module's requirements before submitting."
     ]) : null
