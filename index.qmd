@@ -1343,7 +1343,7 @@ ${progressBox}
 ## About the maintainer and tool
 
 
-This tool was built by [Stefan Müller](https://stefanmueller.ie) with assistance from Claude Code, under the maintainer's direction.
+[Stefan Müller](https://stefanmueller.ie) built this tool with assistance from AI Coding Agents, under his direction.
 
 I would love to hear how you are using this tool and any suggestions for improving it. Please share your thoughts via this [short feedback form](https://forms.cloud.microsoft/e/nSGgCVHRQg).
 
@@ -1373,7 +1373,7 @@ If you are using this tool in your teaching, you can cite it as:
 
 > Müller, Stefan. *AI Disclosure Generator*. <https://disclose-ai.app>
 
-## Related literature and advice
+### Related literature and advice
 
 
 A number of similar tools exist to support transparent AI-use disclosure, including the [AID Framework](https://aidframework.org), the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/), and [sIfA](https://github.com/mareikeschomerus-ctrl/sIfA) (Statement of Intellectual Fellowship and Accountability), a browser-based tool from Busara that maps AI contributions onto the 14 CRediT contributor roles and is aimed more at researchers documenting a publication than at student coursework. All aim at the same goal: helping students and researchers disclose their AI use clearly and consistently. Use whichever fits your context best.
@@ -1403,5 +1403,5 @@ This tool is an independent personal project of the author and is not an officia
 
 The AI tools listed or suggested in this tool are trademarks of their respective owners. Their appearance here, including in the autocomplete suggestions, is for identification purposes only and does not imply any affiliation with, or endorsement of, this tool by those companies, nor endorsement of those tools by the author.
 
-See the [privacy policy](privacy.qmd) for details on what data this tool collects.
+See the [privacy policy](privacy.qmd) for full details on what data this tool does, and does not, collect.
 
