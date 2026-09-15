@@ -22,8 +22,6 @@ website:
         text: Overview
       - href: "#generate-declaration"
         text: Generate Declaration
-      - href: "#about-the-maintainer-and-tool"
-        text: About
       - href: "#information-for-lecturers"
         text: Information for Lecturers
   page-footer:
