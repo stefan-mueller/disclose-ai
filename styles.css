@@ -25,7 +25,9 @@ html {
 }
 
 body {
-  font-family: sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
   background-color: #fbfbfc;
   overflow-x: clip;
   /* Chrome's scroll anchoring tries to auto-correct scroll position whenever
@@ -125,9 +127,8 @@ label:active .gaidet-checkbox-box {
 
 
 .navbar {
-    border-bottom: 0.5px solid #ccc; /* Adjust the color (#ccc) and thickness (1px) as needed */
-    line-height: 1em; /* Decrease this value to reduce space between lines */
-
+  border-bottom: 1px solid var(--gaidet-border);
+  line-height: 1em;
 }
 
 .navbar .nav-link {
@@ -162,6 +163,7 @@ h2 {
   margin-top: 4rem;
   border-bottom: none;
   padding-bottom: 0;
+  letter-spacing: -0.01em;
 }
 
 h2:first-of-type::before,
@@ -241,18 +243,22 @@ h3 {
   animation: gaidet-underline 0.3s ease-out 0.3s both;
 }
 
+/* A left-accent card, the same visual language as .gaidet-category and the
+   other task cards below, rather than a one-off solid-colour hero banner. */
 .gaidet-overview {
-  background: var(--gaidet-accent);
+  background: var(--gaidet-accent-tint);
+  border: 1px solid var(--gaidet-border);
+  border-left: 4px solid var(--gaidet-accent);
   border-radius: 6px;
   padding: 1.1rem 1.4rem;
   margin: 1.5rem 0;
-  font-size: 1rem;
-  line-height: 1.55;
-  color: #ffffffdb;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--gaidet-accent-dark);
 }
 
 .gaidet-overview a {
-  color: #fff;
+  color: var(--gaidet-accent-dark);
   text-decoration: underline;
 }
 
@@ -1118,6 +1124,8 @@ hr {
   background: var(--gaidet-warning-bg);
   border-color: var(--gaidet-warning-border);
   color: var(--gaidet-warning-text);
+  min-height: 0;
+  padding: 1rem 1.2rem;
 }
 
 /* Form controls */

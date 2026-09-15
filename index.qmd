@@ -570,7 +570,11 @@ form = {
 
   if (allowedCategories.size === 0) {
     return el("div", { class: "gaidet-output-placeholder gaidet-output-placeholder-warning" }, [
-      el("p", {}, "Complete Step 1 above first. Once you tick the categories of AI use your assignment allows, they’ll appear here for you to describe.")
+      el("p", {}, [
+        "Complete ",
+        el("a", { href: "#generate-declaration" }, "Step 1"),
+        " above first. Once you tick the categories of AI use your assignment allows, they’ll appear here for you to describe."
+      ])
     ]);
   }
 
