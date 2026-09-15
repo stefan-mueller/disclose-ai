@@ -134,8 +134,8 @@ function el(tag, props = {}, children = []) {
 // piggybacks a "did someone actually generate a declaration" conversion
 // signal on top of page-view tracking: a hidden iframe requests a dummy
 // static page (count/generate-declaration.html) that carries Cabin's
-// tracking script, and Cabin logs that as a page view. It's not dead code —
-// see the "Analytics" section of the Privacy policy below, which discloses
+// tracking script, and Cabin logs that as a page view. It's not dead code,
+// see the "Analytics" section of the Privacy Policy page, which discloses
 // this. Fires once per confirmed declaration (not on "Update declaration").
 function trackGenerateClick() {
   const iframe = document.createElement('iframe');
@@ -1006,7 +1006,7 @@ promptsReminder = providePrompts
   : null
 ```
 
-Before you begin, please read the [privacy policy](#privacy-policy) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
+Before you begin, please read the [privacy policy](privacy.qmd) and [disclaimer of responsibility](#disclaimer-of-responsibility) at the end of this page for details.
 
 
 ```{ojs}
@@ -1254,12 +1254,6 @@ outputBox = {
 
 
 
-::: {.callout-note}
-**Where do these categories come from?** The list below is drawn from the task categories from student surveys and existing AI disclosure guidelines. It is a checklist of common use cases, not a recommendation to use AI for all (or indeed any) of them. Whether AI is appropriate for a given category still depends entirely on your assignment brief and your lecturer’s instructions.
-
-Ticking Step 1 below is the crucial filtering step: it should reflect only what your assignment or course/module actually permits, not everything AI happens to be capable of. If you are unsure whether a category applies, leave it unticked and ask your lecturer rather than guessing.
-:::
-
 ${categoryGate}
 
 ::: {.gaidet-layout}
@@ -1342,10 +1336,6 @@ progressBox = {
 
 ${progressBox}
 
-
----
-
-
 ## About the maintainer and tool
 
 
@@ -1353,18 +1343,27 @@ This tool was built by [Stefan Müller](https://stefanmueller.ie) with assistanc
 
 I would love to hear how you are using this tool and any suggestions for improving it. Please share your thoughts via this [short feedback form](https://forms.cloud.microsoft/e/nSGgCVHRQg).
 
+## Information for lecturers
 
+This section answers the questions lecturers have asked most often after testing the tool with their own students.
 
-## Suggestions for lecturers
+### Where do these categories come from?
 
-The suggestions below come out of conversations with lecturers who tested the tool and shared feedback on how they were thinking of using it with their own students.
+The categories in Step 1 above are drawn from task categories used in student surveys and existing AI disclosure guidelines. They form a checklist of common use cases, not a recommendation that students use AI for all, or indeed any, of them. Whether AI is appropriate for a given category still depends entirely on your assignment brief and your own instructions.
 
-Some lecturers find it useful for students when an assignment brief names the same categories as the ones in Step 1 above, rather than describing permitted and prohibited AI use in separate wording. Students can then tick exactly what's been permitted without having to interpret how a general policy applies to their situation.
+Step 1 is the crucial filtering step for students: it should reflect only what your assignment or course/module actually permits, not everything AI happens to be capable of. Students who are unsure whether a category applies are told to leave it unticked and ask you rather than guess.
 
-One way this can look in an assignment brief: "For this assignment, you may use AI for _Conceptualisation_ and _Initial literature screening_, for instance to brainstorm ideas or locate relevant sources. AI must **not** be used for _Data management_, _Coding and automation_, _Writing and editing_, or _Audiovisual and interactive components_, as these should be your own unassisted work. Anything else can be recorded under _Additional tasks_. Please use the AI Disclosure Generator to record your AI use and attach the generated declaration to your assignment submission: [https://disclose-ai.app](https://disclose-ai.app)."
+### How can I phrase permitted AI use in my assignment brief?
 
-Where a policy hasn't been settled yet, a student who ticks "no guidance" in Step 1 is told to treat that as AI not being permitted, rather than as permission by default.
+Some lecturers find it useful to name the same categories in their assignment brief as the ones in Step 1, rather than describing permitted and prohibited AI use in separate wording. Students can then tick exactly what has been permitted without having to interpret how a general policy applies to their situation.
 
+One way this can look in an assignment brief: "For this assignment, you may use AI for *Conceptualisation* and *Initial literature screening*, for instance to brainstorm ideas or locate relevant sources. AI must **not** be used for *Data management*, *Coding and automation*, *Writing and editing*, or *Audiovisual and interactive components*, as these should be your own unassisted work. Anything else can be recorded under *Additional tasks*. Please use the AI Disclosure Generator to record your AI use and attach the generated declaration to your assignment submission: [https://disclose-ai.app](https://disclose-ai.app)."
+
+### What if my course/module has not settled on an AI policy yet?
+
+A student who ticks "no guidance" in Step 1 is told to treat that as AI not being permitted, rather than as permission by default, until you or the course/module coordinator confirms otherwise. Settling on even a brief policy, using the wording above, removes that ambiguity for your students.
+
+### How do I cite this tool?
 
 If you are using this tool in your teaching, you can cite it as:
 
@@ -1400,14 +1399,5 @@ This tool is an independent personal project of the author and is not an officia
 
 The AI tools listed or suggested in this tool are trademarks of their respective owners. Their appearance here, including in the autocomplete suggestions, is for identification purposes only and does not imply any affiliation with, or endorsement of, this tool by those companies, nor endorsement of those tools by the author.
 
-
-## Privacy policy
-
-This tool is fully [open source](https://github.com/stefan-mueller/disclose-ai), so you can verify these claims yourself.
-
-**Your declaration and task details.** Everything you enter here (tasks, tools, descriptions, prompts) stays in your own browser. It is never stored, transmitted, or saved anywhere, and remains only in your browser and is cleared when you refresh or close the page. The generated declaration is provided only so you can copy or download it yourself.
-
-**Analytics.** This site uses [Cabin](https://withcabin.com), a privacy-focused analytics service, to understand overall visitor numbers. Cabin does not use cookies, does not track IP addresses, and cannot identify individual visitors. It counts page views, plus one aggregate, anonymous tally per completed declaration (clicking "Yes, generate declaration"; not on later edits). See [Cabin's privacy policy](https://withcabin.com/privacy/disclose-ai.app) for details. No data about the content you enter into this tool is ever sent to Cabin or anyone else.
-
-**Questions or feedback.** If you have questions about this policy, contact [Stefan Müller](https://muellerstefan.net). If you spot an error or have an improvement suggestion, feel free to open an issue or pull request on [GitHub](https://github.com/stefan-mueller/disclose-ai).
+See the [privacy policy](privacy.qmd) for details on what data this tool collects.
 

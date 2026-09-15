@@ -24,8 +24,10 @@ website:
         text: Generate Declaration
       - href: "#about-the-maintainer-and-tool"
         text: About
+      - href: "#information-for-lecturers"
+        text: Information for Lecturers
   page-footer:
-    center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) and the [Artificial Intelligence Disclosure (AID) Framework](https://arxiv.org/pdf/2408.01904). [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net). Privacy with [Cabin](https://withcabin.com/privacy/disclose-ai.app)"
+    center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) and the [Artificial Intelligence Disclosure (AID) Framework](https://arxiv.org/pdf/2408.01904). [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net). [Privacy](privacy.qmd), with analytics via [Cabin](https://withcabin.com/privacy/disclose-ai.app)"
 
 format:
   html:

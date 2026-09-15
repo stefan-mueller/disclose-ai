@@ -151,13 +151,39 @@ label:active .gaidet-checkbox-box {
 }
 
 
-h1, h2 {
+h1 {
   margin-top: 2.2rem;
 }
 
+/* Each top-level section gets its own short teal rule above it (matching
+   .hr below) plus extra breathing room, so sections read as clearly
+   separate rather than running into the content above them. */
 h2 {
+  margin-top: 4rem;
   border-bottom: none;
   padding-bottom: 0;
+}
+
+h2:first-of-type::before,
+.gaidet-output-title::before {
+  content: none;
+}
+
+h2::before {
+  content: "";
+  display: block;
+  width: 140px;
+  height: 1.5px;
+  margin: 0 auto 2.5rem;
+  background: var(--gaidet-accent);
+  border-radius: 2px;
+  opacity: 0.6;
+}
+
+h3 {
+  margin-top: 1.6rem;
+  font-size: 1.15rem;
+  font-weight: 600;
 }
 
 #title-block-header {
