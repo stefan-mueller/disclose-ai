@@ -99,7 +99,7 @@ Many universities do not have a single institution-wide policy on generative AI.
 
 Disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, course/module, or assessment brief. You are ultimately responsible for complying with your institution's and course/module's policies, including any separate declaration of authorship or originality statement you must sign. See the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 
-Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies. For an example of what institution-specific AI guidance looks like, see [UCD Library's guide to using generative AI](https://libguides.ucd.ie/GENAI/usingAI).
+Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies.
 :::
 
 ```{ojs}
@@ -1351,31 +1351,44 @@ I would love to hear how you are using this tool and any suggestions for improvi
 
 This section answers the questions lecturers have asked most often after testing the tool with their own students.
 
-### Where do these categories come from?
-
+::: {.gaidet-faq}
+<details class="gaidet-faq-item">
+<summary>Where do these categories come from?</summary>
+<div class="gaidet-faq-body">
 The categories in Step 1 above are drawn from task categories used in student surveys and existing AI disclosure guidelines. They form a checklist of common use cases, not a recommendation that students use AI for all, or indeed any, of them. Whether AI is appropriate for a given category still depends entirely on your assignment brief and your own instructions.
 
 Step 1 is the crucial filtering step for students: it should reflect only what your assignment or course/module actually permits, not everything AI happens to be capable of. Students who are unsure whether a category applies are told to leave it unticked and ask you rather than guess.
+</div>
+</details>
 
-### How can I phrase permitted AI use in my assignment brief?
-
+<details class="gaidet-faq-item">
+<summary>How can I phrase permitted AI use in my assignment brief?</summary>
+<div class="gaidet-faq-body">
 Some lecturers find it useful to name the same categories in their assignment brief as the ones in Step 1, rather than describing permitted and prohibited AI use in separate wording. Students can then tick exactly what has been permitted without having to interpret how a general policy applies to their situation.
 
 One way this can look in an assignment brief: "For this assignment, you may use AI for *Conceptualisation* and *Initial literature screening*, for instance to brainstorm ideas or locate relevant sources. AI must **not** be used for *Data management*, *Coding and automation*, *Writing and editing*, or *Audiovisual and interactive components*, as these should be your own unassisted work. Anything else can be recorded under *Additional tasks*. Please use the AI Disclosure Generator to record your AI use and attach the generated declaration to your assignment submission: [https://disclose-ai.app](https://disclose-ai.app)."
+</div>
+</details>
 
-### What if my course/module has not settled on an AI policy yet?
-
+<details class="gaidet-faq-item">
+<summary>What if my course/module has not settled on an AI policy yet?</summary>
+<div class="gaidet-faq-body">
 A student who ticks "no guidance" in Step 1 is told to treat that as AI not being permitted, rather than as permission by default, until you or the course/module coordinator confirms otherwise. Settling on even a brief policy, using the wording above, removes that ambiguity for your students.
+</div>
+</details>
 
-### How do I cite this tool?
-
+<details class="gaidet-faq-item">
+<summary>How do I cite this tool?</summary>
+<div class="gaidet-faq-body">
 If you are using this tool in your teaching, you can cite it as:
 
 > Müller, Stefan. *AI Disclosure Generator*. <https://disclose-ai.app>
+</div>
+</details>
 
-### Related literature and advice
-
-
+<details class="gaidet-faq-item">
+<summary>Related literature and advice</summary>
+<div class="gaidet-faq-body">
 A number of similar tools exist to support transparent AI-use disclosure, including the [AID Framework](https://aidframework.org), the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/), and [sIfA](https://github.com/mareikeschomerus-ctrl/sIfA) (Statement of Intellectual Fellowship and Accountability), a browser-based tool from Busara that maps AI contributions onto the 14 CRediT contributor roles and is aimed more at researchers documenting a publication than at student coursework. All aim at the same goal: helping students and researchers disclose their AI use clearly and consistently. Use whichever fits your context best.
 
 The optional "AIAS level" field above uses the [AI Assessment Scale](https://aiassessmentscale.com), a complementary framework instructors use to specify how much AI use is permitted on a given assessment; this tool only lets you record that level, it doesn't set or enforce it.
@@ -1390,6 +1403,9 @@ Further reading on AI-use disclosure:
 - American Journal of Political Science (2026). “AJPS AI Policy“. Updated 11 August 2026. [ajps.org/ajps-ai-policy](https://ajps.org/ajps-ai-policy/)
 - Saleh, Engy, & Schomerus, Mareike (2026). “The sIfA Tool for a Statement of Intellectual Fellowship and Accountability: An Invitation to Reflect on How Humans and AI Interact in Producing Knowledge“. *Busara*. [10.62372/IUPB2137](https://doi.org/10.62372/IUPB2137)
 - Schomerus, Mareike. *sIfA Tool (Tool to create a Statement of Intellectual Fellowship and Accountability)*. Version 1.4. 2026. *Busara*. [10.5281/zenodo.20285993](https://doi.org/10.5281/zenodo.20285993)
+</div>
+</details>
+:::
 
 ## Disclaimer of responsibility
 

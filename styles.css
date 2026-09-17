@@ -1325,3 +1325,53 @@ button:active {
   margin-bottom: 0.9rem;
   font-size: 1rem;
 }
+
+/* FAQ accordion: only the question is visible until a lecturer clicks it.
+   Styled as plain prose rather than boxed cards, so it reads as an
+   extension of the surrounding text (matching the h3 treatment used
+   elsewhere on the page) instead of a distinct UI widget. The +/- marker
+   is an inline ::after (not absolutely positioned), so it sits right next
+   to the question text instead of pinned to the far edge of the block. */
+.gaidet-faq {
+  margin: 1.5rem 0;
+}
+
+.gaidet-faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.55rem 0;
+  margin-top: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+.gaidet-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.gaidet-faq-item summary::after {
+  content: "+";
+  margin-left: 0.5rem;
+  color: var(--gaidet-accent);
+  font-weight: 400;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.gaidet-faq-item[open] summary::after {
+  content: "\2212";
+}
+
+.gaidet-faq-item summary:hover {
+  color: var(--gaidet-accent-dark);
+}
+
+.gaidet-faq-body {
+  padding: 0 0 1.1rem;
+  color: #212529;
+}
+
+.gaidet-faq-body p:last-child {
+  margin-bottom: 0;
+}
