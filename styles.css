@@ -134,29 +134,40 @@ label:active .gaidet-checkbox-box {
 }
 
 
+/* The navbar shares the hero banner's dark teal (--gaidet-accent-dark), so
+   on the homepage the two flow into one continuous dark band instead of a
+   white bar sitting awkwardly on top of the hero; on the other pages it
+   just reads as the site's permanent dark header. Colours are set
+   explicitly here rather than left to Quarto's light/dark navbar detection,
+   since that can't be verified without a full site render. */
 .navbar {
-  border-bottom: 1px solid var(--gaidet-border);
+  background: var(--gaidet-accent-dark);
+  border-bottom: 1px solid var(--gaidet-accent-bright);
   line-height: 1em;
 }
 
 .navbar .nav-link {
+  color: rgba(244, 246, 248, 0.82);
   font-size: 1.1rem;
   font-weight: 600;
 }
 
 .navbar .nav-link:hover,
 .navbar .nav-link:focus {
-  color: var(--gaidet-accent);
+  color: var(--gaidet-accent-bright);
 }
 
 .navbar-brand:hover,
 .navbar-brand:focus {
-  color: var(--gaidet-accent);
+  color: var(--gaidet-accent-bright);
 }
 
 .navbar-logo {
   height: 25px;
   max-height: 25px;
+  /* Recolors the mid-teal clipboard icon to solid white so it stays
+     legible against the dark navbar, without needing a second SVG asset. */
+  filter: brightness(0) invert(1);
 }
 
 
@@ -172,6 +183,25 @@ h2 {
   border-bottom: none;
   padding-bottom: 0;
   letter-spacing: -0.01em;
+}
+
+/* The homepage's hero banner sits flush above "About this tool" with no
+   margin of its own (see .site-header), so the section's usual 4rem top
+   margin reads as too tight right under a full-bleed dark banner. Bump it
+   up specifically there, scoped via the sibling combinator rather than
+   `h2:first-of-type` so it doesn't depend on the coincidence that the other
+   pages happen not to use h2 at all. Quarto wraps every `##` heading in its
+   own `<section class="level2">`, so the h2 is a grandchild of main, not a
+   direct sibling of .site-header — the section itself is the sibling.
+
+   Quarto also ships its own reset, `main.content>section:first-of-type>
+   h2:nth-child(1){margin-top:0}`, meant to stop the first section crowding
+   the (normally visible) title block right above it. Its specificity
+   (0,3,3) otherwise beats this rule's (0,3,2), so #quarto-document-content
+   is added purely to outrank it — needed since our hero replaces that
+   title block and that reset no longer applies here. */
+#quarto-document-content .site-header ~ section.level2:first-of-type > h2 {
+  margin-top: 4.5rem;
 }
 
 h2:first-of-type::before,
@@ -1332,4 +1362,135 @@ button:active {
   padding: 0.6rem 0.9rem;
   margin-bottom: 0.9rem;
   font-size: 1rem;
+}
+
+/* Dark hero banner at the top of the homepage. Colour scheme is based on
+   --gaidet-accent-dark, continuing the same teal scale used everywhere else
+   on the site (accent -> accent-dark -> accent-bright) rather than a
+   separate palette.
+
+   Only the background (`.site-header__bg`) is full-bleed, via the
+   left/width/transform trick, which is safe because the site already sets
+   `overflow-x: clip` on html/body. The header itself, and its text, stay as
+   a normal in-flow child of the page's content column — deliberately not
+   given their own max-width/centering — so they inherit exactly the same
+   left edge as "About this tool" and every other heading below, instead of
+   trying to (and risking failing to) replicate Quarto's own grid math. */
+.site-header {
+  --sh-bg: var(--gaidet-accent-dark);
+  --sh-bg-start: #0a2b29;
+  --sh-grid: rgba(255, 255, 255, 0.035);
+  --sh-glow: rgba(45, 212, 191, 0.16);
+  --sh-accent: var(--gaidet-accent-bright);
+  --sh-text: #f4f6f8;
+  --sh-text-muted: #aebbb2;
+
+  position: relative;
+  isolation: isolate;
+  /* Quarto reserves body padding-top equal to the fixed navbar's height (so
+     content isn't hidden under it) but that reserved space is a hair taller
+     than the navbar actually renders, leaving a sliver of the page's light
+     background between the navbar and this banner (invisible before, when
+     the navbar itself was also white). Pulling the banner up cancels that
+     gap so the two dark bars sit flush. */
+  margin-top: -2rem;
+  padding: 3.5rem 0;
+  color: var(--sh-text);
+}
+
+.site-header__bg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--sh-bg-start) 0%, var(--sh-bg) 65%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.site-header__bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(0deg, var(--sh-grid) 0px, var(--sh-grid) 1px, transparent 1px, transparent 40px),
+    repeating-linear-gradient(90deg, var(--sh-grid) 0px, var(--sh-grid) 1px, transparent 1px, transparent 40px);
+}
+
+.site-header__bg::after {
+  content: "";
+  position: absolute;
+  top: -120px;
+  right: -80px;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, var(--sh-glow) 0%, transparent 70%);
+}
+
+.site-header__hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.1rem;
+}
+
+.site-header__kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.8rem;
+  color: var(--sh-accent);
+}
+
+.site-header__cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background: var(--sh-accent);
+  animation: gaidet-header-blink 1.1s steps(1) infinite;
+}
+
+@keyframes gaidet-header-blink {
+  0%, 45% { opacity: 1; }
+  50%, 95% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header__cursor {
+    animation: none;
+  }
+}
+
+.site-header__title {
+  margin: 0;
+  max-width: 780px;
+  font-size: clamp(1.9rem, 4vw, 2.9rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--sh-text);
+}
+
+.site-header__lede {
+  margin: 0;
+  max-width: 560px;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--sh-text-muted);
+}
+
+@media (max-width: 640px) {
+  .site-header {
+    padding: 2.5rem 0;
+  }
 }

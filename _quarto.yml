@@ -15,7 +15,7 @@ website:
     logo: favicon.svg
     search: false
     border: true
-    background: "white"
+    background: "#134e4a"
     pinned: true
     right:
       - href: "#about-this-tool"

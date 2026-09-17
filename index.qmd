@@ -5,11 +5,28 @@ format:
     page-layout: article
 ---
 
-<script async src="https://scripts.withcabin.com/hello.js"></script>
+<style>
+/* The default Quarto title block is replaced by the hero banner below on
+   this page only. Scoped here (not in styles.css) so it doesn't also hide
+   the title on privacy.qmd / lecturers.qmd, which have no hero of their own. */
+#title-block-header {
+  display: none;
+}
+</style>
 
-::: {.gaidet-overview}
-An open-source tool that helps students create structured, task-by-task AI-use disclosure statements for assignment submissions. It’s free, runs entirely in your browser, and never sends anything you enter to a server.
-:::
+<header class="site-header">
+<div class="site-header__bg" aria-hidden="true"></div>
+<div class="site-header__hero">
+<p class="site-header__kicker">
+<span>&gt; Transparently disclose your AI use for university assignments</span>
+<span class="site-header__cursor" aria-hidden="true"></span>
+</p>
+<h1 class="site-header__title">AI Disclosure Generator</h1>
+<p class="site-header__lede">Open-source, free, and privacy-protecting, this tool guides students step by step through structured, task-by-task AI-use disclosure statements.</p>
+</div>
+</header>
+
+<script async src="https://scripts.withcabin.com/hello.js"></script>
 
 ## About this tool
  
