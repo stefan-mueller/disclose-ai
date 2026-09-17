@@ -1501,7 +1501,7 @@ button:active {
   max-width: 560px;
   font-size: 1rem;
   line-height: 1.6;
-  color: var(--sh-text-muted);
+  color: #d5ddda;
 }
 
 @media (max-width: 640px) {
