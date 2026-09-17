@@ -18,7 +18,7 @@ format:
 <div class="site-header__bg" aria-hidden="true"></div>
 <div class="site-header__hero">
 <p class="site-header__kicker">
-<span>&gt; Transparently disclose your AI use</span>
+<span>&gt; Disclose how you used AI in your  assignment</span>
 <span class="site-header__cursor" aria-hidden="true"></span>
 </p>
 <h1 class="site-header__title">AI Disclosure Generator</h1>
@@ -35,7 +35,7 @@ format:
 
 If your assignment permits AI use but requires disclosure, this tool can help. It is adapted for student assignments from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) and the [Artificial Intelligence Disclosure (AID) Framework](https://arxiv.org/pdf/2408.01904).
 
-This tool is built specifically for student coursework. If you're a researcher looking to document AI use in a publication or grant application, check out the [related literature and tools](lecturers.qmd#related-literature-and-advice) for options aimed at research rather than teaching.
+This tool is built specifically for student coursework. That said, if you're a researcher looking to document AI use in a publication or grant application, check out the [related literature and tools](lecturers.qmd#related-literature-and-advice) for options aimed at research rather than teaching.
 
 
 ```{ojs}
@@ -112,7 +112,7 @@ exampleDeclarationHtml = `<p><strong>Declaration on the Use of Artificial Intell
 
 
 ::: {.callout-warning}
-Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual course/module or assessment. Before using any AI tool, check your course/module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some assignments may prohibit generative AI entirely, or allow AI use only for a subset of tasks. Some institutions also limit which AI tools students may use, for example restricting you to a specific, approved list.
+Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual course/module or assessment. Before using any AI tool, check your course/module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some institutions also limit which AI tools students may use, for example restricting you to a specific, approved list.
 
 Disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, course/module, or assessment brief. You are ultimately responsible for complying with your institution's and course/module's policies, including any separate declaration of authorship or originality statement you must sign. See the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 
@@ -445,7 +445,7 @@ aiasSelector = {
   return el("div", { class: "gaidet-aias-question" }, [
     el("p", { class: "gaidet-tool-label" }, "AI Assessment Scale level (optional)"),
     el("p", { class: "gaidet-tool-instructions" }, [
-      "If your assignment brief or course/module states a level from the ",
+      "If your assignment brief or course/module instructions state a level from the ",
       el("a", { href: "https://aiassessmentscale.com", target: "_blank", rel: "noopener" }, "AI Assessment Scale"),
       ", select the matching level below. It will be added to your declaration."
     ]),
@@ -1376,7 +1376,7 @@ If you're a lecturer, see the [dedicated page for lecturers](lecturers.qmd) for 
 
 This tool is provided purely as a free, unofficial aid to help you structure your own AI-use disclosure. It is not legal, academic, or official institutional guidance, and using it does not constitute compliance with any university, School, programme, or course/module policy.
 
-The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete account of all generative AI use in connection with the relevant work, for whether such use is declared honestly and in good faith, or for any academic, disciplinary, legal, or other consequences arising from its use or misuse. 
+The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete account of all generative AI use in connection with the relevant work, or for whether such use is declared honestly and in good faith. Nor do they accept liability for any academic, disciplinary, legal, or other consequences arising from the tool's use or misuse.
 
 You are solely responsible for checking your own university's and course/module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or course/module coordinator whether, and how, AI tools may be used before you submit any work. The author cannot be held legally accountable for any reliance placed on this tool.
 
