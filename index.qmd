@@ -18,7 +18,7 @@ format:
 <div class="site-header__bg" aria-hidden="true"></div>
 <div class="site-header__hero">
 <p class="site-header__kicker">
-<span>&gt; Disclose how you used AI in your  assignment</span>
+<span>&gt; Declare how you used AI in your  assignment</span>
 <span class="site-header__cursor" aria-hidden="true"></span>
 </p>
 <h1 class="site-header__title">AI Disclosure Generator</h1>
