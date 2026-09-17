@@ -1387,20 +1387,35 @@ button:active {
 
   position: relative;
   isolation: isolate;
-  /* Quarto reserves body padding-top equal to the fixed navbar's height (so
-     content isn't hidden under it) but that reserved space is a hair taller
-     than the navbar actually renders, leaving a sliver of the page's light
-     background between the navbar and this banner (invisible before, when
-     the navbar itself was also white). Pulling the banner up cancels that
-     gap so the two dark bars sit flush. */
-  margin-top: -2rem;
+  /* No margin-top hack here: Quarto's quarto-nav.js measures the fixed
+     navbar's real clientHeight after load and sets body's padding-top to
+     that exact value via inline style, so content ends up flush against
+     the navbar with no gap once it settles — by construction, not by
+     guesswork. A hardcoded negative margin here would only be correct
+     against the pre-JS static CSS fallback (a different, slightly-off
+     number), which is exactly what caused a visible jump: right value on
+     settle, wrong value (plus our fixed offset) for the first frame. */
   padding: 3.5rem 0;
   color: var(--sh-text);
 }
 
 .site-header__bg {
   position: absolute;
-  top: 0;
+  /* Quarto's fixed navbar reserves its clearance space on body via JS
+     (measuring the navbar's real height after load and overriding the
+     static CSS fallback), so there's a brief window where that reserved
+     space is off by a few px — enough to flash a sliver of the page's
+     light background between the navbar and this banner, and to make it
+     visibly resettle once the JS-measured value lands. Rather than chase
+     that moving target with a matching negative margin on .site-header
+     itself (which showed the reflow as an visible jump), only the
+     background bleeds upward past its own box by a fixed buffer, painting
+     over that sliver in both the pre- and post-JS state alike — safe
+     because it's the same dark teal as the navbar itself, so any overlap
+     with the navbar's own bottom edge is invisible, and it isn't fixed
+     positioned, so it scrolls away normally rather than sitting over
+     content once the page is scrolled past the hero. */
+  top: -30px;
   bottom: 0;
   left: 50%;
   width: 100vw;
