@@ -2,7 +2,10 @@
   --gaidet-accent: #0f766e;
   --gaidet-accent-dark: #134e4a;
   --gaidet-accent-bright: #2dd4bf;
-  --gaidet-accent-tint: #f0fdfa;
+  /* Soft, slightly grey mint: the earlier #f0fdfa stood out too much. */
+  --gaidet-accent-tint: #f5f9f8;
+  /* Muted teal for accents on light backgrounds, where accent-bright reads as neon. */
+  --gaidet-accent-muted: #6fb3ab;
   --gaidet-border: #e2e5ea;
   --gaidet-text-muted: #5b6270;
   --gaidet-warning-bg: #fff7ed;
@@ -355,7 +358,6 @@ a:hover {
 .gaidet-category {
   background: #fff;
   border: 1px solid var(--gaidet-border);
-  border-left: 4px solid var(--gaidet-accent);
   border-radius: 6px;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
   padding: 1.1rem 1.4rem;
@@ -620,7 +622,6 @@ label.gaidet-tool-option:hover {
   display: block;
   background: #fff;
   border: 1px solid var(--gaidet-border);
-  border-left: 4px solid var(--gaidet-accent);
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 4px rgba(16, 24, 40, 0.04);
   padding: 1.1rem 1.4rem;
@@ -666,7 +667,6 @@ label.gaidet-tool-option:hover {
   display: block;
   background: #fff;
   border: 1px solid var(--gaidet-border);
-  border-left: 4px solid var(--gaidet-accent);
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 4px rgba(16, 24, 40, 0.04);
   padding: 0.9rem 1.4rem;
@@ -848,7 +848,7 @@ label.gaidet-tool-option:hover {
 .gaidet-autocomplete-version-wrap {
   margin: 0.3rem 0 0.1rem 0.2rem;
   padding-left: 0.5rem;
-  border-left: 2px solid var(--gaidet-accent-bright);
+  border-left: 2px solid var(--gaidet-accent-muted);
 }
 
 .gaidet-autocomplete-version-label {
@@ -1067,7 +1067,6 @@ hr {
 .gaidet-output {
   background: #fff;
   border: 2px solid var(--gaidet-accent);
-  border-left: 6px solid var(--gaidet-accent);
   border-radius: 6px;
   padding: 1.4rem 1.6rem;
   margin: 0 0 1.5rem;
@@ -1140,7 +1139,7 @@ hr {
   gap: 0.7rem;
   min-height: 160px;
   background: var(--gaidet-accent-tint);
-  border: 1px solid var(--gaidet-accent-bright);
+  border: 1px solid var(--gaidet-accent-muted);
   border-radius: 10px;
   padding: 1.5rem;
   font-size: 0.95rem;
@@ -1151,7 +1150,6 @@ hr {
 
 .gaidet-output-placeholder p {
   margin: 0;
-  max-width: 32rem;
 }
 
 /* Same orange treatment as .gaidet-category-gate-warning and .gaidet-warning,
@@ -1261,6 +1259,12 @@ button:active {
   margin-top: 0.9rem;
 }
 
+.gaidet-output-actions-label {
+  align-self: center;
+  font-size: 0.9rem;
+  color: var(--gaidet-text-muted);
+}
+
 .gaidet-btn-small {
   padding: 0.3rem 0.6rem;
   font-size: 0.75rem;
@@ -1325,33 +1329,132 @@ button:active {
   }
 }
 
-/* Below the two-column breakpoint, the step 2 and step 3 boxes just stack in
-   normal document order with no gap between them (neither box carries its
-   own margin, since the grid `gap` below normally handles that spacing).
-   Match the step 1 → step 2 gap so step 2 → step 3 isn't flush too. */
-.gaidet-layout-right {
+/* Progress indicator between Step 1 and Steps 2-3: three segments that
+   fill as each step is completed, plus a one-line hint about what's next. */
+.gaidet-progress {
+  margin: 0 0 1.25rem;
+}
+
+.gaidet-progress-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gaidet-progress-bar {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--gaidet-border);
+  transition: background-color 0.3s ease;
+}
+
+.gaidet-progress-step.is-current .gaidet-progress-bar {
+  background: var(--gaidet-accent-muted);
+}
+
+/* A highlight sweeps left to right across the current step's segment, to
+   draw the eye to what comes next. Only `transform` is animated, so it runs
+   on the compositor with no layout or repaint work per frame. */
+.gaidet-progress-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.gaidet-progress-step.is-current .gaidet-progress-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+  transform: translateX(-100%);
+  animation: gaidet-progress-flow 1.8s ease-in-out infinite;
+}
+
+@keyframes gaidet-progress-flow {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gaidet-progress-step.is-current .gaidet-progress-bar::after {
+    animation: none;
+  }
+}
+
+.gaidet-progress-step.is-done .gaidet-progress-bar {
+  background: var(--gaidet-accent);
+}
+
+.gaidet-progress-label {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--gaidet-text-muted);
+}
+
+.gaidet-progress-step.is-current .gaidet-progress-label,
+.gaidet-progress-step.is-done .gaidet-progress-label {
+  color: var(--gaidet-accent-dark);
+  font-weight: 600;
+}
+
+/* The second copy, between Steps 2 and 3: .gaidet-layout-bottom's own
+   top margin already spaces it from Step 3. */
+.gaidet-progress-after-step2 .gaidet-progress {
+  margin: 1.25rem 0 0;
+}
+
+.gaidet-progress-message {
+  margin: 0.6rem 0 0;
+  font-size: 0.95rem;
+}
+
+/* Step 3 always sits below Step 2 (a side-by-side layout confused users). */
+.gaidet-layout-bottom {
   margin-top: 1.25rem;
 }
 
-/* Two-column layout for the checklist + live declaration preview: only on
-   screens wide enough that a sidebar doesn't cramp the checklist itself.
-   Below the breakpoint, .gaidet-layout has no special rules at all, so the
-   left/right blocks just stack in normal document order, i.e. the original
-   single-column layout, with no JS or duplicated markup needed either way. */
-@media (min-width: 1100px) {
-  .gaidet-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(420px, 46%);
-    gap: 2rem;
-    align-items: start;
-  }
+/* Until Step 1 has a ticked category, Steps 2 and 3 are barely visible.
+   Toggled from index.qmd based on `allowedCategories`. */
+.gaidet-layout {
+  position: relative;
+}
 
-  .gaidet-layout-right {
-    position: sticky;
-    top: 4.5rem;
-    margin-top: 0;
-  }
+.gaidet-layout > * {
+  transition: opacity 0.3s ease;
+}
 
+/* The children fade, not the container, so the click notice below (also a
+   child, but excluded) stays fully visible on top of them. */
+.gaidet-layout.gaidet-awaiting-step1 > :not(.gaidet-awaiting-notice) {
+  opacity: 0.12;
+}
+
+.gaidet-layout.gaidet-awaiting-step1 {
+  cursor: not-allowed;
+}
+
+.gaidet-awaiting-notice {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(28rem, calc(100% - 2rem));
+  z-index: 10;
+  background: var(--gaidet-accent-dark);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  box-shadow: 0 6px 16px rgba(16, 24, 40, 0.2);
+  font-size: 0.95rem;
+  cursor: auto;
+}
+
+.gaidet-awaiting-notice a {
+  color: var(--gaidet-accent-bright);
 }
 
 .gaidet-prompts-reminder {
