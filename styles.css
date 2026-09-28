@@ -1,16 +1,18 @@
+/* Colours come from the active theme file (themes/*.css, chosen in
+   _quarto.yml), which defines all the --gaidet-* colour variables. */
+
+/* Shared text sizes, so elements with the same role are always the same
+   size: e.g. a category in Step 1 and a task in Step 2 are both options. */
 :root {
-  --gaidet-accent: #0f766e;
-  --gaidet-accent-dark: #134e4a;
-  --gaidet-accent-bright: #2dd4bf;
-  /* Soft, slightly grey mint: the earlier #f0fdfa stood out too much. */
-  --gaidet-accent-tint: #f5f9f8;
-  /* Muted teal for accents on light backgrounds, where accent-bright reads as neon. */
-  --gaidet-accent-muted: #6fb3ab;
-  --gaidet-border: #e2e5ea;
-  --gaidet-text-muted: #5b6270;
-  --gaidet-warning-bg: #fff7ed;
-  --gaidet-warning-border: #fed7aa;
-  --gaidet-warning-text: #9a3412;
+  /* Anything the student ticks or picks: Step 1 categories, Step 2 tasks,
+     the Yes/No choice, selected tool chips. */
+  --gaidet-fs-option: 1rem;
+  /* Field labels ("AI tool(s) used for this task") and typed text. */
+  --gaidet-fs-field: 0.9rem;
+  /* Grey instruction/help lines under questions. */
+  --gaidet-fs-help: 0.85rem;
+  /* Orange warning boxes. */
+  --gaidet-fs-warning: 0.9rem;
 }
 
 /* Quarto's default blockquote text is a light grey; darken it to match the
@@ -168,7 +170,7 @@ label:active .gaidet-checkbox-box {
 .navbar-logo {
   height: 25px;
   max-height: 25px;
-  /* Recolors the mid-teal clipboard icon to solid white so it stays
+  /* Recolors the slate-grey clipboard icon to solid white so it stays
      legible against the dark navbar, without needing a second SVG asset. */
   filter: brightness(0) invert(1);
 }
@@ -311,15 +313,23 @@ h3 {
   background-color: #fff;
 }
 
-.callout-warning {
-  /* Quarto's callout styling reads these Bootstrap variables internally for
-     the icon and left border, so redefining them here recolors the whole
-     callout to our warmer, more muted amber, without needing to know its
-     exact internal markup/selectors. Same tone as .gaidet-warning elsewhere,
-     chosen to sit better alongside the teal theme than Bootstrap's default
-     bright orange. */
-  --bs-warning: #9a3412;
-  --bs-warning-rgb: 154, 52, 18;
+/* Quarto bakes the callout's colours in at build time (border, header tint,
+   and an icon SVG with its fill hard-coded), so Bootstrap variables can't
+   recolour it. Override each piece with the theme's warning orange; the
+   icon is redrawn as a mask so it takes a CSS colour. */
+div.callout-warning.callout {
+  border-left-color: var(--gaidet-warning);
+}
+
+div.callout-warning.callout-style-default > .callout-header {
+  background-color: var(--gaidet-warning-bg);
+}
+
+div.callout-warning .callout-icon::before {
+  background-image: none !important;
+  background-color: var(--gaidet-warning);
+  -webkit-mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/><path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/></svg>') center / contain no-repeat;
+  mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/><path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/></svg>') center / contain no-repeat;
 }
 
 .callout > .callout-body-container {
@@ -449,8 +459,8 @@ a:hover {
 
 .gaidet-step-number {
   flex-shrink: 0;
-  width: 1.9rem;
-  height: 1.9rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border-radius: 50%;
   background: var(--gaidet-accent);
   color: #fff;
@@ -458,7 +468,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
 }
 
 .gaidet-step-body h3 {
@@ -501,7 +511,7 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  font-size: 0.95rem;
+  font-size: var(--gaidet-fs-option);
   color: #fff;
   cursor: pointer;
 }
@@ -531,7 +541,7 @@ a:hover {
   background: var(--gaidet-warning-bg);
   border: 1px solid var(--gaidet-warning-border);
   border-radius: 4px;
-  font-size: 0.92rem;
+  font-size: var(--gaidet-fs-warning);
   line-height: 1.45;
   color: var(--gaidet-warning-text);
 }
@@ -545,7 +555,7 @@ a:hover {
 }
 
 .gaidet-item-label {
-  font-size: 1.05rem;
+  font-size: var(--gaidet-fs-option);
   transition: color 0.15s ease;
 }
 
@@ -570,13 +580,17 @@ a:hover {
   display: block;
   width: 100%;
   max-width: 620px;
+  min-height: 3.5rem;
   max-height: 400px;
   margin-top: 0.3rem;
   padding: 0.5rem 0.6rem;
-  font-size: 0.9rem;
+  font-size: var(--gaidet-fs-field);
   line-height: 1.4;
   resize: none;
   overflow-y: auto;
+  /* Grows with its text natively, with no JS per keystroke. autoGrow() in
+     index.qmd is the fallback for browsers that don't support this yet. */
+  field-sizing: content;
 }
 
 .gaidet-tool-grid {
@@ -587,7 +601,7 @@ a:hover {
 }
 
 .gaidet-tool-option {
-  font-size: 0.9rem;
+  font-size: var(--gaidet-fs-option);
   font-weight: normal;
   padding: 0.15rem 0;
 }
@@ -605,7 +619,7 @@ label.gaidet-tool-option:hover {
 
 .gaidet-tool-label {
   margin-bottom: 0.2rem;
-  font-size: 0.9rem;
+  font-size: var(--gaidet-fs-field);
 }
 
 /* Shared by the Step 1/2/3 headings so they can't drift out of sync with
@@ -640,7 +654,7 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-prompts-question .gaidet-tool-option {
-  font-size: 1rem;
+  font-size: var(--gaidet-fs-option);
 }
 
 .gaidet-prompts-question .gaidet-tool-option label {
@@ -649,7 +663,7 @@ label.gaidet-tool-option:hover {
   padding: 0.55rem 1rem;
   border: 1px solid var(--gaidet-border);
   border-radius: 8px;
-  font-size: 1.05rem;
+  font-size: var(--gaidet-fs-option);
 }
 
 .gaidet-prompts-question .gaidet-tool-option label:hover {
@@ -722,7 +736,7 @@ label.gaidet-tool-option:hover {
 
 .gaidet-aias-instruction {
   margin: 0.5rem 0 0;
-  font-size: 0.85rem;
+  font-size: var(--gaidet-fs-help);
   font-weight: 600;
   color: var(--gaidet-accent-dark);
 }
@@ -746,7 +760,7 @@ label.gaidet-tool-option:hover {
 
 .gaidet-autocomplete-input-more {
   width: 210px;
-  font-size: 0.82rem;
+  font-size: var(--gaidet-fs-field);
   padding: 0.32rem 0.5rem;
   color: var(--gaidet-accent-dark);
   border-style: dashed;
@@ -778,7 +792,7 @@ label.gaidet-tool-option:hover {
   list-style: none;
   margin: 0;
   padding: 0.4rem 0.55rem;
-  font-size: 0.9rem;
+  font-size: var(--gaidet-fs-field);
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -839,7 +853,7 @@ label.gaidet-tool-option:hover {
 }
 
 .gaidet-autocomplete-chip-name {
-  font-size: 1.05rem;
+  font-size: var(--gaidet-fs-option);
   color: var(--gaidet-accent-dark);
   font-weight: 600;
   white-space: nowrap;
@@ -853,7 +867,7 @@ label.gaidet-tool-option:hover {
 
 .gaidet-autocomplete-version-label {
   display: block;
-  font-size: 0.85rem;
+  font-size: var(--gaidet-fs-field);
   color: var(--gaidet-text-muted);
   margin-bottom: 0.2rem;
 }
@@ -925,7 +939,7 @@ label.gaidet-tool-option:hover {
   width: 100%;
   max-width: 250px;
   padding: 0.2rem 0.45rem;
-  font-size: 0.8rem;
+  font-size: var(--gaidet-fs-field);
 }
 
 .gaidet-autocomplete-remove {
@@ -955,7 +969,7 @@ hr {
 }
 
 .gaidet-tool-instructions {
-  font-size: 0.85rem;
+  font-size: var(--gaidet-fs-help);
   color: var(--gaidet-text-muted);
   margin: 0.2rem 0 0.5rem 0;
 }
@@ -985,7 +999,7 @@ hr {
   border-radius: 8px;
   padding: 0.6rem 0.9rem;
   margin-bottom: 0.9rem;
-  font-size: 0.9rem;
+  font-size: var(--gaidet-fs-warning);
 }
 
 .gaidet-warning-list {
@@ -1001,6 +1015,9 @@ hr {
 .gaidet-sentence-wrap .gaidet-sentence {
   padding-right: 2.4rem;
   padding-bottom: 2.2rem;
+  /* Room for about five lines up front, to invite a fuller description than
+     a one-liner. It still grows past this as the student types. */
+  min-height: 10rem;
 }
 
 .gaidet-sentence-wordcount {
@@ -1036,8 +1053,8 @@ hr {
 }
 
 .gaidet-confirm {
-  background: #fffaf0;
-  border: 1px solid #fcd9a1;
+  background: var(--gaidet-warning-bg);
+  border: 1px solid var(--gaidet-warning-border);
   border-radius: 8px;
   padding: 0.8rem 1rem;
   margin-bottom: 0.9rem;
@@ -1070,7 +1087,7 @@ hr {
   border-radius: 6px;
   padding: 1.4rem 1.6rem;
   margin: 0 0 1.5rem;
-  box-shadow: 0 6px 16px rgba(59, 91, 219, 0.12), 0 2px 6px rgba(16, 24, 40, 0.06);
+  box-shadow: 0 6px 16px var(--gaidet-output-glow), 0 2px 6px rgba(16, 24, 40, 0.06);
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
@@ -1168,10 +1185,10 @@ hr {
 input[type="text"],
 input[type="checkbox"] + input[type="text"],
 textarea {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--gaidet-input-border);
   border-radius: 8px;
   padding: 0.45rem 0.6rem;
-  font-size: 0.9rem;
+  font-size: var(--gaidet-fs-field);
   font-family: inherit;
   transition: border-color 0.15s ease;
 }
@@ -1229,7 +1246,9 @@ button:active {
   background-color: var(--gaidet-accent-dark);
   color: #fff;
   border-radius: 999px;
-  box-shadow: 0 4px 10px rgba(16, 24, 40, 0.15), 0 2px 4px rgba(16, 24, 40, 0.08);
+  /* The thin light ring keeps it visible when it floats over the footer,
+     which is the same dark accent colour as the button itself. */
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4), 0 4px 10px rgba(16, 24, 40, 0.15), 0 2px 4px rgba(16, 24, 40, 0.08);
   font-weight: 600;
   transition: background-color 0.15s ease, transform 0.15s ease;
 }
@@ -1275,7 +1294,7 @@ button:active {
 }
 
 .gaidet-btn-primary:hover {
-  background-color: #24397e;
+  background-color: var(--gaidet-accent-hover);
 }
 
 .gaidet-btn-secondary {
@@ -1311,22 +1330,16 @@ button:active {
 }
 
 .gaidet-example {
-  background: #f8fafc;
-  border: 1px dashed var(--gaidet-border);
+  background: #fff;
+  border: 1px solid var(--gaidet-border);
   border-radius: 8px;
-  padding: 0.9rem;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
+  padding: 1rem 1.1rem;
+  line-height: 1.5;
   margin-top: 0.6rem;
   font-size: 0.85rem;
   font-family: inherit;
   color: var(--gaidet-text-muted);
-}
-
-@media (min-width: 700px) {
-  .gaidet-example {
-    max-width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-  }
 }
 
 /* Progress indicator between Step 1 and Steps 2-3: three segments that
@@ -1368,9 +1381,11 @@ button:active {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+  /* A band of the full accent colour, not white: on the pale muted bar a
+     white highlight was hard to see, while the darker band stands out. */
+  background: linear-gradient(90deg, transparent 10%, var(--gaidet-accent) 50%, transparent 90%);
   transform: translateX(-100%);
-  animation: gaidet-progress-flow 1.8s ease-in-out infinite;
+  animation: gaidet-progress-flow 3.2s ease-in-out infinite;
 }
 
 @keyframes gaidet-progress-flow {
@@ -1481,12 +1496,12 @@ button:active {
    trying to (and risking failing to) replicate Quarto's own grid math. */
 .site-header {
   --sh-bg: var(--gaidet-accent-dark);
-  --sh-bg-start: #0a2b29;
+  --sh-bg-start: var(--gaidet-hero-start);
   --sh-grid: rgba(255, 255, 255, 0.05);
-  --sh-glow: rgba(45, 212, 191, 0.16);
+  --sh-glow: var(--gaidet-hero-glow);
   --sh-accent: var(--gaidet-accent-bright);
   --sh-text: #f4f6f8;
-  --sh-text-muted: #aebbb2;
+  --sh-text-muted: var(--gaidet-hero-text-muted);
 
   position: relative;
   isolation: isolate;
@@ -1610,11 +1625,123 @@ button:active {
   max-width: 560px;
   font-size: 1rem;
   line-height: 1.6;
-  color: #d5ddda;
+  color: var(--gaidet-hero-lede);
 }
 
 @media (max-width: 640px) {
   .site-header {
     padding: 2.5rem 0;
   }
+}
+
+.gaidet-example-views {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.gaidet-example-view {
+  background: #fff;
+  color: var(--gaidet-accent);
+  border: 1px solid var(--gaidet-accent);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.7rem;
+}
+
+.gaidet-example-view:hover {
+  background: var(--gaidet-accent-tint);
+  color: var(--gaidet-accent-dark);
+}
+
+.gaidet-example-view-active,
+.gaidet-example-view-active:hover {
+  background: var(--gaidet-accent);
+  color: #fff;
+}
+
+/* The table view is the exact Word export, with fixed cm column widths, so
+   it scrolls sideways on narrow screens rather than squashing the columns. */
+.gaidet-table-view {
+  overflow-x: auto;
+}
+
+.gaidet-table-view table {
+  margin: 0 0 0.75rem;
+}
+
+.gaidet-example-views + #gaidet-output-text {
+  margin-top: 0.6rem;
+}
+
+/* Long single words (e.g. "Conceptualisation") are wider than the narrow
+   fixed-width Stage column: hyphenate them, and hard-break as a fallback
+   where the browser has no hyphenation dictionary, so text never spills
+   into the next cell. Screen only; Word wraps the pasted table itself. */
+.gaidet-table-view th,
+.gaidet-table-view td {
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  overflow-wrap: anywhere;
+}
+
+.gaidet-example-intro {
+  margin: 0.75rem 0 0;
+}
+
+.gaidet-example-view,
+.gaidet-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.gaidet-format-icon {
+  width: 1em;
+  height: 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Same 0.3s opacity fade Steps 2 and 3 use when Step 1 unlocks them. */
+@keyframes gaidet-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.gaidet-fade-in {
+  animation: gaidet-fade-in 0.3s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gaidet-fade-in {
+    animation: none;
+  }
+}
+
+/* Footer in the same dark accent as the navbar, so the page ends in a solid
+   band that matches the top, instead of a white strip below the light grey
+   page background. The bright-accent top border mirrors the navbar's. */
+footer.footer,
+.nav-footer {
+  background-color: var(--gaidet-accent-dark);
+  color: var(--gaidet-hero-lede);
+}
+
+.nav-footer {
+  border-top: 1px solid var(--gaidet-accent-bright);
+}
+
+.nav-footer a {
+  color: #fff;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+}
+
+.nav-footer a:hover,
+.nav-footer a:focus {
+  color: var(--gaidet-accent-bright);
+  text-decoration-color: currentColor;
 }

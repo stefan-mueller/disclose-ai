@@ -1,0 +1,39 @@
+/* Theme: green (teal). The site's original colour scheme.
+   Every theme file defines the same variables; styles.css only refers to
+   them. To switch themes, change the theme file listed under `css:` in
+   _quarto.yml. To add a theme, copy this file and change the values. */
+:root {
+  /* Main accent: buttons, borders, links, checked boxes. */
+  --gaidet-accent: #0f766e;
+  /* Darker accent: navbar, hero banner, primary buttons. */
+  --gaidet-accent-dark: #134e4a;
+  /* Bright accent for dark backgrounds (navbar hover, hero cursor/label). */
+  --gaidet-accent-bright: #2dd4bf;
+  /* Soft, slightly grey mint: the earlier #f0fdfa stood out too much. */
+  --gaidet-accent-tint: #f5f9f8;
+  /* Muted teal for accents on light backgrounds, where accent-bright reads as neon. */
+  --gaidet-accent-muted: #6fb3ab;
+  /* Primary button hover. */
+  --gaidet-accent-hover: #0c3835;
+  /* Glow shadow around the Step 3 declaration box. */
+  --gaidet-output-glow: rgba(15, 118, 110, 0.12);
+
+  /* Hero banner at the top of the homepage. */
+  --gaidet-hero-start: #0a2b29;
+  --gaidet-hero-glow: rgba(45, 212, 191, 0.16);
+  --gaidet-hero-text-muted: #aebbb2;
+  --gaidet-hero-lede: #d5ddda;
+
+  /* Neutrals and warnings. */
+  --gaidet-border: #e2e5ea;
+  /* Border of text boxes and inputs. */
+  --gaidet-input-border: #d1d5db;
+  --gaidet-text-muted: #5b6270;
+  /* Warning orange: the same in every theme. #f39313 is too light for
+     text on white, so warning text uses a darker shade of it. */
+  --gaidet-warning: #f39313;
+  --gaidet-warning-light: #f9ba73;
+  --gaidet-warning-bg: #fef6ec;
+  --gaidet-warning-border: var(--gaidet-warning-light);
+  --gaidet-warning-text: #8a4a06;
+}

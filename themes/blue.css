@@ -1,0 +1,40 @@
+/* Theme: blue. Built from the blues #04204c, #03326c, #0056a4 and #a3ccee
+   and the greys #9da9b1 and #bec9cf; the tint and glows are derived from
+   those. The greys are too light for text on white, so they're used on the
+   dark hero/footer and for input borders; body text greys stay darker.
+   Same variables as themes/green.css; switch themes in _quarto.yml. */
+:root {
+  /* Main accent: buttons, borders, links, checked boxes. */
+  --gaidet-accent: #0056a4;
+  /* Darker accent: navbar, hero banner, primary buttons. */
+  --gaidet-accent-dark: #03326c;
+  /* Bright accent for dark backgrounds (navbar hover, hero cursor/label). */
+  --gaidet-accent-bright: #a3ccee;
+  /* Very light blue for hover/selected backgrounds. */
+  --gaidet-accent-tint: #f3f7fc;
+  /* Softer accent on light backgrounds (e.g. current progress step). */
+  --gaidet-accent-muted: #a3ccee;
+  /* Primary button hover. */
+  --gaidet-accent-hover: #04204c;
+  /* Glow shadow around the Step 3 declaration box. */
+  --gaidet-output-glow: rgba(0, 86, 164, 0.12);
+
+  /* Hero banner at the top of the homepage. */
+  --gaidet-hero-start: #04204c;
+  --gaidet-hero-glow: rgba(163, 204, 238, 0.16);
+  --gaidet-hero-text-muted: #9da9b1;
+  --gaidet-hero-lede: #bec9cf;
+
+  /* Neutrals and warnings. */
+  --gaidet-border: #e2e5ea;
+  /* Border of text boxes and inputs. */
+  --gaidet-input-border: #bec9cf;
+  --gaidet-text-muted: #5b6270;
+  /* Warning orange: the same in every theme. #f39313 is too light for
+     text on white, so warning text uses a darker shade of it. */
+  --gaidet-warning: #f39313;
+  --gaidet-warning-light: #f9ba73;
+  --gaidet-warning-bg: #fef6ec;
+  --gaidet-warning-border: var(--gaidet-warning-light);
+  --gaidet-warning-text: #8a4a06;
+}

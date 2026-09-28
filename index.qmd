@@ -93,17 +93,103 @@ exampleDeclarationHtml = `<p><strong>Declaration on the Use of Artificial Intell
 
 ```{ojs}
 //| echo: false
+mutable exampleView = "text"
+```
+
+```{ojs}
+//| echo: false
+mutable outputView = "text"
+```
+
+```{ojs}
+//| echo: false
+// "Show as: Text / Table" switch, shared by the example declaration and the
+// generated one so both look and behave the same.
+// Small line icons for the two declaration formats, drawn in currentColor so
+// they follow each button's text colour (including its active/hover state).
+// Shared by the "Show as" switches and the copy buttons under the declaration.
+function formatIcon(view) {
+  const paths = {
+    text: '<path d="M4 6h16M4 10h16M4 14h16M4 18h10"/>',
+    table: '<rect x="3.5" y="4.5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 9.5v10"/>',
+    // Lightbulb, for the "Show an example declaration" tip button.
+    tip: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"/>'
+  };
+  const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  icon.setAttribute("viewBox", "0 0 24 24");
+  icon.setAttribute("aria-hidden", "true");
+  icon.setAttribute("class", "gaidet-format-icon");
+  icon.innerHTML = paths[view];
+  return icon;
+}
+
+function viewSwitch(current, onPick) {
+  const button = (view, label) => el("button", {
+    type: "button",
+    class: current === view ? "gaidet-example-view gaidet-example-view-active" : "gaidet-example-view",
+    "aria-pressed": current === view ? "true" : "false",
+    onclick: () => onPick(view)
+  }, [formatIcon(view), label]);
+  return el("div", { class: "gaidet-example-views", role: "group", "aria-label": "Declaration format" }, [
+    el("span", { class: "gaidet-output-actions-label" }, "Show as:"),
+    button("text", "Text"),
+    button("table", "Table")
+  ]);
+}
+```
+
+```{ojs}
+//| echo: false
+// The same three example tasks as exampleDeclarationHtml, as selections, so
+// the table view runs through the real table export (declarationTableRows +
+// declarationTableHtml) and matches what "Copy as table" produces exactly.
+exampleSelections = ({
+  "literature_review::clarifying_definitions": {
+    label: "Clarifying definitions or concepts",
+    tools: { "Claude": { version: "Sonnet 5" } },
+    sentence: "I asked Claude to explain a few concepts I was unsure about, then checked the literature it pointed me to against the original sources before relying on it."
+  },
+  "software_development::code_review": {
+    label: "Code review",
+    tools: { "Claude Code": { version: "Sonnet 4.6" } },
+    sentence: "I wrote the core analysis logic myself; Claude Code was used only to draft repetitive boilerplate (e.g. file-loading functions), which I reviewed, tested, and adapted to my dataset."
+  },
+  "writing_editing::proofreading": {
+    label: "Proofreading",
+    tools: { "Microsoft Copilot": { version: "GPT-5.5" } },
+    sentence: "After completing my own final draft, I asked Copilot to flag grammar and punctuation issues, and manually reviewed and accepted only the suggestions I agreed with."
+  }
+})
+```
+
+```{ojs}
+//| echo: false
 {
   const wrap = el("div", { class: "gaidet-example-wrap" }, [
     el("button", {
-      class: "gaidet-example-toggle",
+      class: "gaidet-example-toggle gaidet-btn-icon",
+      "aria-expanded": showExample ? "true" : "false",
       onclick: () => { mutable showExample = !showExample; }
-    }, showExample ? "Hide an example declaration" : "Show an example declaration")
+    }, [formatIcon("tip"), showExample ? "Hide an example declaration" : "Show an example declaration"])
   ]);
   if (showExample) {
+    // Fade in only when the example is opened, not on every Text/Table
+    // switch. `this` is this cell's previous output (null on first run).
+    const wasOpen = !!this?.querySelector?.(".gaidet-example");
     const example = el("div", { class: "gaidet-example" }, []);
-    example.innerHTML = exampleDeclarationHtml;
-    wrap.append(example);
+    if (exampleView === "table") {
+      example.classList.add("gaidet-table-view");
+      example.innerHTML = declarationTableHtml(declarationTableRows(exampleSelections), [], "");
+    } else {
+      example.innerHTML = exampleDeclarationHtml;
+    }
+    const revealed = [
+      el("p", { class: "gaidet-tool-instructions gaidet-example-intro" }, "This is what your generated declaration will look like"),
+      viewSwitch(exampleView, (view) => { mutable exampleView = view; }),
+      example
+    ];
+    if (!wasOpen) revealed.forEach(node => node.classList.add("gaidet-fade-in"));
+    wrap.append(...revealed);
   }
   return wrap;
 }
@@ -172,7 +258,13 @@ function countWords(text) {
   return (text || "").trim().split(/\s+/).filter(Boolean).length;
 }
 
+nativeAutoGrow = typeof CSS !== "undefined" && CSS.supports?.("field-sizing", "content");
+
 function autoGrow(textarea, attempts = 0) {
+  // Browsers with `field-sizing: content` (see styles.css) size the box
+  // themselves as part of their normal layout pass, so no JS runs per
+  // keystroke at all. The rest is the fallback for browsers without it.
+  if (nativeAutoGrow) return;
   if (!textarea.isConnected) {
     if (attempts < 30) requestAnimationFrame(() => autoGrow(textarea, attempts + 1));
     return;
@@ -182,8 +274,18 @@ function autoGrow(textarea, attempts = 0) {
   // before the browser can render the typed character.
   if (textarea._autoGrowRaf) cancelAnimationFrame(textarea._autoGrowRaf);
   textarea._autoGrowRaf = requestAnimationFrame(() => {
-    textarea.style.height = "auto";
-    textarea.style.height = `${textarea.scrollHeight}px`;
+    // Collapsing to "auto" re-lays out the whole page, so only do it when
+    // text was removed (the box may need to shrink). While typing forwards,
+    // growing to fit scrollHeight is enough and much cheaper.
+    const len = textarea.value.length;
+    const shrunk = len < (textarea._autoGrowLen ?? 0);
+    textarea._autoGrowLen = len;
+    if (shrunk || !textarea.style.height) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    } else if (textarea.scrollHeight > textarea.clientHeight) {
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
   });
 }
 
@@ -1092,6 +1194,31 @@ form = {
 
 ```{ojs}
 //| echo: false
+//| output: false
+// Quarto's floating "Back to top" button scrolls to the very top, but on this
+// page the useful place to return to is the generator, so it's pointed at the
+// "Generate declaration" section instead (and relabelled to say so). The
+// offset keeps the heading clear of the pinned navbar.
+{
+  const btn = document.getElementById("quarto-back-to-top");
+  if (!btn) return;
+  btn.removeAttribute("onclick");
+  btn.setAttribute("href", "#generate-declaration");
+  btn.replaceChildren(el("i", { class: "bi bi-arrow-up" }, []), " Back to generator");
+  btn.addEventListener("click", (e) => {
+    const target = document.getElementById("generate-declaration");
+    if (!target) return;
+    e.preventDefault();
+    const navHeight = document.querySelector("#quarto-header")?.offsetHeight ?? 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+    window.scrollTo({ top, behavior: "smooth" });
+  });
+}
+```
+
+
+```{ojs}
+//| echo: false
 promptsReminder = providePrompts
   ? el("p", { class: "gaidet-prompts-reminder" }, "Please add your prompts for each task below.")
   : null
@@ -1109,6 +1236,76 @@ declarationClosingParas = [
   "Responsibility for the submitted assignment lies entirely with the author of this declaration.",
   "Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes."
 ]
+```
+
+```{ojs}
+//| echo: false
+// One row per ticked task, in taxonomy order. Shared by the real table export
+// and the example declaration at the top, so both lay out identically.
+function declarationTableRows(sels) {
+  const rows = [];
+  for (const cat of data.categories) {
+    for (const item of cat.items) {
+      const sel = sels[`${cat.id}::${item.id}`];
+      if (!sel) continue;
+      rows.push({
+        stageId: cat.id,
+        stage: cat.label,
+        task: (sel.customLabel && sel.customLabel.trim()) ? sel.customLabel.trim() : sel.label,
+        tools: Object.entries(sel.tools ?? {}).map(([name, val]) => {
+          const version = (val && typeof val === "object" && val.version) ? val.version.trim() : "";
+          return version ? `${name} (${version})` : name;
+        }).join(", ") || "[no tool specified]",
+        use: (sel.sentence ?? "").trim() || "[please add an explainer]",
+        prompts: (sel.prompts ?? "").trim()
+      });
+    }
+  }
+  // The stage name is shown only on the first row of each group, which reads
+  // as a merged cell without needing rowspan support (Markdown) or the
+  // multirow package (LaTeX).
+  rows.forEach((r, i) => { r.firstInStage = i === 0 || rows[i - 1].stageId !== r.stageId; });
+  return rows;
+}
+```
+
+```{ojs}
+//| echo: false
+// The declaration as a Word / Google Docs table (rich-text clipboard HTML).
+// Also rendered as-is for the example declaration's table view.
+function declarationTableHtml(rows, promptRows, aiasLabel) {
+  const title = "Declaration on the Use of Artificial Intelligence Tools";
+  const headers = ["Stage", "Task", "AI tool(s)", "How AI was used"];
+  const escapeHtml = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+  // Word ignores width:100% on pasted HTML and sizes columns to their
+  // content, which can run off the page. Fixed widths in cm, summing to
+  // 15.9cm (A4 with Word's default 2.54cm margins; also fits US Letter),
+  // keep the table inside the page, and long text wraps within its cell.
+  const mainWidths = [2.8, 3.8, 3.0, 6.3];
+  const promptWidths = [4.5, 11.4];
+  const cell = (tag, text, widthCm, attrs = "") =>
+    `<${tag}${attrs} style="border:1px solid #000;padding:4px 6px;vertical-align:top;text-align:left;width:${widthCm}cm;">${text}</${tag}>`;
+  const htmlTable = (widths, head, bodyRows) =>
+    `<table style="border-collapse:collapse;table-layout:fixed;width:${widths.reduce((a, b) => a + b, 0).toFixed(1)}cm;">`
+    + `<thead><tr>${head.map((h, i) => cell("th", h, widths[i])).join("")}</tr></thead>`
+    + `<tbody>${bodyRows.join("")}</tbody></table>`;
+  const stageSpan = r => rows.filter(o => o.stageId === r.stageId).length;
+  return [
+    `<p><strong>${title}</strong></p>`,
+    aiasLabel ? `<p><strong>AIAS level:</strong> ${escapeHtml(aiasLabel)}</p>` : "",
+    htmlTable(mainWidths, headers, rows.map(r => "<tr>"
+      + (r.firstInStage ? cell("td", escapeHtml(r.stage), mainWidths[0], ` rowspan="${stageSpan(r)}"`) : "")
+      + cell("td", escapeHtml(r.task), mainWidths[1])
+      + cell("td", escapeHtml(r.tools), mainWidths[2])
+      + cell("td", escapeHtml(r.use), mainWidths[3])
+      + "</tr>")),
+    promptRows.length ? `<p></p><p><strong>Prompts used</strong></p>` + htmlTable(promptWidths, ["Task", "Prompt(s)"], promptRows.map(r => "<tr>"
+      + cell("td", escapeHtml(r.task), promptWidths[0])
+      + cell("td", escapeHtml(r.prompts), promptWidths[1])
+      + "</tr>")) : "",
+    declarationClosingParas.map(t => `<p>${escapeHtml(t)}</p>`).join("")
+  ].join("");
+}
 ```
 
 ```{ojs}
@@ -1204,63 +1401,14 @@ declarationTables = {
   // AIAS level and closing statements stay as ordinary paragraphs. Prompts,
   // when included, go in a second Task | Prompt(s) table so long prompts
   // don't stretch the main one.
-  const rows = [];
-  for (const cat of data.categories) {
-    for (const item of cat.items) {
-      const sel = selections[`${cat.id}::${item.id}`];
-      if (!sel) continue;
-      rows.push({
-        stageId: cat.id,
-        stage: cat.label,
-        task: (sel.customLabel && sel.customLabel.trim()) ? sel.customLabel.trim() : sel.label,
-        tools: Object.entries(sel.tools ?? {}).map(([name, val]) => {
-          const version = (val && typeof val === "object" && val.version) ? val.version.trim() : "";
-          return version ? `${name} (${version})` : name;
-        }).join(", ") || "[no tool specified]",
-        use: (sel.sentence ?? "").trim() || "[please add an explainer]",
-        prompts: (sel.prompts ?? "").trim()
-      });
-    }
-  }
-  // The stage name is shown only on the first row of each group, which reads
-  // as a merged cell without needing rowspan support (Markdown) or the
-  // multirow package (LaTeX).
-  rows.forEach((r, i) => { r.firstInStage = i === 0 || rows[i - 1].stageId !== r.stageId; });
+  const rows = declarationTableRows(selections);
   const promptRows = providePrompts ? rows.filter(r => r.prompts) : [];
 
   const title = "Declaration on the Use of Artificial Intelligence Tools";
   const headers = ["Stage", "Task", "AI tool(s)", "How AI was used"];
 
   // --- Word / Google Docs (rich-text clipboard) ---
-  const escapeHtml = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
-  // Word ignores width:100% on pasted HTML and sizes columns to their
-  // content, which can run off the page. Fixed widths in cm, summing to
-  // 15.9cm (A4 with Word's default 2.54cm margins; also fits US Letter),
-  // keep the table inside the page, and long text wraps within its cell.
-  const mainWidths = [2.8, 3.8, 3.0, 6.3];
-  const promptWidths = [4.5, 11.4];
-  const cell = (tag, text, widthCm, attrs = "") =>
-    `<${tag}${attrs} style="border:1px solid #000;padding:4px 6px;vertical-align:top;text-align:left;width:${widthCm}cm;">${text}</${tag}>`;
-  const htmlTable = (widths, head, bodyRows) =>
-    `<table style="border-collapse:collapse;table-layout:fixed;width:${widths.reduce((a, b) => a + b, 0).toFixed(1)}cm;">`
-    + `<thead><tr>${head.map((h, i) => cell("th", h, widths[i])).join("")}</tr></thead>`
-    + `<tbody>${bodyRows.join("")}</tbody></table>`;
-  const stageSpan = r => rows.filter(o => o.stageId === r.stageId).length;
-  const html = [
-    `<p><strong>${title}</strong></p>`,
-    aiasLevelLabel ? `<p><strong>AIAS level:</strong> ${escapeHtml(aiasLevelLabel)}</p>` : "",
-    htmlTable(mainWidths, headers, rows.map(r => "<tr>"
-      + (r.firstInStage ? cell("td", escapeHtml(r.stage), mainWidths[0], ` rowspan="${stageSpan(r)}"`) : "")
-      + cell("td", escapeHtml(r.task), mainWidths[1])
-      + cell("td", escapeHtml(r.tools), mainWidths[2])
-      + cell("td", escapeHtml(r.use), mainWidths[3])
-      + "</tr>")),
-    promptRows.length ? `<p></p><p><strong>Prompts used</strong></p>` + htmlTable(promptWidths, ["Task", "Prompt(s)"], promptRows.map(r => "<tr>"
-      + cell("td", escapeHtml(r.task), promptWidths[0])
-      + cell("td", escapeHtml(r.prompts), promptWidths[1])
-      + "</tr>")) : "",
-    declarationClosingParas.map(t => `<p>${escapeHtml(t)}</p>`).join("")
-  ].join("");
+  const html = declarationTableHtml(rows, promptRows, aiasLevelLabel);
 
   // --- Markdown (pipe table) ---
   const escapeMd = s => s.replace(/\|/g, "\\|").replace(/\n/g, "<br>");
@@ -1452,9 +1600,13 @@ outputBox = {
       ? null
       : showDeclaration
       ? (() => {
-          const div = el("div", { id: "gaidet-output-text", class: justUpdated ? "gaidet-output-flash" : "" }, []);
-          div.innerHTML = declarationHtml;
-          return div;
+          const classes = [justUpdated ? "gaidet-output-flash" : "", outputView === "table" ? "gaidet-table-view" : ""].filter(Boolean).join(" ");
+          const div = el("div", { id: "gaidet-output-text", class: classes }, []);
+          div.innerHTML = outputView === "table" ? declarationTables.html : declarationHtml;
+          return el("div", {}, [
+            viewSwitch(outputView, (view) => { mutable outputView = view; }),
+            div
+          ]);
         })()
       : el("div", { class: "gaidet-output-placeholder" },
           Array.isArray(placeholderText)
@@ -1466,15 +1618,15 @@ outputBox = {
     (showDeclaration && !showConfirmPrompt) ? el("div", { class: "gaidet-output-actions-secondary" }, [
       el("span", { class: "gaidet-output-actions-label" }, "Copy as text:"),
       el("button", {
-        class: "gaidet-btn-secondary gaidet-btn-small",
+        class: "gaidet-btn-secondary gaidet-btn-small gaidet-btn-icon",
         onclick: () => {
           copyToClipboard(declarationText, declarationHtml);
           mutable copySuccess = "copy";
           mutable copiedText = declarationText;
         }
-      }, "Copy to clipboard"),
+      }, [formatIcon("text"), "Copy to clipboard"]),
       el("button", {
-        class: "gaidet-btn-secondary gaidet-btn-small",
+        class: "gaidet-btn-secondary gaidet-btn-small gaidet-btn-icon",
         onclick: () => {
           const blob = new Blob([declarationText], { type: "text/plain" });
           const url = URL.createObjectURL(blob);
@@ -1486,34 +1638,34 @@ outputBox = {
           mutable copySuccess = "download";
           mutable copiedText = declarationText;
         }
-      }, "Download as txt file")
+      }, [formatIcon("text"), "Download as txt file"])
     ]) : null,
     (showDeclaration && !showConfirmPrompt) ? el("div", { class: "gaidet-output-actions-secondary" }, [
       el("span", { class: "gaidet-output-actions-label" }, "Copy as table:"),
       el("button", {
-        class: "gaidet-btn-secondary gaidet-btn-small",
+        class: "gaidet-btn-secondary gaidet-btn-small gaidet-btn-icon",
         onclick: () => {
           copyToClipboard(declarationTables.markdown, declarationTables.html);
           mutable copySuccess = "word";
           mutable copiedText = declarationText;
         }
-      }, "Word"),
+      }, [formatIcon("table"), "Word"]),
       el("button", {
-        class: "gaidet-btn-secondary gaidet-btn-small",
+        class: "gaidet-btn-secondary gaidet-btn-small gaidet-btn-icon",
         onclick: () => {
           copyToClipboard(declarationTables.latex);
           mutable copySuccess = "latex";
           mutable copiedText = declarationText;
         }
-      }, "LaTeX"),
+      }, [formatIcon("table"), "LaTeX"]),
       el("button", {
-        class: "gaidet-btn-secondary gaidet-btn-small",
+        class: "gaidet-btn-secondary gaidet-btn-small gaidet-btn-icon",
         onclick: () => {
           copyToClipboard(declarationTables.markdown);
           mutable copySuccess = "markdown";
           mutable copiedText = declarationText;
         }
-      }, "Markdown")
+      }, [formatIcon("table"), "Markdown"])
     ]) : null,
     success,
     (showDeclaration && !showConfirmPrompt) ? el("p", { class: "gaidet-output-note" }, [

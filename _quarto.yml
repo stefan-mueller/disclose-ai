@@ -4,6 +4,8 @@ project:
   resources:
     - "count/"
 
+lang: en-GB
+
 website:
   title: "AI Disclosure Generator"
   description: "A free tool that helps students write a clear AI-use disclosure statement for university assignments."
@@ -30,7 +32,11 @@ website:
 format:
   html:
     theme: flatly
-    css: styles.css
+    # Colour theme: swap themes/green.css for another file in themes/
+    # (e.g. themes/blue.css) to rebuild the site in that colour scheme.
+    css:
+      - themes/blue.css
+      - styles.css
     toc: false
     page-layout: article
     smooth-scroll: true
