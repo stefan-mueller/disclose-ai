@@ -8,7 +8,7 @@ format:
 <style>
 /* The default Quarto title  block is replaced by the hero banner below on 
    this page only. Scoped here (not in styles.css) so it doesn't also hide
-   the title on privacy.qmd / lecturers.qmd, which have no hero of their own. */
+   the title on privacy.qmd, which has no hero of their own. */
 #title-block-header {
   display: none;
 }
@@ -35,7 +35,7 @@ format:
 
 If your assignment permits AI use but requires disclosure, this tool can help. It is adapted for student assignments from the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) and the [Artificial Intelligence Disclosure (AID) Framework](https://arxiv.org/pdf/2408.01904).
 
-This tool is built specifically for student coursework. That said, if you're a researcher looking to document AI use in a publication or grant application, check out the [related literature and tools](lecturers.qmd#related-literature-and-advice) for options aimed at research rather than teaching.
+This tool is built specifically for student coursework. That said, if you're a researcher looking to document AI use in a publication or grant application, check out the [related literature and tools](#related-literature-and-advice) for options aimed at research rather than teaching.
 
 
 ```{ojs}
@@ -93,25 +93,22 @@ exampleDeclarationHtml = `<p><strong>Declaration on the Use of Artificial Intell
 
 ```{ojs}
 //| echo: false
-mutable exampleView = "text"
-```
-
-```{ojs}
-//| echo: false
 mutable outputView = "text"
 ```
 
 ```{ojs}
 //| echo: false
-// "Show as: Text / Table" switch, shared by the example declaration and the
-// generated one so both look and behave the same.
 // Small line icons for the two declaration formats, drawn in currentColor so
 // they follow each button's text colour (including its active/hover state).
-// Shared by the "Show as" switches and the copy buttons under the declaration.
+// Shared by the "Show as" switches, the copy buttons under the declaration
+// and the confirmation buttons.
 function formatIcon(view) {
   const paths = {
     text: '<path d="M4 6h16M4 10h16M4 14h16M4 18h10"/>',
     table: '<rect x="3.5" y="4.5" width="17" height="15" rx="1.5"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 9.5v10"/>',
+    // Tick and pencil, for the "Yes, generate" / "No, let me edit" buttons.
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    edit: '<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/>',
     // Lightbulb, for the "Show an example declaration" tip button.
     tip: '<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.1V16h5v-.1c0-.8.4-1.6 1.1-2.1A6 6 0 0 0 12 3z"/>'
   };
@@ -123,6 +120,7 @@ function formatIcon(view) {
   return icon;
 }
 
+// "Show as: Text / Table" switch for the generated declaration.
 function viewSwitch(current, onPick) {
   const button = (view, label) => el("button", {
     type: "button",
@@ -140,30 +138,6 @@ function viewSwitch(current, onPick) {
 
 ```{ojs}
 //| echo: false
-// The same three example tasks as exampleDeclarationHtml, as selections, so
-// the table view runs through the real table export (declarationTableRows +
-// declarationTableHtml) and matches what "Copy as table" produces exactly.
-exampleSelections = ({
-  "literature_review::clarifying_definitions": {
-    label: "Clarifying definitions or concepts",
-    tools: { "Claude": { version: "Sonnet 5" } },
-    sentence: "I asked Claude to explain a few concepts I was unsure about, then checked the literature it pointed me to against the original sources before relying on it."
-  },
-  "software_development::code_review": {
-    label: "Code review",
-    tools: { "Claude Code": { version: "Sonnet 4.6" } },
-    sentence: "I wrote the core analysis logic myself; Claude Code was used only to draft repetitive boilerplate (e.g. file-loading functions), which I reviewed, tested, and adapted to my dataset."
-  },
-  "writing_editing::proofreading": {
-    label: "Proofreading",
-    tools: { "Microsoft Copilot": { version: "GPT-5.5" } },
-    sentence: "After completing my own final draft, I asked Copilot to flag grammar and punctuation issues, and manually reviewed and accepted only the suggestions I agreed with."
-  }
-})
-```
-
-```{ojs}
-//| echo: false
 {
   const wrap = el("div", { class: "gaidet-example-wrap" }, [
     el("button", {
@@ -173,23 +147,12 @@ exampleSelections = ({
     }, [formatIcon("tip"), showExample ? "Hide an example declaration" : "Show an example declaration"])
   ]);
   if (showExample) {
-    // Fade in only when the example is opened, not on every Text/Table
-    // switch. `this` is this cell's previous output (null on first run).
-    const wasOpen = !!this?.querySelector?.(".gaidet-example");
-    const example = el("div", { class: "gaidet-example" }, []);
-    if (exampleView === "table") {
-      example.classList.add("gaidet-table-view");
-      example.innerHTML = declarationTableHtml(declarationTableRows(exampleSelections), [], "");
-    } else {
-      example.innerHTML = exampleDeclarationHtml;
-    }
-    const revealed = [
-      el("p", { class: "gaidet-tool-instructions gaidet-example-intro" }, "This is what your generated declaration will look like"),
-      viewSwitch(exampleView, (view) => { mutable exampleView = view; }),
+    const example = el("div", { class: "gaidet-example gaidet-fade-in" }, []);
+    example.innerHTML = exampleDeclarationHtml;
+    wrap.append(
+      el("p", { class: "gaidet-tool-instructions gaidet-example-intro gaidet-fade-in" }, "This is what your generated declaration will look like"),
       example
-    ];
-    if (!wasOpen) revealed.forEach(node => node.classList.add("gaidet-fade-in"));
-    wrap.append(...revealed);
+    );
   }
   return wrap;
 }
@@ -197,8 +160,10 @@ exampleSelections = ({
 
 
 
-::: {.callout-warning}
-Rules on generative AI often differ between programmes, courses/modules, and even individual assessments. Before using any AI tool, check your course/module syllabus and Learning Management System (LMS) course site for information on AI use, and ask your lecturer whether (and how) it may be used. Some institutions also only allow specific, approved AI tools. Disclosing a task or tool here does not mean you are permitted to use it, and you remain responsible for following your institution's and course/module's policies.
+::: {.gaidet-notice}
+[Before you start]{.gaidet-notice-title}
+
+Rules on generative AI differ between programmes, courses/modules, and even individual assessments. Before using any AI tool, check your syllabus and Learning Management System (LMS) course site for information on AI use, and ask your lecturer whether (and how) it may be used. Some institutions also only allow specific, approved AI tools. Disclosing a task or tool here does not mean you are permitted to use AI, and you remain responsible for following your institution's and course/module's policies.
 
 AI can hallucinate, producing false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. See the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 :::
@@ -400,12 +365,20 @@ autocompletePickers = new Map()
     if (e.target.closest(".gaidet-awaiting-notice")) return;
     layout.querySelector(".gaidet-awaiting-notice")?.remove();
     clearTimeout(hideTimer);
-    const notice = el("div", { class: "gaidet-awaiting-notice", role: "alert" }, [
-      el("strong", {}, "Steps 2 and 3 aren’t available yet. "),
-      "Tick at least one box in ",
-      el("a", { href: "#generate-declaration" }, "Step 1 above"),
-      " to show which categories of AI use your assignment allows."
-    ]);
+    // The faded boxes are inert, so the click lands on the layout itself;
+    // tell Step 2 and Step 3 apart by where it happened.
+    const step3 = layout.querySelector(".gaidet-layout-bottom");
+    const onStep3 = step3 && e.clientY >= step3.getBoundingClientRect().top;
+    const step1Link = el("a", { href: "#generate-declaration" }, "Step 1 above");
+    const notice = el("div", { class: "gaidet-awaiting-notice", role: "alert" }, onStep3
+      ? [
+          el("strong", {}, "Step 3 isn’t available yet. "),
+          "Complete ", step1Link, " and then Step 2 before you generate your declaration."
+        ]
+      : [
+          el("strong", {}, "Step 2 isn’t available yet. "),
+          "Select the categories your assignment allows in ", step1Link, "."
+        ]);
     const top = e.clientY - layout.getBoundingClientRect().top;
     notice.style.top = `${Math.max(0, top - 20)}px`;
     layout.append(notice);
@@ -569,6 +542,29 @@ promptsToggle = {
 
 ```{ojs}
 //| echo: false
+// The prompts question and the AIAS level are optional, so they sit folded
+// away under one small "Optional information" toggle rather than as two
+// full boxes. It opens by itself when either already has a value (e.g.
+// after loading saved progress), so a choice is never hidden. Otherwise it
+// keeps whatever state it had before this cell re-ran (`this` is the
+// previous output), without a `mutable` that would redraw it on every click.
+optionalInfo = {
+  const open = !!this?.open || providePrompts === true || aiasLevel !== "";
+  const details = el("details", { class: "gaidet-optional" }, [
+    el("summary", { class: "gaidet-optional-summary" }, [
+      el("span", { class: "gaidet-optional-title" }, "Optional information"),
+      el("span", { class: "gaidet-optional-hint" }, "Prompts, AI Assessment Scale level")
+    ]),
+    promptsToggle,
+    aiasSelector
+  ]);
+  details.open = open;
+  return details;
+}
+```
+
+```{ojs}
+//| echo: false
 aiasSelector = {
   // Clicking the already-selected level clears it, so there's always an
   // obvious, one-click way back to "not specified" without a separate
@@ -717,7 +713,7 @@ categoryGate = {
 
   return el("div", { class: "gaidet-category-gate" }, [
     el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1 (What is allowed): Which categories of AI use does your assignment permit?"),
-    el("p", { class: "gaidet-tool-instructions" }, "Check the categories your assignment brief or course/module instructions allow. Everything else stays locked below until you check it here, so tick only what is permitted."),
+    el("p", { class: "gaidet-tool-instructions gaidet-gate-instructions" }, "Check all categories your assignment brief or course/module instructions allow. Everything else stays locked below until you check it here, so tick only what is permitted."),
     el("div", { class: "gaidet-category-gate-list" }, [...categoryOptions, selectAllOption, noGuidanceOption]),
     noGuidanceWarning
   ]);
@@ -727,7 +723,12 @@ categoryGate = {
 ```{ojs}
 //| echo: false
 step2Label = el("div", {}, [
-  el("p", { class: "gaidet-step-label" }, "Step 2 (What you used): Tick every task where you used AI"),
+  // The short title only shows while Steps 2 and 3 are collapsed, waiting
+  // for Step 1; it matches Step 3's "Step 3: Generate your declaration".
+  el("p", { class: "gaidet-step-label" }, [
+    el("span", { class: "gaidet-step-label-full" }, "Step 2 (What you used): Tick every task where you used AI"),
+    el("span", { class: "gaidet-step-label-short" }, "Step 2: Describe how you used AI")
+  ]),
   el("p", { class: "gaidet-tool-instructions" }, "Select and describe your use of AI for one or more tasks below.")
 ])
 ```
@@ -843,13 +844,23 @@ form = {
           currentMatches = [];
         }
 
-        function selectTool(entry) {
+        function selectTool(entry, { refocus = true } = {}) {
           if (!isSelected(entry.name)) {
             commit([...currentSelected(), { name: entry.name, needsVersion: entry.needsVersion, version: "" }]);
           }
           input.value = "";
           closeList();
-          input.focus();
+          if (refocus) input.focus();
+        }
+
+        // Tools that aren't in the list are accepted as typed, with no extra
+        // "Add … as a tool" step: on Enter, or when the student leaves the
+        // field. A typed name matching a listed tool uses that entry.
+        function acceptTyped(options) {
+          const q = input.value.trim();
+          if (!q) return;
+          const exact = toolIndex.find(t => t.name.toLowerCase() === q.toLowerCase());
+          selectTool(exact ?? { name: q, needsVersion: true }, options);
         }
 
         function renderList(query) {
@@ -859,16 +870,7 @@ form = {
           const matches = toolIndex.filter(t => t.name.toLowerCase().includes(ql) && !isSelected(t.name));
           list.innerHTML = "";
 
-          if (matches.length === 0) {
-            currentMatches = [{ name: q, needsVersion: true, isCustom: true }];
-            const li = el("li", { class: "gaidet-autocomplete-item gaidet-autocomplete-add-custom" }, []);
-            li.append("Add “", Object.assign(document.createElement("strong"), { textContent: q }), "” as a tool");
-            li.addEventListener("mousedown", (e) => { e.preventDefault(); selectTool(currentMatches[0]); });
-            list.append(li);
-            list.style.display = "block";
-            activeIndex = -1;
-            return;
-          }
+          if (matches.length === 0) { closeList(); return; }
 
           currentMatches = matches;
           matches.forEach(entry => {
@@ -891,6 +893,7 @@ form = {
         }
 
         input.addEventListener("input", (e) => renderList(e.target.value));
+        input.addEventListener("blur", () => acceptTyped({ refocus: false }));
         input.addEventListener("keydown", (e) => {
           const items = list.querySelectorAll(".gaidet-autocomplete-item");
           if (e.key === "ArrowDown") {
@@ -909,6 +912,8 @@ form = {
               selectTool(currentMatches[activeIndex]);
             } else if (currentMatches.length === 1) {
               selectTool(currentMatches[0]);
+            } else {
+              acceptTyped();
             }
           } else if (e.key === "Escape") {
             closeList();
@@ -974,7 +979,7 @@ form = {
 
         return el("div", { class: "gaidet-autocomplete" }, [
           el("p", { class: "gaidet-tool-label" }, "AI tool(s) used for this task:"),
-          el("p", { class: "gaidet-tool-instructions" }, "Press Enter or click a suggestion to add a tool. If yours isn't listed, type its name and add it as a custom tool."),
+          el("p", { class: "gaidet-tool-instructions" }, "Click a suggestion or press Enter to add a tool. If yours isn't listed, just type its name."),
           el("div", { class: "gaidet-autocomplete-wrap" }, [input, list]),
           selectedWrap
         ]);
@@ -1534,24 +1539,24 @@ outputBox = {
     ? el("div", { class: "gaidet-success" }, successText)
     : null;
 
-  const placeholderText = ["Your declaration will appear here once every ticked task has a tool and a short description.", "Your declaration should accurately reflect all uses of generative AI in preparing the assignment.", "If you didn't use AI at all, add: ‘No generative AI tools were used in the preparation of this assignment.’"];
+  const placeholderText = ["Your declaration will appear here once every ticked task has a tool and a short description.", "It should accurately reflect all uses of generative AI in preparing the assignment.", "If you didn't use AI at all, add: ‘No generative AI tools were used in the preparation of this assignment.’"];
 
   const confirmBox = showConfirmPrompt ? el("div", { class: "gaidet-confirm" }, [
     el("p", {}, "Did you disclose all use of generative AI in this assignment?"),
     el("div", { class: "gaidet-confirm-actions" }, [
       el("button", {
-        class: "gaidet-btn-primary",
+        class: "gaidet-btn-primary gaidet-btn-icon",
         onclick: () => {
           trackGenerateClick();
           mutable declarationConfirmed = true;
           mutable showConfirmPrompt = false;
           mutable copySuccess = false;
         }
-      }, "Yes, generate declaration"),
+      }, [formatIcon("check"), "Yes, generate declaration"]),
       el("button", {
-        class: "gaidet-btn-secondary",
+        class: "gaidet-btn-secondary gaidet-btn-icon",
         onclick: () => { mutable showConfirmPrompt = false; }
-      }, "No, let me edit")
+      }, [formatIcon("edit"), "No, let me edit"])
     ])
   ]) : null;
 
@@ -1585,7 +1590,7 @@ outputBox = {
   }
 
   const outputDiv = el("div", { class: "gaidet-output", id: "gaidet-output-section" }, [
-    el("h2", { class: "gaidet-output-title gaidet-step-label" }, "Step 3: Your declaration"),
+    el("h2", { class: "gaidet-output-title gaidet-step-label" }, "Step 3: Generate your declaration"),
     el("div", { class: "gaidet-output-header-actions" }, [
       showConfirmPrompt ? null : el("button", {
         class: "gaidet-btn-primary",
@@ -1682,7 +1687,7 @@ outputBox = {
 // Builds a fresh progress bar each call, since the same DOM node can't be
 // shown twice. One sits between Step 1 and the (faded) Steps 2-3, outside
 // the fade, so it's always readable and says what unlocks the next step; a
-// second copy appears between Steps 2 and 3 once a task is complete.
+// second copy appears between Steps 2 and 3 once Step 2 is available.
 makeProgressBar = ({ announce = true } = {}) => {
   const entries = Object.values(selections);
   const done = [
@@ -1697,7 +1702,7 @@ makeProgressBar = ({ announce = true } = {}) => {
   const message = noGuidance
     ? "No guidance on AI use means AI is not permitted until your course/module coordinator confirms otherwise."
     : [
-        "Tick at least one box in Step 1 to continue to Step 2.",
+        "Select the categories your assignment allows in Step 1 to continue.",
         "Step 1 done. In Step 2, tick every task where you used AI and add a tool and short description for each.",
         "Step 2 done. Create your declaration in Step 3.",
       ][current] ?? "All steps done. Review your declaration before submitting.";
@@ -1705,11 +1710,16 @@ makeProgressBar = ({ announce = true } = {}) => {
   // Steps 2 and 3 in the bar are clickable. Before Step 1 is done, a click
   // shows a notice instead; the bar is rebuilt once Step 1 is completed,
   // which clears the notice again.
-  const lockedNotice = el("div", { class: "gaidet-category-gate-warning gaidet-progress-locked", hidden: "" },
-    "Step 1 needs to be completed first. Tick at least one box in Step 1 to continue.");
+  const lockedNotice = el("div", { class: "gaidet-category-gate-warning gaidet-progress-locked", hidden: "" }, []);
+  const lockedMessages = [
+    null,
+    "Step 2 isn’t available yet. Select the categories your assignment allows in Step 1.",
+    "Step 3 isn’t available yet. Complete Step 1 and then Step 2 before you generate your declaration."
+  ];
   const targets = [null, ".gaidet-step2-box", ".gaidet-layout-bottom"];
   const goTo = (i) => {
     if (!done[0]) {
+      lockedNotice.textContent = lockedMessages[i];
       lockedNotice.hidden = false;
       return;
     }
@@ -1721,7 +1731,7 @@ makeProgressBar = ({ announce = true } = {}) => {
     el("ol", { class: "gaidet-progress-steps" }, labels.map((label, i) => {
       const content = [
         el("span", { class: "gaidet-progress-bar" }, []),
-        el("span", { class: "gaidet-progress-label" }, `${done[i] ? "✓" : i + 1} ${label}`)
+        el("span", { class: "gaidet-progress-label" }, `${done[i] ? "✓ " : ""}Step ${i + 1}: ${label}`)
       ];
       return el("li", {
         class: "gaidet-progress-step" + (done[i] ? " is-done" : i === current ? " is-current" : ""),
@@ -1743,7 +1753,7 @@ progressBar = makeProgressBar()
 
 ```{ojs}
 //| echo: false
-progressBarAfterStep2 = Object.values(selections).some(sel => taskIsComplete(sel.sentence, sel.tools, sel.openEnded, sel.customLabel))
+progressBarAfterStep2 = allowedCategories.size > 0
   ? makeProgressBar({ announce: false })  // the Step 1 copy already announces changes
   : el("div", {}, [])
 ```
@@ -1762,9 +1772,7 @@ ${promptsReminder}
 
 ${form}
 
-${promptsToggle}
-
-${aiasSelector}
+${optionalInfo}
 :::
 
 ::: {.gaidet-progress-after-step2}
@@ -1839,7 +1847,7 @@ ${progressBox}
 ## About the maintainer and tool
 
 
-[Stefan Müller](https://stefanmueller.ie) built this tool with assistance from AI Coding Agents, under his direction.
+This tool was built and is maintained by [Stefan Müller](https://stefanmueller.ie), with assistance from AI coding agents working under his direction.
 
 I would love to hear how you are using this tool and any suggestions for improving it. Please share your thoughts via this [short feedback form](https://forms.cloud.microsoft/e/nSGgCVHRQg).
 
@@ -1849,7 +1857,93 @@ If you are using this tool in your teaching or research, you can cite it as:
 
 ## Information for lecturers
 
-If you're a lecturer, see the [dedicated page for lecturers](lecturers.qmd) for answers to the questions lecturers have asked most often after testing the tool with their own students, including where the Step 1 categories come from, how to phrase permitted AI use in an assignment brief, how to cite this tool, and related literature and advice.
+Answers to the questions lecturers have asked most often after testing the tool with their own students. Click a question to show the answer.
+
+::: {.gaidet-faq-accordion}
+### Where do these categories come from? {.gaidet-faq}
+
+The categories in Step 1 of the tool are drawn from task categories used in student surveys and existing AI disclosure guidelines. They form a checklist of common use cases, not a recommendation that students use AI for all, or indeed any, of them. Whether AI is appropriate for a given category still depends entirely on your assignment brief and your own instructions.
+
+Step 1 is the crucial filtering step for students: it should reflect only what your assignment or course/module actually permits, not everything AI happens to be capable of. Students who are unsure whether a category applies are told to leave it unticked and ask you rather than guess.
+
+### How can I phrase permitted AI use in my assignment brief? {.gaidet-faq}
+
+Some lecturers find it useful to name the same categories in their assignment brief as the ones in Step 1, rather than describing permitted and prohibited AI use in separate wording. Students can then tick exactly what has been permitted without having to interpret how a general policy applies to their situation.
+
+One way this can look in an assignment brief:
+
+::: {.gaidet-quote}
+For this assignment, you may use AI for *Conceptualisation* and *Initial literature screening*, for instance to brainstorm ideas or locate relevant sources. AI must **not** be used for *Data management*, *Coding and automation*, *Writing and editing*, or *Audiovisual and interactive components*, as these should be your own unassisted work. Anything else can be recorded under *Additional tasks*. Please use the AI Disclosure Generator to record your AI use and attach the generated declaration to your assignment submission: [https://disclose-ai.app](https://disclose-ai.app).
+:::
+
+### What if my course/module has not settled on an AI policy yet? {.gaidet-faq}
+
+A student who ticks "no guidance" in Step 1 is told to treat that as AI not being permitted, rather than as permission by default, until you or the course/module coordinator confirms otherwise. Settling on even a brief policy, using the wording above, removes that ambiguity for your students.
+
+### Where can I find related tools, literature, and advice? {#related-literature-and-advice .gaidet-faq}
+
+A number of similar tools exist to support transparent AI-use disclosure, including the [AID Framework](https://aidframework.org), the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/), and [sIfA](https://github.com/mareikeschomerus-ctrl/sIfA) (Statement of Intellectual Fellowship and Accountability), a browser-based tool from Busara that maps AI contributions onto the 14 CRediT contributor roles and is aimed more at researchers documenting a publication than at student coursework. All aim at the same goal: helping students and researchers disclose their AI use clearly and consistently. Use whichever fits your context best.
+
+The optional "AIAS level" field in the tool uses the [AI Assessment Scale](https://aiassessmentscale.com), a complementary framework instructors use to specify how much AI use is permitted on a given assessment; this tool only lets you record that level, it doesn't set or enforce it.
+
+This tool's approach is comparable to the [American Journal of Political Science's AI Policy](https://ajps.org/ajps-ai-policy/), which asks authors to describe how AI was used rather than reproduce full transcripts. If you're an instructor who wants students to submit the entire output of their AI conversations, not just a summary and the prompts used, ask for that separately.
+
+Further reading on AI-use disclosure:
+
+- Suchikova, Yana, Tsybuliak, Natalia, Teixeira da Silva, Jaime A., & Nazarovets, Serhii (2026). “GAIDeT (Generative AI Delegation Taxonomy): A Taxonomy for Humans to Delegate Tasks to Generative Artificial Intelligence in Scientific Research and Publishing“. *Accountability in Research*, *33*(3). [10.1080/08989621.2025.2544331](https://doi.org/10.1080/08989621.2025.2544331)
+- Weaver, Kari D. (2024). “The Artificial Intelligence Disclosure (AID) Framework: An Introduction“. *College & Research Libraries News*, *85*(10), 407–411. [arxiv.org/abs/2408.01904](https://arxiv.org/abs/2408.01904)
+- Perkins, Mike, Furze, Leon, Roe, Jasper, & MacVaugh, Jason (2024). “The AI Assessment Scale (AIAS)“. [aiassessmentscale.com](https://aiassessmentscale.com)
+- American Journal of Political Science (2026). “AJPS AI Policy“. Updated 11 August 2026. [ajps.org/ajps-ai-policy](https://ajps.org/ajps-ai-policy/)
+- Saleh, Engy, & Schomerus, Mareike (2026). “The sIfA Tool for a Statement of Intellectual Fellowship and Accountability: An Invitation to Reflect on How Humans and AI Interact in Producing Knowledge“. *Busara*. [10.62372/IUPB2137](https://doi.org/10.62372/IUPB2137)
+- Schomerus, Mareike. *sIfA Tool (Tool to create a Statement of Intellectual Fellowship and Accountability)*. Version 1.4. 2026. *Busara*. [10.5281/zenodo.20285993](https://doi.org/10.5281/zenodo.20285993)
+:::
+
+```{=html}
+<script>
+// Turns each question in the lecturers FAQ above into a collapsible
+// <details> item: the "?" heading becomes the summary and everything up to
+// the next question becomes the answer. Quarto may or may not wrap each
+// heading in its own <section>, so both layouts are handled.
+document.addEventListener("DOMContentLoaded", () => {
+  const root = document.querySelector(".gaidet-faq-accordion");
+  if (!root) return;
+  for (const h of [...root.querySelectorAll("h3.gaidet-faq")]) {
+    const section = h.parentElement.matches("section.level3") ? h.parentElement : null;
+    const body = [];
+    if (section) {
+      body.push(...[...section.children].filter(n => n !== h));
+    } else {
+      for (let n = h.nextElementSibling; n && !n.matches("h3.gaidet-faq"); n = n.nextElementSibling) body.push(n);
+    }
+    const details = document.createElement("details");
+    details.className = "gaidet-faq-item";
+    // Put the new item where the question was, before moving anything.
+    (section ?? h).before(details);
+    const summary = document.createElement("summary");
+    summary.className = "gaidet-faq-summary";
+    summary.append(h);
+    const answer = document.createElement("div");
+    answer.className = "gaidet-faq-answer";
+    answer.append(...body);
+    details.append(summary, answer);
+    section?.remove();
+  }
+
+  // Links to a question (e.g. #related-literature-and-advice from "About
+  // this tool") open its answer rather than landing on a closed item.
+  const openFromHash = () => {
+    const target = location.hash && root.querySelector(location.hash);
+    const details = target?.closest("details.gaidet-faq-item");
+    if (details) {
+      details.open = true;
+      target.scrollIntoView();
+    }
+  };
+  openFromHash();
+  window.addEventListener("hashchange", openFromHash);
+});
+</script>
+```
 
 ## Disclaimer of responsibility
 

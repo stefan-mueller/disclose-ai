@@ -10,3 +10,15 @@
 
 [build.environment]
   QUARTO_PRINT_STACK = "true"
+
+# The separate lecturers page was folded into the homepage; keep old links
+# working.
+[[redirects]]
+  from = "/lecturers.html"
+  to = "/#information-for-lecturers"
+  status = 301
+
+[[redirects]]
+  from = "/lecturers"
+  to = "/#information-for-lecturers"
+  status = 301

@@ -184,6 +184,8 @@ h1 {
    .hr below) plus extra breathing room, so sections read as clearly
    separate rather than running into the content above them. */
 h2 {
+  /* Up from the theme's 1.65rem, so sections stand out more. */
+  font-size: clamp(1.6rem, 1.3rem + 1vw, 2rem);
   margin-top: 4rem;
   border-bottom: none;
   padding-bottom: 0;
@@ -206,7 +208,7 @@ h2 {
    is added purely to outrank it — needed since our hero replaces that
    title block and that reset no longer applies here. */
 #quarto-document-content .site-header ~ section.level2:first-of-type > h2 {
-  margin-top: 4.5rem;
+  margin-top: 3.25rem;
 }
 
 h2:first-of-type::before,
@@ -250,13 +252,8 @@ h3 {
   animation: gaidet-fade-up 0.5s ease-out both;
 }
 
-#title-block-header + p {
-  animation: gaidet-fade-up 0.5s ease-out 0.12s both;
-}
-
 @media (prefers-reduced-motion: reduce) {
   #title-block-header,
-  #title-block-header + p,
   .title::after {
     animation: none;
   }
@@ -309,45 +306,43 @@ h3 {
   margin: 0;
 }
 
-.callout {
-  background-color: #fff;
+/* Warning box above the tool. A plain div rather than a Quarto callout,
+   styled like the tool's other boxes but in the theme's warning orange. */
+.gaidet-notice {
+  /* Orange frame, almost white inside: the border marks it as a caution
+     while the long text stays calm to read. */
+  background: #fffcf8;
+  border: 2px solid var(--gaidet-warning);
+  border-radius: 6px;
+  padding: 1.1rem 1.4rem;
+  margin: 1.5rem 0;
 }
 
-/* Quarto bakes the callout's colours in at build time (border, header tint,
-   and an icon SVG with its fill hard-coded), so Bootstrap variables can't
-   recolour it. Override each piece with the theme's warning orange; the
-   icon is redrawn as a mask so it takes a CSS colour. */
-div.callout-warning.callout {
-  border-left-color: var(--gaidet-warning);
+.gaidet-notice p {
+  margin: 0 0 0.6rem;
 }
 
-div.callout-warning.callout-style-default > .callout-header {
-  background-color: var(--gaidet-warning-bg);
+.gaidet-notice p:last-child {
+  margin-bottom: 0;
 }
 
-div.callout-warning .callout-icon::before {
-  background-image: none !important;
-  background-color: var(--gaidet-warning);
-  -webkit-mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/><path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/></svg>') center / contain no-repeat;
-  mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/><path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/></svg>') center / contain no-repeat;
+.gaidet-notice-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 700;
+  color: var(--gaidet-warning-text);
 }
 
-.callout > .callout-body-container {
-  background-color: #fff;
-}
-
-.callout,
-.callout p,
-.callout-body-container,
-.callout-body-container p {
-  font-size: 1rem !important;
-}
-
-.callout-title,
-.callout-title-container,
-.callout-title-container > * {
-  font-size: 1rem !important;
-  font-weight: 700 !important;
+/* Warning triangle, drawn as a mask so it takes the title's colour. */
+.gaidet-notice-title::before {
+  content: "";
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+  background-color: currentColor;
+  -webkit-mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>') center / contain no-repeat;
+  mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>') center / contain no-repeat;
 }
 
 a {
@@ -447,14 +442,47 @@ a:hover {
 .gaidet-steps {
   display: flex;
   flex-direction: column;
+  /* Room for the arrows between steps; the arrow maths below adds it in. */
+  gap: 0.5rem;
   margin: 1rem 0 1.4rem;
 }
 
 .gaidet-step {
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: 0.8rem;
   padding: 0.3rem 0;
+}
+
+/* Short straight arrow from each step's number down to the next one,
+   centred under the circle (1.1rem in: half its 2.2rem width). It starts
+   4px below this circle (0.3rem padding + 2.2rem = 2.5rem down) and ends
+   4px above the next one (100% + the 0.5rem gap + its 0.3rem padding).
+   Decorative only. */
+.gaidet-step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: calc(1.1rem - 1px);
+  top: calc(2.5rem + 4px);
+  width: 2px;
+  height: calc(100% - 1.7rem - 8px);
+  background: var(--gaidet-accent);
+  border-radius: 1px;
+}
+
+/* Open chevron arrowhead pointing down, tip at the end of the line. */
+.gaidet-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  box-sizing: border-box;
+  width: 7px;
+  height: 7px;
+  left: calc(1.1rem - 3.5px);
+  top: calc(100% + 0.8rem - 12.5px);
+  border-right: 2px solid var(--gaidet-accent);
+  border-bottom: 2px solid var(--gaidet-accent);
+  transform: rotate(45deg);
 }
 
 .gaidet-step-number {
@@ -481,6 +509,15 @@ a:hover {
   margin: 0;
   font-size: 0.92rem;
   color: var(--gaidet-text-muted);
+}
+
+/* Step 1's instruction decides what unlocks later, so it's set in full
+   white and a touch larger/bolder than the usual (dimmed) hint text.
+   Tripled up to outrank .gaidet-category-gate .gaidet-tool-instructions. */
+.gaidet-category-gate .gaidet-tool-instructions.gaidet-gate-instructions {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .gaidet-category-gate {
@@ -630,6 +667,98 @@ label.gaidet-tool-option:hover {
   font-size: 1.15rem !important;
   font-weight: 700 !important;
   margin: 0 0 0.5rem;
+}
+
+/* Folded-away "Optional information" (prompts, AIAS level) in Step 2. The
+   closed state is a full-width bar with a border, a +/- icon and a
+   "Show"/"Hide" cue, so it reads as something to open rather than a line of
+   text, while staying quieter than the task cards above it. */
+.gaidet-optional {
+  margin: 1rem 0 0.75rem;
+  background: #fff;
+  border: 1px solid var(--gaidet-border);
+  border-radius: 6px;
+  transition: border-color 0.15s ease;
+}
+
+.gaidet-optional:hover,
+.gaidet-optional[open] {
+  border-color: var(--gaidet-accent-muted);
+}
+
+.gaidet-optional-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.6rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  list-style: none;
+  color: var(--gaidet-accent-dark);
+  font-size: 0.95rem;
+  border-radius: 6px;
+}
+
+.gaidet-optional-summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Plus sign that turns into a minus when open. The two strokes are drawn
+   as centred gradient bars rather than "+"/"−" characters, whose position
+   inside the circle depends on the font's metrics and never sits quite in
+   the middle. */
+.gaidet-optional-summary::before {
+  content: "";
+  flex: none;
+  box-sizing: border-box;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  border: 1px solid var(--gaidet-accent-muted);
+  background:
+    linear-gradient(currentColor, currentColor) center / 0.6rem 2px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 2px 0.6rem no-repeat,
+    var(--gaidet-accent-tint);
+}
+
+.gaidet-optional[open] > .gaidet-optional-summary::before {
+  background:
+    linear-gradient(currentColor, currentColor) center / 0.6rem 2px no-repeat,
+    var(--gaidet-accent-tint);
+}
+
+.gaidet-optional-summary::after {
+  content: "Show";
+  margin-left: auto;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gaidet-accent);
+}
+
+.gaidet-optional[open] > .gaidet-optional-summary::after {
+  content: "Hide";
+}
+
+.gaidet-optional-summary:hover {
+  background: var(--gaidet-accent-tint);
+}
+
+.gaidet-optional[open] > .gaidet-optional-summary {
+  border-bottom: 1px solid var(--gaidet-border);
+  border-radius: 6px 6px 0 0;
+}
+
+.gaidet-optional-title {
+  font-weight: 600;
+}
+
+.gaidet-optional-hint {
+  color: var(--gaidet-text-muted);
+}
+
+/* The two questions keep their own cards, inset inside the open panel. */
+.gaidet-optional > :not(summary) {
+  margin: 0.9rem 1rem;
 }
 
 .gaidet-prompts-question {
@@ -824,13 +953,6 @@ label.gaidet-tool-option:hover {
   background: var(--gaidet-accent-tint);
 }
 
-.gaidet-autocomplete-add-custom {
-  justify-content: flex-start;
-  gap: 0;
-  font-style: italic;
-  color: var(--gaidet-accent);
-}
-
 .gaidet-autocomplete-selected {
   margin-top: 0.6rem;
   display: flex;
@@ -880,8 +1002,8 @@ label.gaidet-tool-option:hover {
   cursor: help;
 }
 
-/* Bigger and in the bright accent (not the plain teal, which is too close
-   in tone to the dark green .gaidet-category-gate card behind it) so the
+/* Bigger and in the bright accent (not the plain accent, which is too
+   close in tone to the dark .gaidet-category-gate card behind it) so the
    icon actually stands out against Step 1's dark background. */
 .gaidet-category-gate-option .gaidet-info-icon {
   font-size: 0.8em;
@@ -909,7 +1031,7 @@ label.gaidet-tool-option:hover {
   max-width: calc(100vw - 2.5rem);
   /* Same light-tint-plus-accent-text pairing used for buttons and callouts
      elsewhere on the site (e.g. .gaidet-btn-secondary:hover), rather than a
-     dark panel — a light box also reads clearly against the dark green
+     dark panel — a light box also reads clearly against the dark
      .gaidet-category-gate card the icon sits on in Step 1. */
   background: var(--gaidet-accent-tint);
   color: var(--gaidet-accent-dark);
@@ -1053,8 +1175,8 @@ hr {
 }
 
 .gaidet-confirm {
-  background: var(--gaidet-warning-bg);
-  border: 1px solid var(--gaidet-warning-border);
+  background: var(--gaidet-accent-tint);
+  border: 1px solid var(--gaidet-border);
   border-radius: 8px;
   padding: 0.8rem 1rem;
   margin-bottom: 0.9rem;
@@ -1488,7 +1610,56 @@ button:active {
 /* The children fade, not the container, so the click notice below (also a
    child, but excluded) stays fully visible on top of them. */
 .gaidet-layout.gaidet-awaiting-step1 > :not(.gaidet-awaiting-notice) {
-  opacity: 0.12;
+  opacity: 0.6;
+}
+
+/* While waiting, Steps 2 and 3 collapse to just their titles on a light
+   accent tint, so the page shows what's coming without a large faded block
+   that reads like an error. */
+.gaidet-awaiting-step1 .gaidet-step2-box > :not(:first-child),
+.gaidet-awaiting-step1 .gaidet-step2-box .gaidet-tool-instructions,
+.gaidet-awaiting-step1 .gaidet-progress-after-step2,
+.gaidet-awaiting-step1 .gaidet-output > :not(.gaidet-output-title) {
+  display: none;
+}
+
+.gaidet-awaiting-step1 .gaidet-step2-box,
+.gaidet-awaiting-step1 .gaidet-output {
+  background: var(--gaidet-accent-tint);
+  border: 1px solid var(--gaidet-accent-muted);
+  border-radius: 6px;
+  box-shadow: none;
+  padding: 1rem 1.2rem;
+}
+
+.gaidet-awaiting-step1 .gaidet-step2-box > :first-child,
+.gaidet-awaiting-step1 .gaidet-step2-box .gaidet-step-label,
+.gaidet-awaiting-step1 .gaidet-output-title {
+  margin: 0 !important;
+  padding: 0;
+  /* Step 3's title is an <h2> and Step 2's a <p>, so pin the line height
+     to keep both collapsed boxes the same height. */
+  line-height: 1.4 !important;
+  color: var(--gaidet-accent-dark);
+}
+
+.gaidet-awaiting-step1 .gaidet-step2-box > :first-child * {
+  margin: 0;
+}
+
+.gaidet-step-label-short,
+.gaidet-awaiting-step1 .gaidet-step-label-full {
+  display: none;
+}
+
+.gaidet-awaiting-step1 .gaidet-step-label-short {
+  display: inline;
+}
+
+/* Drop Step 3's own grey "locked" look here; the tint says it all. */
+.gaidet-awaiting-step1 .gaidet-locked {
+  opacity: 1;
+  filter: none;
 }
 
 .gaidet-layout.gaidet-awaiting-step1 {
@@ -1786,4 +1957,121 @@ footer.footer,
 .nav-footer a:focus {
   color: var(--gaidet-accent-bright);
   text-decoration-color: currentColor;
+}
+
+/* Question headings on the lecturers page: a small filled circle with a
+   question mark in front of each, in the theme accent. The badge hangs in
+   the left padding and is sized from the heading's own font size, so it
+   stays centred on the first line whatever the heading's size or wrapping.
+   Heading line height is 1.35em; the badge (0.75em font x 1.5) is 1.125em
+   tall, so a 0.15em (x 0.75 = 0.1125em) top offset centres it. */
+h3.gaidet-faq {
+  /* Quarto fades every h3 to 0.9 opacity, which also lightened the "?"
+     badge compared with the step numbers; keep both at full strength. */
+  opacity: 1;
+  position: relative;
+  padding-left: 2.1rem;
+  line-height: 1.35;
+}
+
+h3.gaidet-faq::before {
+  content: "?";
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  background: var(--gaidet-accent);
+  color: #fff;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1.5em;
+  text-align: center;
+}
+
+/* Example wording quoted on the lecturers page: a white card with an accent
+   bar and a large opening quote mark, so it reads as a citable snippet. */
+.gaidet-quote {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--gaidet-border);
+  border-left: 4px solid var(--gaidet-accent);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 4px rgba(16, 24, 40, 0.04);
+  padding: 1.1rem 1.4rem 1.1rem 3.2rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.gaidet-quote::before {
+  content: "\201C";
+  position: absolute;
+  left: 0.9rem;
+  top: 0.35rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 3rem;
+  font-style: normal;
+  line-height: 1;
+  color: var(--gaidet-accent-muted);
+}
+
+.gaidet-quote p:last-child {
+  margin-bottom: 0;
+}
+
+/* No italics anywhere in the quote, including the category names, which
+   are marked as emphasis in the source. */
+.gaidet-quote em {
+  font-style: normal;
+}
+
+/* Lecturers FAQ on the main page: a plain list of questions, each opening
+   to its answer. No cards, rules, shadows or tinted hover blocks, so it
+   reads like an ordinary page section. Built by a small script in
+   index.qmd from the same headings used on the lecturers page. */
+.gaidet-faq-accordion {
+  margin-top: 1rem;
+}
+
+.gaidet-faq-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.gaidet-faq-summary::-webkit-details-marker {
+  display: none;
+}
+
+.gaidet-faq-summary h3.gaidet-faq {
+  margin: 0;
+  /* Reads like body text rather than a heading. */
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--bs-body-color, #212529);
+}
+
+.gaidet-faq-summary:hover h3.gaidet-faq {
+  color: var(--gaidet-accent);
+}
+
+/* Plain plus/minus straight after the question. */
+.gaidet-faq-summary::after {
+  content: "+";
+  flex: none;
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--gaidet-accent);
+}
+
+.gaidet-faq-item[open] > .gaidet-faq-summary::after {
+  content: "\2212";
+}
+
+.gaidet-faq-answer {
+  padding: 0 0 0.5rem 2.1rem;
 }

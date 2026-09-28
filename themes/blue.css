@@ -34,7 +34,7 @@
      text on white, so warning text uses a darker shade of it. */
   --gaidet-warning: #f39313;
   --gaidet-warning-light: #f9ba73;
-  --gaidet-warning-bg: #fef6ec;
+  --gaidet-warning-bg: #fff6ec;
   --gaidet-warning-border: var(--gaidet-warning-light);
   --gaidet-warning-text: #8a4a06;
 }
