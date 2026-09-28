@@ -189,41 +189,61 @@ function autoGrow(textarea, attempts = 0) {
 
 function preserveFocus(build) {
   const active = document.activeElement;
-  const field = active?.dataset?.field;
-  const selStart = active?.selectionStart ?? null;
-  const selEnd = active?.selectionEnd ?? null;
   // Where the field sits on screen right now, not the page's absolute scroll
   // position: restoring the old absolute scrollY fought the new layout when
   // an edit changed a box's height, but not correcting for anything at all
   // lets the browser's own scroll-anchoring reset to the top of this whole
   // block on every rebuild. Keeping the field at the same viewport-relative
   // spot avoids both.
-  const beforeTop = active?.getBoundingClientRect?.().top ?? null;
+  let target = active?.dataset?.field ? {
+    field: active.dataset.field,
+    selStart: active.selectionStart ?? null,
+    selEnd: active.selectionEnd ?? null,
+    beforeTop: active.getBoundingClientRect().top,
+    time: Date.now()
+  } : null;
+  // A commit can trigger two rebuilds in quick succession (e.g. Enter in a
+  // description box). If the second lands before the first has restored
+  // focus, focus has already dropped to <body>, so reuse the first rebuild's
+  // still-pending target instead of losing focus and scroll position.
+  const pending = preserveFocus.pending;
+  if (!target && pending && Date.now() - pending.time < 1000) target = pending;
+  preserveFocus.pending = target;
   const node = build();
-  if (field) {
+  if (target) {
     let attempts = 0;
+    const done = () => { if (preserveFocus.pending === target) preserveFocus.pending = null; };
     const refocus = () => {
       attempts += 1;
-      const next = node.querySelector(`[data-field="${CSS.escape(field)}"]`);
-      if (!next) return;
+      const next = node.querySelector(`[data-field="${CSS.escape(target.field)}"]`);
+      if (!next) return done();
       if (!next.isConnected) {
         if (attempts < 30) requestAnimationFrame(refocus);
+        else done();
         return;
       }
       next.focus({ preventScroll: true });
-      if (selStart !== null && typeof next.setSelectionRange === "function") {
-        next.setSelectionRange(selStart, selEnd);
+      if (target.selStart !== null && typeof next.setSelectionRange === "function") {
+        next.setSelectionRange(target.selStart, target.selEnd);
       }
       // One more frame before correcting scroll: Safari can apply its own
       // scroll adjustment on focus a tick after preventScroll would suggest,
       // so measuring immediately can get overridden right after by Safari's
       // own late adjustment. Waiting a frame lets that settle first.
-      if (beforeTop !== null) {
-        requestAnimationFrame(() => {
-          const afterTop = next.getBoundingClientRect().top;
-          window.scrollBy(0, afterTop - beforeTop);
-        });
-      }
+      requestAnimationFrame(() => {
+        // Replaced by a newer rebuild in the meantime: a detached node
+        // measures as top 0, which used to scroll the page all the way up
+        // to Step 1. The newer rebuild restores focus and scroll instead.
+        if (!next.isConnected) return;
+        // Deliberate navigation (Enter jumping to the next task) scrolls on
+        // its own; correcting here would cancel that scroll midway.
+        if (Date.now() < (preserveFocus.holdScrollUntil ?? 0)) return done();
+        const afterTop = next.getBoundingClientRect().top;
+        // "instant", so the page-wide smooth scrolling doesn't turn this
+        // small correction into a visible scroll animation.
+        window.scrollBy({ top: afterTop - target.beforeTop, behavior: "instant" });
+        done();
+      });
     };
     requestAnimationFrame(refocus);
   }
@@ -943,6 +963,7 @@ form = {
         const idx = allSentences.indexOf(sentenceTextarea);
         const nextField = allSentences[idx + 1]?.dataset.field;
         if (!nextField) return;
+        preserveFocus.holdScrollUntil = Date.now() + 1000;
         let attempts = 0;
         const tryFocusNext = () => {
           attempts += 1;
@@ -950,6 +971,14 @@ form = {
           if (next && next.isConnected) {
             next.focus({ preventScroll: true });
             next.scrollIntoView({ behavior: "smooth", block: "center" });
+            // The commit can rebuild the checklist again after this, replacing
+            // `next`; once things settle, re-centre whichever copy is focused.
+            setTimeout(() => {
+              const current = document.querySelector(`[data-field="${CSS.escape(nextField)}"]`);
+              if (current && document.activeElement === current) {
+                current.scrollIntoView({ behavior: "smooth", block: "center" });
+              }
+            }, 400);
             return;
           }
           if (attempts < 30) requestAnimationFrame(tryFocusNext);
