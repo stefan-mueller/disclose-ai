@@ -6,7 +6,7 @@ format:
 ---
 
 <style>
-/* The default Quarto title  block is replaced by the hero banner below on
+/* The default Quarto title  block is replaced by the hero banner below on 
    this page only. Scoped here (not in styles.css) so it doesn't also hide
    the title on privacy.qmd / lecturers.qmd, which have no hero of their own. */
 #title-block-header {
