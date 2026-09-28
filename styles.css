@@ -355,7 +355,6 @@ a:hover {
 .gaidet-category {
   background: #fff;
   border: 1px solid var(--gaidet-border);
-  border-left: 4px solid var(--gaidet-accent);
   border-radius: 6px;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
   padding: 1.1rem 1.4rem;
@@ -620,7 +619,6 @@ label.gaidet-tool-option:hover {
   display: block;
   background: #fff;
   border: 1px solid var(--gaidet-border);
-  border-left: 4px solid var(--gaidet-accent);
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 4px rgba(16, 24, 40, 0.04);
   padding: 1.1rem 1.4rem;
@@ -666,7 +664,6 @@ label.gaidet-tool-option:hover {
   display: block;
   background: #fff;
   border: 1px solid var(--gaidet-border);
-  border-left: 4px solid var(--gaidet-accent);
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 4px rgba(16, 24, 40, 0.04);
   padding: 0.9rem 1.4rem;
@@ -1067,7 +1064,6 @@ hr {
 .gaidet-output {
   background: #fff;
   border: 2px solid var(--gaidet-accent);
-  border-left: 6px solid var(--gaidet-accent);
   border-radius: 6px;
   padding: 1.4rem 1.6rem;
   margin: 0 0 1.5rem;
@@ -1261,6 +1257,12 @@ button:active {
   margin-top: 0.9rem;
 }
 
+.gaidet-output-actions-label {
+  align-self: center;
+  font-size: 0.9rem;
+  color: var(--gaidet-text-muted);
+}
+
 .gaidet-btn-small {
   padding: 0.3rem 0.6rem;
   font-size: 0.75rem;
@@ -1325,33 +1327,19 @@ button:active {
   }
 }
 
-/* Below the two-column breakpoint, the step 2 and step 3 boxes just stack in
-   normal document order with no gap between them (neither box carries its
-   own margin, since the grid `gap` below normally handles that spacing).
-   Match the step 1 → step 2 gap so step 2 → step 3 isn't flush too. */
-.gaidet-layout-right {
+/* Step 3 always sits below Step 2 (a side-by-side layout confused users). */
+.gaidet-layout-bottom {
   margin-top: 1.25rem;
 }
 
-/* Two-column layout for the checklist + live declaration preview: only on
-   screens wide enough that a sidebar doesn't cramp the checklist itself.
-   Below the breakpoint, .gaidet-layout has no special rules at all, so the
-   left/right blocks just stack in normal document order, i.e. the original
-   single-column layout, with no JS or duplicated markup needed either way. */
-@media (min-width: 1100px) {
-  .gaidet-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(420px, 46%);
-    gap: 2rem;
-    align-items: start;
-  }
+/* Until Step 1 has a ticked category, Steps 2 and 3 are barely visible.
+   Toggled from index.qmd based on `allowedCategories`. */
+.gaidet-layout {
+  transition: opacity 0.3s ease;
+}
 
-  .gaidet-layout-right {
-    position: sticky;
-    top: 4.5rem;
-    margin-top: 0;
-  }
-
+.gaidet-layout.gaidet-awaiting-step1 {
+  opacity: 0.12;
 }
 
 .gaidet-prompts-reminder {

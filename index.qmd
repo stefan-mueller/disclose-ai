@@ -260,6 +260,16 @@ autocompletePickers = new Map()
 
 ```{ojs}
 //| echo: false
+// Steps 2 and 3 fade almost out of view until Step 1 has a ticked category,
+// so the page reads as "start here" rather than a wall of boxes.
+{
+  document.querySelector(".gaidet-layout")
+    ?.classList.toggle("gaidet-awaiting-step1", allowedCategories.size === 0);
+}
+```
+
+```{ojs}
+//| echo: false
 //| output: false
 {
   document.addEventListener("click", (e) => {
@@ -774,7 +784,7 @@ form = {
               const suggestedVersion = (data.commonVersions ?? {})[entry.name];
               row.append(el("div", { class: "gaidet-autocomplete-version-wrap" }, [
                 el("label", { class: "gaidet-autocomplete-version-label" }, [
-                  `Model/version of ${entry.name} `,
+                  `Model/version of ${entry.name} (if available) `,
                   el("span", {
                     class: "gaidet-info-icon",
                     tabindex: "0",
@@ -1032,6 +1042,17 @@ Before you begin, please read the [privacy policy](privacy.qmd) and [disclaimer 
 
 ```{ojs}
 //| echo: false
+// Closing statements shared by the text, rich-text and table versions of the
+// declaration, so the wording can't drift between them.
+declarationClosingParas = [
+  "The author confirms that this AI use falls within what was permitted for this assignment, and complies with any other applicable rules, such as their institution's Declaration of Authorship.",
+  "Responsibility for the submitted assignment lies entirely with the author of this declaration.",
+  "Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes."
+]
+```
+
+```{ojs}
+//| echo: false
 declarationText = {
   const entries = Object.values(selections);
 
@@ -1048,7 +1069,7 @@ declarationText = {
   const aiasLine = aiasLevelLabel ? `**AIAS level:** ${aiasLevelLabel}\n` : "";
   const heading = `**Declaration on the Use of Artificial Intelligence Tools**\n\n**AI tools used:** ${overallToolsPart}\n${aiasLine}`;
 
-  const closing = `\n\nThe author confirms that this AI use falls within what was permitted for this assignment, and complies with any other applicable rules, such as their institution's Declaration of Authorship.\n\nResponsibility for the submitted assignment lies entirely with the author of this declaration.\n\nGenerative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.`;
+  const closing = `\n\n${declarationClosingParas.join("\n\n")}`;
 
   if (entries.length === 0) {
     return `${heading}\nNo tasks have been ticked yet.${closing}`;
@@ -1095,7 +1116,7 @@ declarationHtml = {
   const aiasLineHtml = aiasLevelLabel ? `<p><strong>AIAS level:</strong> ${escapeHtml(aiasLevelLabel)}</p>` : "";
   const headingHtml = `<p><strong>Declaration on the Use of Artificial Intelligence Tools</strong></p><p><strong>AI tools used:</strong> ${overallToolsPart}</p>${aiasLineHtml}`;
 
-  const closingHtml = `<p>The author confirms that this AI use falls within what was permitted for this assignment, and complies with any other applicable rules, such as their institution's Declaration of Authorship.</p><p>Responsibility for the submitted assignment lies entirely with the author of this declaration.</p><p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p>`;
+  const closingHtml = declarationClosingParas.map(t => `<p>${escapeHtml(t)}</p>`).join("");
 
   if (entries.length === 0) {
     return `${headingHtml}<p>No tasks have been ticked yet.</p>${closingHtml}`;
@@ -1112,6 +1133,138 @@ declarationHtml = {
   });
 
   return `${headingHtml}<p>The following generative AI tasks were delegated as part of this assignment:</p><ul>${items.join("")}</ul>${closingHtml}`;
+}
+```
+
+```{ojs}
+//| echo: false
+declarationTables = {
+  // The declaration as a table (one row per ticked task), for pasting into
+  // Word, LaTeX or Markdown. Only the task list becomes a table; the title,
+  // AIAS level and closing statements stay as ordinary paragraphs. Prompts,
+  // when included, go in a second Task | Prompt(s) table so long prompts
+  // don't stretch the main one.
+  const rows = [];
+  for (const cat of data.categories) {
+    for (const item of cat.items) {
+      const sel = selections[`${cat.id}::${item.id}`];
+      if (!sel) continue;
+      rows.push({
+        stageId: cat.id,
+        stage: cat.label,
+        task: (sel.customLabel && sel.customLabel.trim()) ? sel.customLabel.trim() : sel.label,
+        tools: Object.entries(sel.tools ?? {}).map(([name, val]) => {
+          const version = (val && typeof val === "object" && val.version) ? val.version.trim() : "";
+          return version ? `${name} (${version})` : name;
+        }).join(", ") || "[no tool specified]",
+        use: (sel.sentence ?? "").trim() || "[please add an explainer]",
+        prompts: (sel.prompts ?? "").trim()
+      });
+    }
+  }
+  // The stage name is shown only on the first row of each group, which reads
+  // as a merged cell without needing rowspan support (Markdown) or the
+  // multirow package (LaTeX).
+  rows.forEach((r, i) => { r.firstInStage = i === 0 || rows[i - 1].stageId !== r.stageId; });
+  const promptRows = providePrompts ? rows.filter(r => r.prompts) : [];
+
+  const title = "Declaration on the Use of Artificial Intelligence Tools";
+  const headers = ["Stage", "Task", "AI tool(s)", "How AI was used"];
+
+  // --- Word / Google Docs (rich-text clipboard) ---
+  const escapeHtml = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
+  const cellStyle = "border:1px solid #000;padding:4px 6px;vertical-align:top;text-align:left;";
+  const htmlTable = (head, bodyRows) =>
+    `<table style="border-collapse:collapse;width:100%;"><thead><tr>${head.map(h => `<th style="${cellStyle}">${h}</th>`).join("")}</tr></thead><tbody>${bodyRows.join("")}</tbody></table>`;
+  const stageSpan = r => rows.filter(o => o.stageId === r.stageId).length;
+  const html = [
+    `<p><strong>${title}</strong></p>`,
+    aiasLevelLabel ? `<p><strong>AIAS level:</strong> ${escapeHtml(aiasLevelLabel)}</p>` : "",
+    htmlTable(headers, rows.map(r => `<tr>${r.firstInStage ? `<td rowspan="${stageSpan(r)}" style="${cellStyle}">${escapeHtml(r.stage)}</td>` : ""}<td style="${cellStyle}">${escapeHtml(r.task)}</td><td style="${cellStyle}">${escapeHtml(r.tools)}</td><td style="${cellStyle}">${escapeHtml(r.use)}</td></tr>`)),
+    promptRows.length ? `<p></p><p><strong>Prompts used</strong></p>` + htmlTable(["Task", "Prompt(s)"], promptRows.map(r => `<tr><td style="${cellStyle}">${escapeHtml(r.task)}</td><td style="${cellStyle}">${escapeHtml(r.prompts)}</td></tr>`)) : "",
+    declarationClosingParas.map(t => `<p>${escapeHtml(t)}</p>`).join("")
+  ].join("");
+
+  // --- Markdown (pipe table) ---
+  const escapeMd = s => s.replace(/\|/g, "\\|").replace(/\n/g, "<br>");
+  const mdRow = cells => `| ${cells.map(escapeMd).join(" | ")} |`;
+  const mdTable = (head, bodyRows) => [mdRow(head), `|${head.map(() => "---").join("|")}|`, ...bodyRows.map(mdRow)].join("\n");
+  const markdown = [
+    `**${title}**`,
+    aiasLevelLabel ? `**AIAS level:** ${aiasLevelLabel}` : null,
+    mdTable(headers, rows.map(r => [r.firstInStage ? r.stage : "", r.task, r.tools, r.use])),
+    promptRows.length ? `**Prompts used**\n\n${mdTable(["Task", "Prompt(s)"], promptRows.map(r => [r.task, r.prompts]))}` : null,
+    ...declarationClosingParas
+  ].filter(Boolean).join("\n\n");
+
+  // --- LaTeX ---
+  // Plain `tabular` with fixed-width p{} columns needs no extra packages, and
+  // wraps long text inside each cell automatically. \raggedright avoids the
+  // wide word gaps of justified text in narrow columns; rows end with
+  // \tabularnewline because \raggedright redefines \\.
+  const latexSpecial = { "\\": "\\textbackslash{}", "&": "\\&", "%": "\\%", "$": "\\$", "#": "\\#", "_": "\\_", "{": "\\{", "}": "\\}", "~": "\\textasciitilde{}", "^": "\\textasciicircum{}", "|": "\\textbar{}", "<": "\\textless{}", ">": "\\textgreater{}" };
+  const escapeTex = s => s.replace(/[\\&%$#_{}~^|<>]/g, c => latexSpecial[c]).replace(/\n/g, "\\newline ");
+  // \hspace{0pt} lets TeX hyphenate a cell's first word (it otherwise never
+  // does), so long words like "Conceptualisation" don't overflow the column.
+  const texCell = s => `\\raggedright\\hspace{0pt}${escapeTex(s)}`;
+  const texRow = cells => `${cells.map(texCell).join(" & ")} \\tabularnewline`;
+  const texTable = (colSpec, head, bodyLines) => [
+    "\\begin{center}",
+    "\\small",
+    `\\begin{tabular}{${colSpec}}`,
+    "\\hline",
+    `${head.map(h => `\\textbf{${h}}`).join(" & ")} \\tabularnewline`,
+    "\\hline",
+    ...bodyLines,
+    "\\end{tabular}",
+    "\\end{center}"
+  ].join("\n");
+  // Within a stage, a partial rule (columns 2-4) keeps the stage cell looking
+  // merged; a full \hline marks the start of the next stage.
+  const texBody = rows.flatMap((r, i) => [
+    texRow([r.firstInStage ? r.stage : "", r.task, r.tools, r.use]),
+    (i === rows.length - 1 || rows[i + 1].stageId !== r.stageId) ? "\\hline" : "\\cline{2-4}"
+  ]);
+  const latex = [
+    `\\noindent\\textbf{${title}}`,
+    aiasLevelLabel ? `\\noindent\\textbf{AIAS level:} ${escapeTex(aiasLevelLabel)}` : null,
+    texTable("|p{0.16\\textwidth}|p{0.2\\textwidth}|p{0.16\\textwidth}|p{0.33\\textwidth}|", headers, texBody),
+    promptRows.length
+      ? `\\noindent\\textbf{Prompts used}\n\n` + texTable("|p{0.25\\textwidth}|p{0.65\\textwidth}|", ["Task", "Prompt(s)"], promptRows.flatMap(r => [texRow([r.task, r.prompts]), "\\hline"]))
+      : null,
+    ...declarationClosingParas.map(t => `\\noindent ${escapeTex(t)}`)
+  ].filter(Boolean).join("\n\n");
+
+  return { html, markdown, latex };
+}
+```
+
+```{ojs}
+//| echo: false
+// Copies plain text (and, optionally, rich HTML for Word/Docs) to the
+// clipboard. Uses a synchronous `copy` event first: it runs inside the click
+// itself, which every browser accepts. The async Clipboard API is only a
+// fallback, because when it rejects, any retry has already lost the click's
+// user activation (Safari especially), leaving the old clipboard untouched.
+function copyToClipboard(plain, html) {
+  const onCopy = e => {
+    e.clipboardData.setData("text/plain", plain);
+    if (html) e.clipboardData.setData("text/html", html);
+    e.preventDefault();
+  };
+  document.addEventListener("copy", onCopy);
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+  document.removeEventListener("copy", onCopy);
+  if (ok) return;
+  if (html && typeof ClipboardItem !== "undefined") {
+    navigator.clipboard.write([new ClipboardItem({
+      "text/plain": new Blob([plain], { type: "text/plain" }),
+      "text/html": new Blob([html], { type: "text/html" })
+    })]).catch(() => navigator.clipboard.writeText(plain));
+  } else {
+    navigator.clipboard.writeText(plain);
+  }
 }
 ```
 
@@ -1147,9 +1300,12 @@ outputBox = {
 
   const showDeclaration = declarationConfirmed && !incomplete;
 
-  const successText = copySuccess === "download"
-    ? "Declaration downloaded as a text file. You can open it, paste it into your assignment, and make manual edits if needed."
-    : "Declaration copied to clipboard. You can paste it into your assignment and make manual edits if needed.";
+  const successText = {
+    download: "Declaration downloaded as a text file. You can open it, paste it into your assignment, and make manual edits if needed.",
+    word: "Table copied. Paste it into Word or Google Docs and make manual edits if needed.",
+    latex: "LaTeX table copied. Paste it into your .tex file; it needs no extra packages.",
+    markdown: "Markdown table copied. Paste it into your document and make manual edits if needed."
+  }[copySuccess] ?? "Declaration copied to clipboard. You can paste it into your assignment and make manual edits if needed.";
 
   const success = (showDeclaration && copySuccess && declarationText === copiedText)
     ? el("div", { class: "gaidet-success" }, successText)
@@ -1234,14 +1390,7 @@ outputBox = {
       el("button", {
         class: "gaidet-btn-secondary gaidet-btn-small",
         onclick: () => {
-          const item = new ClipboardItem({
-            "text/plain": new Blob([declarationText], { type: "text/plain" }),
-            "text/html": new Blob([declarationHtml], { type: "text/html" })
-          });
-          navigator.clipboard.write([item]).catch(() => {
-            // Older/other browsers without rich-clipboard support.
-            navigator.clipboard.writeText(declarationText);
-          });
+          copyToClipboard(declarationText, declarationHtml);
           mutable copySuccess = "copy";
           mutable copiedText = declarationText;
         }
@@ -1261,6 +1410,33 @@ outputBox = {
         }
       }, "Download as txt file")
     ]) : null,
+    (showDeclaration && !showConfirmPrompt) ? el("div", { class: "gaidet-output-actions-secondary" }, [
+      el("span", { class: "gaidet-output-actions-label" }, "Copy as table:"),
+      el("button", {
+        class: "gaidet-btn-secondary gaidet-btn-small",
+        onclick: () => {
+          copyToClipboard(declarationTables.markdown, declarationTables.html);
+          mutable copySuccess = "word";
+          mutable copiedText = declarationText;
+        }
+      }, "Word"),
+      el("button", {
+        class: "gaidet-btn-secondary gaidet-btn-small",
+        onclick: () => {
+          copyToClipboard(declarationTables.latex);
+          mutable copySuccess = "latex";
+          mutable copiedText = declarationText;
+        }
+      }, "LaTeX"),
+      el("button", {
+        class: "gaidet-btn-secondary gaidet-btn-small",
+        onclick: () => {
+          copyToClipboard(declarationTables.markdown);
+          mutable copySuccess = "markdown";
+          mutable copiedText = declarationText;
+        }
+      }, "Markdown")
+    ]) : null,
     success,
     (showDeclaration && !showConfirmPrompt) ? el("p", { class: "gaidet-output-note" }, [
       "I recommend reviewing and adjusting the declaration to fit your own voice and your course/module's requirements before submitting."
@@ -1278,7 +1454,6 @@ outputBox = {
 ${categoryGate}
 
 ::: {.gaidet-layout}
-::: {.gaidet-layout-left}
 ::: {.gaidet-step2-box}
 ${step2Label}
 
@@ -1290,9 +1465,8 @@ ${promptsToggle}
 
 ${aiasSelector}
 :::
-:::
 
-::: {.gaidet-layout-right}
+::: {.gaidet-layout-bottom}
 ${outputBox}
 :::
 :::
