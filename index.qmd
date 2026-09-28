@@ -198,11 +198,9 @@ exampleSelections = ({
 
 
 ::: {.callout-warning}
-Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual course/module or assessment. Before using any AI tool, check your course/module descriptor and Learning Management System (LMS) course site, and ask your lecturer whether (and how) it may be used. Some institutions also limit which AI tools students may use, for example restricting you to a specific, approved list.
+Rules on generative AI often differ between programmes, courses/modules, and even individual assessments. Before using any AI tool, check your course/module syllabus and Learning Management System (LMS) course site for information on AI use, and ask your lecturer whether (and how) it may be used. Some institutions also only allow specific, approved AI tools. Disclosing a task or tool here does not mean you are permitted to use it, and you remain responsible for following your institution's and course/module's policies.
 
-Disclosing a task or AI tool here does not constitute permission to use it, nor a means of circumventing any such prohibition imposed by your institution, School, programme, course/module, or assessment brief. You are ultimately responsible for complying with your institution's and course/module's policies, including any separate declaration of authorship or originality statement you must sign. See the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
-
-Using generative AI responsibly also means applying quality control: AI is known to hallucinate, presenting false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. It also means complying with your own institution's policies.
+AI can hallucinate, producing false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. See the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 :::
 
 ```{ojs}
@@ -1704,18 +1702,36 @@ makeProgressBar = ({ announce = true } = {}) => {
         "Step 2 done. Create your declaration in Step 3.",
       ][current] ?? "All steps done. Review your declaration before submitting.";
 
+  // Steps 2 and 3 in the bar are clickable. Before Step 1 is done, a click
+  // shows a notice instead; the bar is rebuilt once Step 1 is completed,
+  // which clears the notice again.
+  const lockedNotice = el("div", { class: "gaidet-category-gate-warning gaidet-progress-locked", hidden: "" },
+    "Step 1 needs to be completed first. Tick at least one box in Step 1 to continue.");
+  const targets = [null, ".gaidet-step2-box", ".gaidet-layout-bottom"];
+  const goTo = (i) => {
+    if (!done[0]) {
+      lockedNotice.hidden = false;
+      return;
+    }
+    document.querySelector(targets[i])?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   const labels = ["What is allowed", "What you used", "Your declaration"];
   return el("div", { class: "gaidet-progress", role: announce ? "status" : null }, [
-    el("ol", { class: "gaidet-progress-steps" }, labels.map((label, i) =>
-      el("li", {
-        class: "gaidet-progress-step" + (done[i] ? " is-done" : i === current ? " is-current" : ""),
-        "aria-current": i === current ? "step" : null
-      }, [
+    el("ol", { class: "gaidet-progress-steps" }, labels.map((label, i) => {
+      const content = [
         el("span", { class: "gaidet-progress-bar" }, []),
         el("span", { class: "gaidet-progress-label" }, `${done[i] ? "✓" : i + 1} ${label}`)
-      ])
-    )),
-    el("p", { class: "gaidet-progress-message" }, message)
+      ];
+      return el("li", {
+        class: "gaidet-progress-step" + (done[i] ? " is-done" : i === current ? " is-current" : ""),
+        "aria-current": i === current ? "step" : null
+      }, i === 0 ? content : [
+        el("button", { type: "button", class: "gaidet-progress-link", onclick: () => goTo(i) }, content)
+      ]);
+    })),
+    el("p", { class: "gaidet-progress-message" }, message),
+    lockedNotice
   ]);
 }
 ```
@@ -1841,7 +1857,9 @@ This tool is provided purely as a free, unofficial aid to help you structure you
 
 The author, Stefan Müller, and any contributors accept **no responsibility or liability whatsoever** for how this tool is used, for whether the tasks and tools listed by the user constitute a complete account of all generative AI use in connection with the relevant work, or for whether such use is declared honestly and in good faith. Nor do they accept liability for any academic, disciplinary, legal, or other consequences arising from the tool's use or misuse.
 
-You are solely responsible for checking your own university's and course/module's specific generative AI policies and citation requirements, and for confirming directly with your lecturer or course/module coordinator whether, and how, AI tools may be used before you submit any work. The author cannot be held legally accountable for any reliance placed on this tool.
+Many universities do not have a single institution-wide policy on generative AI. Permission varies by Department, School, programme, and even individual course/module or assessment, and some institutions limit students to a specific list of approved AI tools. You are solely responsible for checking your own university's and course/module's generative AI policies and citation requirements (for example in your course/module descriptor and Learning Management System (LMS) course site), and for confirming directly with your lecturer or course/module coordinator whether, and how, AI tools may be used before you submit any work. This includes complying with any separate declaration of authorship or originality statement you must sign.
+
+Disclosing a task or AI tool in a declaration generated here does not constitute permission to use it, nor a means of circumventing any prohibition imposed by your institution, School, programme, course/module, or assessment brief. The author cannot be held legally accountable for any reliance placed on this tool.
 
 This tool is an independent personal project of the author and is not an official service of, or endorsed by, University College Dublin or any other institution.
 

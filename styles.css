@@ -1428,6 +1428,48 @@ button:active {
   font-size: 0.95rem;
 }
 
+/* Steps 2 and 3 are buttons: reset the browser's button look so they match
+   the plain Step 1 segment. */
+.gaidet-progress-link {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* No hover or pressed look: the theme's button styles would otherwise paint
+   a grey block over the segment. */
+.gaidet-progress-link,
+.gaidet-progress-link:hover,
+.gaidet-progress-link:focus,
+.gaidet-progress-link:active {
+  background: none !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  border-radius: 0;
+  transform: none;
+  outline: none;
+}
+
+.gaidet-progress-link:focus-visible {
+  outline: 2px solid var(--gaidet-accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.gaidet-progress-locked {
+  margin-top: 0.6rem;
+}
+
+.gaidet-progress-locked[hidden] {
+  display: none;
+}
+
 /* Step 3 always sits below Step 2 (a side-by-side layout confused users). */
 .gaidet-layout-bottom {
   margin-top: 1.25rem;
