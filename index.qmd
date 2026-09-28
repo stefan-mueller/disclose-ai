@@ -6,7 +6,7 @@ format:
 ---
 
 <style>
-/* The default Quarto title block is replaced by the hero banner below on
+/* The default Quarto title  block is replaced by the hero banner below on
    this page only. Scoped here (not in styles.css) so it doesn't also hide
    the title on privacy.qmd / lecturers.qmd, which have no hero of their own. */
 #title-block-header {
@@ -260,11 +260,42 @@ autocompletePickers = new Map()
 
 ```{ojs}
 //| echo: false
+//| output: false
 // Steps 2 and 3 fade almost out of view until Step 1 has a ticked category,
-// so the page reads as "start here" rather than a wall of boxes.
+// so the page reads as "start here" rather than a wall of boxes. While faded
+// they're inert, and a click anywhere on them pops up a note explaining why.
 {
-  document.querySelector(".gaidet-layout")
-    ?.classList.toggle("gaidet-awaiting-step1", allowedCategories.size === 0);
+  const layout = document.querySelector(".gaidet-layout");
+  if (!layout) return;
+  const awaiting = allowedCategories.size === 0;
+  layout.classList.toggle("gaidet-awaiting-step1", awaiting);
+  for (const child of layout.children) {
+    if (!child.classList.contains("gaidet-awaiting-notice")) child.toggleAttribute("inert", awaiting);
+  }
+  layout.querySelector(".gaidet-awaiting-notice")?.remove();
+  if (!awaiting) return;
+
+  let hideTimer;
+  const onClick = (e) => {
+    if (e.target.closest(".gaidet-awaiting-notice")) return;
+    layout.querySelector(".gaidet-awaiting-notice")?.remove();
+    clearTimeout(hideTimer);
+    const notice = el("div", { class: "gaidet-awaiting-notice", role: "alert" }, [
+      el("strong", {}, "Steps 2 and 3 aren’t available yet. "),
+      "Tick at least one box in ",
+      el("a", { href: "#generate-declaration" }, "Step 1 above"),
+      " to show which categories of AI use your assignment allows."
+    ]);
+    const top = e.clientY - layout.getBoundingClientRect().top;
+    notice.style.top = `${Math.max(0, top - 20)}px`;
+    layout.append(notice);
+    hideTimer = setTimeout(() => notice.remove(), 6000);
+  };
+  layout.addEventListener("click", onClick);
+  invalidation.then(() => {
+    layout.removeEventListener("click", onClick);
+    clearTimeout(hideTimer);
+  });
 }
 ```
 
@@ -1173,15 +1204,32 @@ declarationTables = {
 
   // --- Word / Google Docs (rich-text clipboard) ---
   const escapeHtml = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");
-  const cellStyle = "border:1px solid #000;padding:4px 6px;vertical-align:top;text-align:left;";
-  const htmlTable = (head, bodyRows) =>
-    `<table style="border-collapse:collapse;width:100%;"><thead><tr>${head.map(h => `<th style="${cellStyle}">${h}</th>`).join("")}</tr></thead><tbody>${bodyRows.join("")}</tbody></table>`;
+  // Word ignores width:100% on pasted HTML and sizes columns to their
+  // content, which can run off the page. Fixed widths in cm, summing to
+  // 15.9cm (A4 with Word's default 2.54cm margins; also fits US Letter),
+  // keep the table inside the page, and long text wraps within its cell.
+  const mainWidths = [2.8, 3.8, 3.0, 6.3];
+  const promptWidths = [4.5, 11.4];
+  const cell = (tag, text, widthCm, attrs = "") =>
+    `<${tag}${attrs} style="border:1px solid #000;padding:4px 6px;vertical-align:top;text-align:left;width:${widthCm}cm;">${text}</${tag}>`;
+  const htmlTable = (widths, head, bodyRows) =>
+    `<table style="border-collapse:collapse;table-layout:fixed;width:${widths.reduce((a, b) => a + b, 0).toFixed(1)}cm;">`
+    + `<thead><tr>${head.map((h, i) => cell("th", h, widths[i])).join("")}</tr></thead>`
+    + `<tbody>${bodyRows.join("")}</tbody></table>`;
   const stageSpan = r => rows.filter(o => o.stageId === r.stageId).length;
   const html = [
     `<p><strong>${title}</strong></p>`,
     aiasLevelLabel ? `<p><strong>AIAS level:</strong> ${escapeHtml(aiasLevelLabel)}</p>` : "",
-    htmlTable(headers, rows.map(r => `<tr>${r.firstInStage ? `<td rowspan="${stageSpan(r)}" style="${cellStyle}">${escapeHtml(r.stage)}</td>` : ""}<td style="${cellStyle}">${escapeHtml(r.task)}</td><td style="${cellStyle}">${escapeHtml(r.tools)}</td><td style="${cellStyle}">${escapeHtml(r.use)}</td></tr>`)),
-    promptRows.length ? `<p></p><p><strong>Prompts used</strong></p>` + htmlTable(["Task", "Prompt(s)"], promptRows.map(r => `<tr><td style="${cellStyle}">${escapeHtml(r.task)}</td><td style="${cellStyle}">${escapeHtml(r.prompts)}</td></tr>`)) : "",
+    htmlTable(mainWidths, headers, rows.map(r => "<tr>"
+      + (r.firstInStage ? cell("td", escapeHtml(r.stage), mainWidths[0], ` rowspan="${stageSpan(r)}"`) : "")
+      + cell("td", escapeHtml(r.task), mainWidths[1])
+      + cell("td", escapeHtml(r.tools), mainWidths[2])
+      + cell("td", escapeHtml(r.use), mainWidths[3])
+      + "</tr>")),
+    promptRows.length ? `<p></p><p><strong>Prompts used</strong></p>` + htmlTable(promptWidths, ["Task", "Prompt(s)"], promptRows.map(r => "<tr>"
+      + cell("td", escapeHtml(r.task), promptWidths[0])
+      + cell("td", escapeHtml(r.prompts), promptWidths[1])
+      + "</tr>")) : "",
     declarationClosingParas.map(t => `<p>${escapeHtml(t)}</p>`).join("")
   ].join("");
 
@@ -1387,6 +1435,7 @@ outputBox = {
     // Copy/download sit below the declaration, not above it, so a student
     // reads what was generated before acting on it.
     (showDeclaration && !showConfirmPrompt) ? el("div", { class: "gaidet-output-actions-secondary" }, [
+      el("span", { class: "gaidet-output-actions-label" }, "Copy as text:"),
       el("button", {
         class: "gaidet-btn-secondary gaidet-btn-small",
         onclick: () => {
@@ -1439,7 +1488,7 @@ outputBox = {
     ]) : null,
     success,
     (showDeclaration && !showConfirmPrompt) ? el("p", { class: "gaidet-output-note" }, [
-      "I recommend reviewing and adjusting the declaration to fit your own voice and your course/module's requirements before submitting."
+      "It is recommended to review and adjust the declaration to fit your own voice and your course/module's requirements before submitting."
     ]) : null
   ]);
 
@@ -1449,9 +1498,64 @@ outputBox = {
 }
 ```
 
+```{ojs}
+//| echo: false
+// Builds a fresh progress bar each call, since the same DOM node can't be
+// shown twice. One sits between Step 1 and the (faded) Steps 2-3, outside
+// the fade, so it's always readable and says what unlocks the next step; a
+// second copy appears between Steps 2 and 3 once a task is complete.
+makeProgressBar = ({ announce = true } = {}) => {
+  const entries = Object.values(selections);
+  const done = [
+    allowedCategories.size > 0,
+    entries.length > 0 && entries.every(sel => taskIsComplete(sel.sentence, sel.tools, sel.openEnded, sel.customLabel)),
+    declarationConfirmed
+  ];
+  // A step only counts once every step before it is done too.
+  for (let i = 1; i < done.length; i++) done[i] = done[i] && done[i - 1];
+  const current = done.indexOf(false);
+
+  const message = noGuidance
+    ? "No guidance on AI use means AI is not permitted until your course/module coordinator confirms otherwise."
+    : [
+        "Tick at least one box in Step 1 to continue to Step 2.",
+        "Step 1 done. In Step 2, tick every task where you used AI and add a tool and short description for each.",
+        "Step 2 done. Create your declaration in Step 3.",
+      ][current] ?? "All steps done. Review your declaration before submitting.";
+
+  const labels = ["What is allowed", "What you used", "Your declaration"];
+  return el("div", { class: "gaidet-progress", role: announce ? "status" : null }, [
+    el("ol", { class: "gaidet-progress-steps" }, labels.map((label, i) =>
+      el("li", {
+        class: "gaidet-progress-step" + (done[i] ? " is-done" : i === current ? " is-current" : ""),
+        "aria-current": i === current ? "step" : null
+      }, [
+        el("span", { class: "gaidet-progress-bar" }, []),
+        el("span", { class: "gaidet-progress-label" }, `${done[i] ? "✓" : i + 1} ${label}`)
+      ])
+    )),
+    el("p", { class: "gaidet-progress-message" }, message)
+  ]);
+}
+```
+
+```{ojs}
+//| echo: false
+progressBar = makeProgressBar()
+```
+
+```{ojs}
+//| echo: false
+progressBarAfterStep2 = Object.values(selections).some(sel => taskIsComplete(sel.sentence, sel.tools, sel.openEnded, sel.customLabel))
+  ? makeProgressBar({ announce: false })  // the Step 1 copy already announces changes
+  : el("div", {}, [])
+```
+
 
 
 ${categoryGate}
+
+${progressBar}
 
 ::: {.gaidet-layout}
 ::: {.gaidet-step2-box}
@@ -1464,6 +1568,10 @@ ${form}
 ${promptsToggle}
 
 ${aiasSelector}
+:::
+
+::: {.gaidet-progress-after-step2}
+${progressBarAfterStep2}
 :::
 
 ::: {.gaidet-layout-bottom}
