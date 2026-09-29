@@ -1857,7 +1857,7 @@ If you are using this tool in your teaching or research, you can cite it as:
 
 ## Information for lecturers
 
-Answers to the questions lecturers have asked most often after testing the tool with their own students. Click a question to show the answer.
+Common questions from lecturers who have tested the tool with their students.
 
 ::: {.gaidet-faq-accordion}
 ### Where do these categories come from? {.gaidet-faq}
