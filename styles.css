@@ -353,6 +353,15 @@ label:active .gaidet-checkbox-box {
   line-height: 1em;
 }
 
+/* Space reserved for the fixed navbar before quarto-nav.js runs. Bootstrap
+   reserves 82px, but the navbar is 71px tall at every width, so once the
+   script measured it and set 71px the whole page (hero included) jumped up
+   by 11px, leaving a brief white strip at the top. Reserving the measured
+   height up front means the script's value changes nothing. */
+body.nav-fixed {
+  padding-top: 71px;
+}
+
 .navbar .nav-link {
   color: rgba(244, 246, 248, 0.82);
   font-size: 1.1rem;
