@@ -72,22 +72,12 @@ input[type="checkbox"].gaidet-checkbox-input {
   height: 1.2rem;
   margin-top: 0.15rem;
   border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 2px solid var(--gaidet-border);
   background: #fff;
-  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
-}
-
-.gaidet-checkbox-box::after {
-  content: "";
-  position: absolute;
-  left: 0.3rem;
-  top: 0.1rem;
-  width: 0.3rem;
-  height: 0.55rem;
-  border: solid #fff;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg) scale(0);
-  transition: transform 0.15s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
 }
 
 .gaidet-checkbox-input:hover + .gaidet-checkbox-box {
@@ -99,8 +89,100 @@ input[type="checkbox"].gaidet-checkbox-input {
   border-color: var(--gaidet-accent);
 }
 
-.gaidet-checkbox-input:checked + .gaidet-checkbox-box::after {
-  transform: rotate(45deg) scale(1);
+/* The tick, after beUI's Checkbox (https://beui.dev, MIT licence). Hidden
+   (shrunk to half size) when unticked, drawn in full when ticked. */
+.gaidet-checkbox-mark {
+  width: 0.75rem;
+  height: 0.75rem;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  opacity: 0;
+  scale: 0.5;
+}
+
+.gaidet-checkbox-input:checked + .gaidet-checkbox-box .gaidet-checkbox-mark {
+  opacity: 1;
+  scale: 1;
+}
+
+/* form rebuilds every task row when a box is ticked, so transitions never
+   play. Only the box that just changed gets .is-toggled, which replays
+   beUI's timings as keyframes: the box fills (0.2s), the tick pops in from
+   half size (0.16s) and its stroke draws on (0.3s, after 0.04s). Unticking
+   shrinks and blurs the tick away instead. */
+.gaidet-checkbox-box.is-toggled {
+  animation: gaidet-check-box-off 0.2s ease;
+}
+
+.gaidet-checkbox-input:checked + .gaidet-checkbox-box.is-toggled {
+  animation-name: gaidet-check-box-on;
+}
+
+.gaidet-checkbox-box.is-toggled .gaidet-checkbox-mark {
+  animation: gaidet-check-mark-out 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gaidet-checkbox-input:checked + .gaidet-checkbox-box.is-toggled .gaidet-checkbox-mark {
+  animation-name: gaidet-check-mark-in;
+}
+
+.gaidet-checkbox-input:checked + .gaidet-checkbox-box.is-toggled .gaidet-checkbox-mark path {
+  animation: gaidet-check-draw 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both;
+}
+
+@keyframes gaidet-check-box-on {
+  from {
+    background-color: #fff;
+    border-color: var(--gaidet-border);
+  }
+}
+
+@keyframes gaidet-check-box-off {
+  from {
+    background-color: var(--gaidet-accent);
+    border-color: var(--gaidet-accent);
+  }
+}
+
+@keyframes gaidet-check-mark-in {
+  from {
+    opacity: 0;
+    scale: 0.5;
+  }
+}
+
+@keyframes gaidet-check-mark-out {
+  from {
+    opacity: 1;
+    scale: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    scale: 0.5;
+    filter: blur(4px);
+  }
+}
+
+@keyframes gaidet-check-draw {
+  from { stroke-dashoffset: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gaidet-checkbox-box {
+    transition: none;
+  }
+
+  .gaidet-checkbox-box.is-toggled,
+  .gaidet-checkbox-box.is-toggled .gaidet-checkbox-mark,
+  .gaidet-checkbox-input:checked + .gaidet-checkbox-box.is-toggled .gaidet-checkbox-mark path {
+    animation: none;
+  }
 }
 
 .gaidet-checkbox-input:focus-visible + .gaidet-checkbox-box {
@@ -1137,8 +1219,10 @@ label.gaidet-tool-option:hover {
    right edge to the icon instead keeps the whole box on screen. */
 .gaidet-category-gate-option .gaidet-info-icon::after {
   left: auto;
-  right: 0;
+  /* A little past the icon, so the arrow clears the box's rounded corner. */
+  right: -10px;
   transform: none;
+  transform-origin: calc(100% - 10px) bottom;
 }
 
 .gaidet-info-icon::after {
@@ -1165,15 +1249,71 @@ label.gaidet-tool-option:hover {
   white-space: pre-line;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.15s ease;
   z-index: 30;
+  pointer-events: none;
+}
+
+/* Tooltip motion and arrow, after beUI's Tooltip (https://beui.dev, MIT
+   licence): the box grows from 0.94 to full size out of the icon it points
+   at while fading in (0.18s), and shrinks back faster on the way out
+   (0.12s), on beUI's strong ease-out curve. `scale` is used rather than
+   `transform`, so it doesn't fight the translate that centres the box. */
+.gaidet-info-icon::after {
+  scale: 0.94;
+  transform-origin: center bottom;
+  transition: opacity 0.12s cubic-bezier(0.16, 1, 0.3, 1),
+    scale 0.12s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 0.12s;
+}
+
+/* The arrow: a small rotated square whose lower half pokes out under the
+   box. It sits above the box, so its tint covers the box's bottom border
+   and only the two outer edges show, as in beUI. */
+.gaidet-info-icon::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--gaidet-accent-tint);
+  border: solid var(--gaidet-accent);
+  border-width: 0 1px 1px 0;
+  transform: translateX(-50%) rotate(45deg);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.12s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.12s;
+  z-index: 31;
   pointer-events: none;
 }
 
 .gaidet-info-icon:hover::after,
 .gaidet-info-icon:focus::after {
   opacity: 1;
+  scale: 1;
   visibility: visible;
+  transition: opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    scale 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s;
+}
+
+.gaidet-info-icon:hover::before,
+.gaidet-info-icon:focus::before {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gaidet-info-icon::before,
+  .gaidet-info-icon::after,
+  .gaidet-info-icon:hover::before,
+  .gaidet-info-icon:hover::after,
+  .gaidet-info-icon:focus::before,
+  .gaidet-info-icon:focus::after {
+    scale: 1;
+    transition: none;
+  }
 }
 
 .gaidet-autocomplete-version-input {
@@ -2032,12 +2172,68 @@ button:active {
   margin-top: 0.6rem;
 }
 
-.gaidet-example-view {
-  background: #fff;
-  color: var(--gaidet-accent);
+/* Segmented Text/Table control, after beUI's Tabs (segment variant,
+   https://beui.dev, MIT licence): both buttons sit in one outlined track
+   and a single accent highlight sits behind the selected one. Equal grid
+   columns keep the two halves the same width, so the highlight only ever
+   needs to move by its own width. */
+.gaidet-segment {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 2px;
   border: 1px solid var(--gaidet-accent);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.gaidet-segment-indicator {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc(50% - 2px);
+  border-radius: 6px;
+  background: var(--gaidet-accent);
+}
+
+.gaidet-segment.is-table .gaidet-segment-indicator {
+  transform: translateX(100%);
+}
+
+/* beUI glides the highlight on a spring tuned not to overshoot; this curve
+   follows its shape (gentle start, long soft landing) over about the time
+   the spring takes to settle. */
+.gaidet-segment-indicator.is-moved {
+  animation: gaidet-segment-to-text 0.4s cubic-bezier(0.25, 0.8, 0.35, 1);
+}
+
+.gaidet-segment.is-table .gaidet-segment-indicator.is-moved {
+  animation-name: gaidet-segment-to-table;
+}
+
+@keyframes gaidet-segment-to-table {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes gaidet-segment-to-text {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.gaidet-example-view {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  background: transparent;
+  color: var(--gaidet-accent);
+  border-radius: 6px;
   font-size: 0.75rem;
   padding: 0.25rem 0.7rem;
+  transition: color 0.2s ease, background-color 0.15s ease;
 }
 
 .gaidet-example-view:hover {
@@ -2045,10 +2241,21 @@ button:active {
   color: var(--gaidet-accent-dark);
 }
 
+/* Transparent so the highlight behind it shows through. */
 .gaidet-example-view-active,
 .gaidet-example-view-active:hover {
-  background: var(--gaidet-accent);
+  background: transparent;
   color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gaidet-segment-indicator.is-moved {
+    animation: none;
+  }
+
+  .gaidet-example-view {
+    transition: none;
+  }
 }
 
 /* The table view is the exact Word export, with fixed cm column widths, so

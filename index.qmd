@@ -120,8 +120,37 @@ function formatIcon(view) {
   return icon;
 }
 
-// "Show as: Text / Table" switch for the generated declaration.
+// The tick inside each Step 2 task checkbox, after beUI's Checkbox
+// (https://beui.dev, MIT licence). An SVG path rather than a CSS border, so
+// it can be drawn on stroke by stroke; pathLength="1" lets the CSS treat
+// the stroke's length as 1 whatever the size.
+function checkMark() {
+  const mark = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  mark.setAttribute("viewBox", "0 0 24 24");
+  mark.setAttribute("aria-hidden", "true");
+  mark.setAttribute("class", "gaidet-checkbox-mark");
+  mark.innerHTML = '<path d="M5 13l4 4L19 7" pathLength="1"/>';
+  return mark;
+}
+
+// Step 2 task checkbox states from the last build of form, so only the box
+// that changed animates. A plain object, not a mutable, so updating it
+// doesn't trigger another rebuild (and typing in Step 2 stays unaffected).
+taskCheckState = ({ prev: {} })
+
+// The format shown when the "Show as" switch was last built, so the
+// highlight only slides when the format actually changed. A plain object,
+// not a mutable, so updating it doesn't trigger another rebuild.
+viewSwitchState = ({ prev: null })
+
+// "Show as: Text / Table" switch for the generated declaration, as a
+// segmented control after beUI's Tabs (segment variant, https://beui.dev,
+// MIT licence). outputBox rebuilds the switch on every change, so the
+// highlight can't transition; it gets .is-moved instead, which slides it
+// over from the other button.
 function viewSwitch(current, onPick) {
+  const moved = viewSwitchState.prev !== null && viewSwitchState.prev !== current;
+  viewSwitchState.prev = current;
   const button = (view, label) => el("button", {
     type: "button",
     class: current === view ? "gaidet-example-view gaidet-example-view-active" : "gaidet-example-view",
@@ -130,8 +159,11 @@ function viewSwitch(current, onPick) {
   }, [formatIcon(view), label]);
   return el("div", { class: "gaidet-example-views", role: "group", "aria-label": "Declaration format" }, [
     el("span", { class: "gaidet-output-actions-label" }, "Show as:"),
-    button("text", "Text"),
-    button("table", "Table")
+    el("div", { class: "gaidet-segment" + (current === "table" ? " is-table" : "") }, [
+      el("span", { class: "gaidet-segment-indicator" + (moved ? " is-moved" : ""), "aria-hidden": "true" }, []),
+      button("text", "Text"),
+      button("table", "Table")
+    ])
   ]);
 }
 ```
@@ -821,13 +853,20 @@ form = {
     ]);
   }
 
-  return preserveFocus(() => el("div", {}, data.categories.filter(cat => allowedCategories.has(cat.id)).map(cat => {
+  // Task checkbox states from the last build, so only the box that was just
+  // ticked or unticked animates (see taskCheckState).
+  const previousChecks = taskCheckState.prev;
+  const currentChecks = {};
+
+  const built = preserveFocus(() => el("div", {}, data.categories.filter(cat => allowedCategories.has(cat.id)).map(cat => {
   const categoryEl = el("div", { class: "gaidet-category" }, [
     el("h3", {}, cat.label),
     ...cat.items.map(item => {
       const key = `${cat.id}::${item.id}`;
 
       const checked = key in selections;
+      currentChecks[key] = checked;
+      const checkToggled = key in previousChecks && previousChecks[key] !== checked;
       const sel = selections[key];
       const isComplete = checked && taskIsComplete(sel.sentence, sel.tools, item.openEnded, sel.customLabel);
 
@@ -1073,7 +1112,7 @@ form = {
             mutable selections = next;
           }
         }),
-        el("span", { class: "gaidet-checkbox-box" }, []),
+        el("span", { class: "gaidet-checkbox-box" + (checkToggled ? " is-toggled" : "") }, [checkMark()]),
         el("span", { class: "gaidet-item-label" }, item.label),
         isComplete ? el("span", { class: "gaidet-item-complete", "aria-label": "Sentence and tool provided" }, " ✓") : null
       ]);
@@ -1254,6 +1293,9 @@ form = {
 
   return categoryEl;
   })));
+
+  taskCheckState.prev = currentChecks;
+  return built;
 }
 ```
 
