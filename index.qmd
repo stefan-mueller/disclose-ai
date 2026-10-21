@@ -456,6 +456,42 @@ mutable copiedText = ""
 
 ```{ojs}
 //| echo: false
+// Which copy/download button under the declaration briefly shows "Copied"
+// (pattern after beUI's StatefulButton, https://beui.dev, MIT licence).
+mutable copyFlash = ""
+```
+
+```{ojs}
+//| echo: false
+// Holds the pending reset for copyFlash, so a second click restarts the
+// timer instead of an older one clearing the new state early.
+copyFlashTimer = ({ id: null })
+```
+
+```{ojs}
+//| echo: false
+// Small notices stacked in the corner of the screen, for actions with no
+// on-page result (saving or loading a progress file). Pattern after beUI's
+// Animated Toast Stack (https://beui.dev, MIT licence).
+function showToast(message, { tone = "info" } = {}) {
+  let stack = document.querySelector(".gaidet-toast-stack");
+  if (!stack) {
+    stack = el("div", { class: "gaidet-toast-stack", role: "status", "aria-live": "polite" }, []);
+    document.body.append(stack);
+  }
+  const toast = el("div", { class: `gaidet-toast gaidet-toast-${tone}` }, message);
+  stack.append(toast);
+  // Keep at most three on screen; the oldest goes first.
+  while (stack.children.length > 3) stack.firstElementChild.remove();
+  setTimeout(() => {
+    toast.classList.add("is-leaving");
+    setTimeout(() => toast.remove(), 250);
+  }, tone === "error" ? 6000 : 3500);
+}
+```
+
+```{ojs}
+//| echo: false
 mutable justUpdated = false
 ```
 
@@ -622,9 +658,32 @@ aiasLevelLabel = {
 
 ```{ojs}
 //| echo: false
+// Step 1 switch states from the last build of categoryGate, so only the
+// switch that changed animates. A plain object, not a mutable, so updating
+// it doesn't trigger another rebuild.
+gateSwitchState = ({ prev: {} })
+```
+
+```{ojs}
+//| echo: false
 categoryGate = {
   const allCatIds = data.categories.map(cat => cat.id);
   const allSelected = allCatIds.every(id => allowedCategories.has(id));
+
+  // Each option is a switch (after beUI's Switch, https://beui.dev, MIT
+  // licence). This cell rebuilds every option on each change, so a CSS
+  // transition would never play; instead the last-built state is kept and
+  // only switches whose state differs from it get .is-toggled, which slides
+  // the thumb across.
+  const previous = gateSwitchState.prev;
+  const current = {};
+  const switchTrack = (key, checked) => {
+    current[key] = checked;
+    const toggled = key in previous && previous[key] !== checked;
+    return el("span", { class: "gaidet-switch" + (toggled ? " is-toggled" : ""), "aria-hidden": "true" }, [
+      el("span", { class: "gaidet-switch-thumb" }, [])
+    ]);
+  };
 
   const optionClass = (base, checked) =>
     checked ? `${base} gaidet-category-gate-option-checked` : base;
@@ -640,6 +699,7 @@ categoryGate = {
       el("input", {
         type: "checkbox",
         class: "gaidet-checkbox-input",
+        role: "switch",
         checked: isAllowed,
         disabled: noGuidance,
         onchange: (e) => {
@@ -648,7 +708,7 @@ categoryGate = {
           mutable allowedCategories = next;
         }
       }),
-      el("span", { class: "gaidet-checkbox-box" }, []),
+      switchTrack(cat.id, isAllowed),
       el("span", {}, cat.label),
       // No tooltip for "Additional tasks": its only item is the open-ended
       // catch-all itself, so a preview listing it back would be pointless.
@@ -678,13 +738,14 @@ categoryGate = {
     el("input", {
       type: "checkbox",
       class: "gaidet-checkbox-input",
+        role: "switch",
       checked: allSelected,
       disabled: noGuidance,
       onchange: (e) => {
         mutable allowedCategories = e.target.checked ? new Set(allCatIds) : new Set();
       }
     }),
-    el("span", { class: "gaidet-checkbox-box" }, []),
+    switchTrack("all", allSelected),
     el("span", {}, "My assignment allows using AI without limiting it to specific categories")
   ]);
 
@@ -694,13 +755,14 @@ categoryGate = {
     el("input", {
       type: "checkbox",
       class: "gaidet-checkbox-input",
+        role: "switch",
       checked: noGuidance,
       onchange: (e) => {
         mutable noGuidance = e.target.checked;
         if (e.target.checked) mutable allowedCategories = new Set();
       }
     }),
-    el("span", { class: "gaidet-checkbox-box" }, []),
+    switchTrack("noguidance", noGuidance),
     el("span", {}, "My assignment/course/module gives no guidance at all on AI use")
   ]);
 
@@ -710,6 +772,8 @@ categoryGate = {
         "Treat no guidance as AI not being permitted until your course/module coordinator confirms otherwise, not as permission by default. Ask before using AI or generating a declaration."
       ])
     : null;
+
+  gateSwitchState.prev = current;
 
   return el("div", { class: "gaidet-category-gate" }, [
     el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1 (What is allowed): Which categories of AI use does your assignment permit?"),
@@ -1589,6 +1653,25 @@ outputBox = {
     }
   }
 
+  // A copy/download button that briefly swaps to a tick and "Copied" (or
+  // "Downloaded") after a click, so the result shows on the button itself.
+  function actionButton(kind, icon, label, action) {
+    const flashed = copyFlash === kind;
+    return el("button", {
+      class: "gaidet-btn-secondary gaidet-btn-small gaidet-btn-icon" + (flashed ? " is-copied" : ""),
+      onclick: () => {
+        action();
+        mutable copySuccess = kind;
+        mutable copiedText = declarationText;
+        mutable copyFlash = kind;
+        clearTimeout(copyFlashTimer.id);
+        copyFlashTimer.id = setTimeout(() => { mutable copyFlash = ""; }, 1800);
+      }
+    }, flashed
+      ? [formatIcon("check"), kind === "download" ? "Downloaded" : "Copied"]
+      : [formatIcon(icon), label]);
+  }
+
   const outputDiv = el("div", { class: "gaidet-output", id: "gaidet-output-section" }, [
     el("h2", { class: "gaidet-output-title gaidet-step-label" }, "Step 3: Generate your declaration"),
     el("div", { class: "gaidet-output-header-actions" }, [
@@ -1620,55 +1703,22 @@ outputBox = {
     // reads what was generated before acting on it.
     (showDeclaration && !showConfirmPrompt) ? el("div", { class: "gaidet-output-actions-secondary" }, [
       el("span", { class: "gaidet-output-actions-label" }, "Copy as text:"),
-      el("button", {
-        class: "gaidet-btn-secondary gaidet-btn-small gaidet-btn-icon",
-        onclick: () => {
-          copyToClipboard(declarationText, declarationHtml);
-          mutable copySuccess = "copy";
-          mutable copiedText = declarationText;
-        }
-      }, [formatIcon("text"), "Copy to clipboard"]),
-      el("button", {
-        class: "gaidet-btn-secondary gaidet-btn-small gaidet-btn-icon",
-        onclick: () => {
-          const blob = new Blob([declarationText], { type: "text/plain" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "ai-disclosure-declaration.txt";
-          a.click();
-          URL.revokeObjectURL(url);
-          mutable copySuccess = "download";
-          mutable copiedText = declarationText;
-        }
-      }, [formatIcon("text"), "Download as txt file"])
+      actionButton("copy", "text", "Copy to clipboard", () => copyToClipboard(declarationText, declarationHtml)),
+      actionButton("download", "text", "Download as txt file", () => {
+        const blob = new Blob([declarationText], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "ai-disclosure-declaration.txt";
+        a.click();
+        URL.revokeObjectURL(url);
+      })
     ]) : null,
     (showDeclaration && !showConfirmPrompt) ? el("div", { class: "gaidet-output-actions-secondary" }, [
       el("span", { class: "gaidet-output-actions-label" }, "Copy as table:"),
-      el("button", {
-        class: "gaidet-btn-secondary gaidet-btn-small gaidet-btn-icon",
-        onclick: () => {
-          copyToClipboard(declarationTables.markdown, declarationTables.html);
-          mutable copySuccess = "word";
-          mutable copiedText = declarationText;
-        }
-      }, [formatIcon("table"), "Word"]),
-      el("button", {
-        class: "gaidet-btn-secondary gaidet-btn-small gaidet-btn-icon",
-        onclick: () => {
-          copyToClipboard(declarationTables.latex);
-          mutable copySuccess = "latex";
-          mutable copiedText = declarationText;
-        }
-      }, [formatIcon("table"), "LaTeX"]),
-      el("button", {
-        class: "gaidet-btn-secondary gaidet-btn-small gaidet-btn-icon",
-        onclick: () => {
-          copyToClipboard(declarationTables.markdown);
-          mutable copySuccess = "markdown";
-          mutable copiedText = declarationText;
-        }
-      }, [formatIcon("table"), "Markdown"])
+      actionButton("word", "table", "Word", () => copyToClipboard(declarationTables.markdown, declarationTables.html)),
+      actionButton("latex", "table", "LaTeX", () => copyToClipboard(declarationTables.latex)),
+      actionButton("markdown", "table", "Markdown", () => copyToClipboard(declarationTables.markdown))
     ]) : null,
     success,
     (showDeclaration && !showConfirmPrompt) ? el("p", { class: "gaidet-output-note" }, [
@@ -1806,8 +1856,9 @@ progressBox = {
           mutable selections = data.selections ?? {};
           mutable providePrompts = data.providePrompts ?? false;
           mutable aiasLevel = data.aiasLevel ?? "";
+          showToast("Progress loaded.", { tone: "success" });
         } catch (err) {
-          alert("Could not read this file. Please make sure it's a progress file saved from this tool.");
+          showToast("Could not read this file. Please make sure it's a progress file saved from this tool.", { tone: "error" });
         }
         e.target.value = "";
       };
@@ -1829,6 +1880,7 @@ progressBox = {
           a.download = "ai-disclosure-progress.json";
           a.click();
           URL.revokeObjectURL(url);
+          showToast("Progress saved as ai-disclosure-progress.json. Use “Load progress” to pick up where you left off.", { tone: "success" });
         }
       }, "Save progress"),
       el("button", {
@@ -1907,6 +1959,37 @@ Further reading on AI-use disclosure:
 document.addEventListener("DOMContentLoaded", () => {
   const root = document.querySelector(".gaidet-faq-accordion");
   if (!root) return;
+
+  // Answers slide open with a slight overshoot and slide shut, instead of
+  // jumping. Pattern after beUI's Bouncy Accordion (https://beui.dev, MIT
+  // licence). Skipped when the visitor has asked for reduced motion, which
+  // leaves the plain <details> toggle.
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const toggleAnimated = (details, answer) => {
+    const closing = details.classList.contains("is-closing");
+    const startHeight = details.open ? answer.offsetHeight : 0;
+    answer.getAnimations().forEach(a => a.cancel());
+    answer.style.overflow = "hidden";
+    const done = () => { answer.style.overflow = ""; };
+    if (!details.open || closing) {
+      details.classList.remove("is-closing");
+      details.open = true;
+      answer.animate(
+        [{ height: `${startHeight}px`, opacity: closing ? 1 : 0 }, { height: `${answer.scrollHeight}px`, opacity: 1 }],
+        { duration: 380, easing: "cubic-bezier(0.34, 1.3, 0.64, 1)" }
+      ).onfinish = done;
+    } else {
+      details.classList.add("is-closing");
+      answer.animate(
+        [{ height: `${startHeight}px`, opacity: 1 }, { height: "0px", opacity: 0 }],
+        { duration: 220, easing: "ease-in" }
+      ).onfinish = () => {
+        details.classList.remove("is-closing");
+        details.open = false;
+        done();
+      };
+    }
+  };
   for (const h of [...root.querySelectorAll("h3.gaidet-faq")]) {
     const section = h.parentElement.matches("section.level3") ? h.parentElement : null;
     const body = [];
@@ -1927,6 +2010,11 @@ document.addEventListener("DOMContentLoaded", () => {
     answer.append(...body);
     details.append(summary, answer);
     section?.remove();
+    summary.addEventListener("click", e => {
+      if (reduceMotion.matches) return;
+      e.preventDefault();
+      toggleAnimated(details, answer);
+    });
   }
 
   // Links to a question (e.g. #related-literature-and-advice from "About

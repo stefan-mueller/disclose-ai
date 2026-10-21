@@ -138,6 +138,126 @@ label:active .gaidet-checkbox-box {
   border-color: var(--gaidet-accent-dark);
 }
 
+/* Step 1 switches, after beUI's Switch (https://beui.dev, MIT licence): a
+   pill track with a white thumb that slides right when on. The real
+   checkbox (role="switch") stays in the label, invisible, so keyboard and
+   screen readers work as before. The thumb travels 1.2rem: track width
+   minus its padding on both sides minus the thumb. */
+.gaidet-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 2.8rem;
+  height: 1.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  transition: background-color 0.2s ease;
+}
+
+.gaidet-switch-thumb {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(16, 24, 40, 0.3);
+  transition: width 0.15s ease, transform 0.15s ease, scale 0.15s ease;
+}
+
+/* Hover anywhere on the option row, not just the (small, invisible)
+   checkbox, which only covers the left end of the track. */
+.gaidet-category-gate-option:not(.gaidet-category-gate-option-disabled):hover .gaidet-checkbox-input:not(:checked) + .gaidet-switch {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.gaidet-checkbox-input:checked + .gaidet-switch {
+  background: var(--gaidet-accent-bright);
+}
+
+.gaidet-checkbox-input:checked + .gaidet-switch .gaidet-switch-thumb {
+  transform: translateX(1.2rem);
+}
+
+.gaidet-checkbox-input:focus-visible + .gaidet-switch {
+  outline: 2px solid var(--gaidet-accent-bright);
+  outline-offset: 2px;
+}
+
+/* Only the switch that just changed slides; the springy curve overshoots a
+   little, like beUI's heavy spring. */
+.gaidet-switch.is-toggled {
+  animation: gaidet-switch-track-off 0.2s ease;
+}
+
+.gaidet-checkbox-input:checked + .gaidet-switch.is-toggled {
+  animation-name: gaidet-switch-track-on;
+}
+
+.gaidet-switch.is-toggled .gaidet-switch-thumb {
+  animation: gaidet-switch-thumb-off 0.35s cubic-bezier(0.34, 1.35, 0.64, 1);
+}
+
+.gaidet-checkbox-input:checked + .gaidet-switch.is-toggled .gaidet-switch-thumb {
+  animation-name: gaidet-switch-thumb-on;
+}
+
+@keyframes gaidet-switch-thumb-on {
+  from { transform: translateX(0); }
+  to { transform: translateX(1.2rem); }
+}
+
+@keyframes gaidet-switch-thumb-off {
+  from { transform: translateX(1.2rem); }
+  to { transform: translateX(0); }
+}
+
+@keyframes gaidet-switch-track-on {
+  from { background-color: rgba(255, 255, 255, 0.22); }
+}
+
+@keyframes gaidet-switch-track-off {
+  from { background-color: var(--gaidet-accent-bright); }
+}
+
+/* Press: the thumb squishes and stretches towards where it will go. When
+   on, it stays anchored right by shifting left as it widens. */
+.gaidet-category-gate-option:active .gaidet-switch-thumb {
+  width: 1.5rem;
+  scale: 0.9;
+}
+
+.gaidet-category-gate-option:active .gaidet-checkbox-input:checked + .gaidet-switch .gaidet-switch-thumb {
+  transform: translateX(0.9rem);
+}
+
+/* A disabled switch (Step 1 when "no guidance" is ticked) shakes instead. */
+.gaidet-category-gate-option-disabled:active .gaidet-switch-thumb {
+  width: 1.2rem;
+  scale: 1;
+  animation: gaidet-switch-shake 0.6s ease 0.2s;
+}
+
+@keyframes gaidet-switch-shake {
+  0%, 100% { translate: 0; }
+  25% { translate: -2px; }
+  50% { translate: 2px; }
+  75% { translate: -1px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gaidet-switch,
+  .gaidet-switch-thumb {
+    transition: none;
+  }
+
+  .gaidet-switch.is-toggled,
+  .gaidet-switch.is-toggled .gaidet-switch-thumb,
+  .gaidet-category-gate-option-disabled:active .gaidet-switch-thumb {
+    animation: none;
+  }
+}
+
 
 /* The navbar shares the hero banner's dark teal (--gaidet-accent-dark), so
    on the homepage the two flow into one continuous dark band instead of a
@@ -1808,7 +1928,16 @@ button:active {
   margin-left: 0.5rem;
   vertical-align: middle;
   background: var(--sh-accent);
-  animation: gaidet-header-blink 1.1s steps(1) infinite;
+  /* Hidden until the title's chromatic reveal (below) has finished, i.e.
+     its 0.15s delay plus 1.2s sweep, then starts blinking. */
+  animation:
+    gaidet-cursor-appear 0s linear 1.35s both,
+    gaidet-header-blink 1.1s steps(1) 1.35s infinite;
+}
+
+@keyframes gaidet-cursor-appear {
+  from { visibility: hidden; }
+  to { visibility: visible; }
 }
 
 @keyframes gaidet-header-blink {
@@ -1831,6 +1960,53 @@ button:active {
   line-height: 1.15;
   letter-spacing: -0.01em;
   color: var(--sh-text);
+}
+
+/* Chromatic reveal for the hero title, after beUI's ChromaticTextReveal
+   (https://beui.dev/components/motion/text-animation, MIT licence), in plain
+   CSS. The text is painted with a gradient: settled text colour on the left,
+   a band of accent colour around --gaidet-sweep, transparent on the right. Moving
+   the sweep from -14% to 114% passes the band across the title once, while
+   the title fades in, unblurs and rises 5px. fit-content keeps the gradient
+   as wide as the text rather than the 780px box. Browsers without @property
+   can't tween the sweep; they show the title plainly partway through. */
+@property --gaidet-sweep {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 114%;
+}
+
+.site-header__title {
+  width: fit-content;
+  /* A single band of the theme's bright accent rather than beUI's default
+     rainbow, which was too colourful against the hero. */
+  background-image: linear-gradient(90deg,
+    var(--sh-text) calc(var(--gaidet-sweep) - 14%),
+    var(--sh-accent) calc(var(--gaidet-sweep) - 4%),
+    var(--sh-accent) calc(var(--gaidet-sweep) + 4%),
+    transparent calc(var(--gaidet-sweep) + 14%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation:
+    gaidet-chromatic-sweep 1.2s ease-in-out 0.15s both,
+    gaidet-chromatic-enter 0.36s ease-out both;
+}
+
+@keyframes gaidet-chromatic-sweep {
+  from { --gaidet-sweep: -14%; }
+  to { --gaidet-sweep: 114%; }
+}
+
+@keyframes gaidet-chromatic-enter {
+  from { opacity: 0.56; filter: blur(6px); transform: translateY(5px); }
+  to { opacity: 1; filter: none; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header__title {
+    animation: none;
+  }
 }
 
 .site-header__lede {
@@ -1907,6 +2083,87 @@ button:active {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+}
+
+/* Copy/download buttons under the declaration after a click: green, with a
+   tick and "Copied", plus a small pop (see actionButton in index.qmd). */
+.gaidet-btn-secondary.is-copied,
+.gaidet-btn-secondary.is-copied:hover {
+  background-color: #f0fdf4;
+  border-color: #16a34a;
+  color: #166534;
+  animation: gaidet-copied-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes gaidet-copied-pop {
+  from { transform: scale(0.94); }
+  to { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gaidet-btn-secondary.is-copied {
+    animation: none;
+  }
+}
+
+/* Corner notices for saving/loading progress (showToast in index.qmd):
+   bottom right on wide screens, full width at the bottom on phones. */
+.gaidet-toast-stack {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1080;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  max-width: min(24rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.gaidet-toast {
+  background: #fff;
+  border: 1px solid var(--gaidet-border);
+  border-left: 4px solid var(--gaidet-accent);
+  border-radius: 6px;
+  box-shadow: 0 6px 16px rgba(16, 24, 40, 0.12), 0 2px 6px rgba(16, 24, 40, 0.06);
+  padding: 0.6rem 0.9rem;
+  font-size: 0.9rem;
+  color: var(--bs-body-color, #212529);
+  animation: gaidet-toast-in 0.35s cubic-bezier(0.34, 1.3, 0.64, 1) backwards;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.gaidet-toast-success {
+  border-left-color: #16a34a;
+}
+
+.gaidet-toast-error {
+  border-left-color: #dc2626;
+}
+
+.gaidet-toast.is-leaving {
+  opacity: 0;
+  transform: translateY(0.5rem);
+}
+
+@keyframes gaidet-toast-in {
+  from { opacity: 0; transform: translateY(0.75rem) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 576px) {
+  .gaidet-toast-stack {
+    left: 1rem;
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gaidet-toast {
+    animation: none;
+    transition: none;
+  }
 }
 
 .gaidet-format-icon {
@@ -2058,7 +2315,10 @@ h3.gaidet-faq::before {
   color: var(--gaidet-accent);
 }
 
-/* Plain plus/minus straight after the question. */
+/* Plain plus straight after the question, which turns into a cross with a
+   small bounce when the answer opens (see the accordion script in
+   index.qmd). .is-closing turns it back as soon as the answer starts to
+   close, rather than when the closing animation ends. */
 .gaidet-faq-summary::after {
   content: "+";
   flex: none;
@@ -2066,10 +2326,17 @@ h3.gaidet-faq::before {
   font-weight: 400;
   line-height: 1;
   color: var(--gaidet-accent);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.gaidet-faq-item[open] > .gaidet-faq-summary::after {
-  content: "\2212";
+.gaidet-faq-item[open]:not(.is-closing) > .gaidet-faq-summary::after {
+  transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gaidet-faq-summary::after {
+    transition: none;
+  }
 }
 
 .gaidet-faq-answer {
