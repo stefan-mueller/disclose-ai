@@ -1929,10 +1929,10 @@ button:active {
   vertical-align: middle;
   background: var(--sh-accent);
   /* Hidden until the title's chromatic reveal (below) has finished, i.e.
-     its 0.15s delay plus 1.2s sweep, then starts blinking. */
+     its 0.2s delay plus 1.5s sweep, then starts blinking. */
   animation:
-    gaidet-cursor-appear 0s linear 1.35s both,
-    gaidet-header-blink 1.1s steps(1) 1.35s infinite;
+    gaidet-cursor-appear 0s linear 1.7s both,
+    gaidet-header-blink 1.1s steps(1) 1.7s infinite;
 }
 
 @keyframes gaidet-cursor-appear {
@@ -1969,7 +1969,9 @@ button:active {
    the sweep from -14% to 114% passes the band across the title once, while
    the title fades in, unblurs and rises 5px. fit-content keeps the gradient
    as wide as the text rather than the 780px box. Browsers without @property
-   can't tween the sweep; they show the title plainly partway through. */
+   can't tween the sweep; they show the title plainly partway through.
+   Timings are slower than beUI's defaults (1.2s sweep, 0.36s fade-in), so
+   the title settles in calmly rather than snapping into place. */
 @property --gaidet-sweep {
   syntax: "<percentage>";
   inherits: false;
@@ -1989,8 +1991,8 @@ button:active {
   background-clip: text;
   color: transparent;
   animation:
-    gaidet-chromatic-sweep 1.2s ease-in-out 0.15s both,
-    gaidet-chromatic-enter 0.36s ease-out both;
+    gaidet-chromatic-sweep 1.5s ease-in-out 0.2s both,
+    gaidet-chromatic-enter 0.7s ease-out both;
 }
 
 @keyframes gaidet-chromatic-sweep {
