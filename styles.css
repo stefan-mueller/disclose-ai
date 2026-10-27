@@ -2960,7 +2960,7 @@ button.gaidet-link-add:hover {
 /* A saved description under 20 words (see shortNote in index.qmd). */
 .gaidet-sentence.is-short,
 .gaidet-sentence.is-short:focus {
-  /* A step stronger than the note below it, so the box itself stands out. */
-  background: color-mix(in srgb, var(--gaidet-warning-light) 35%, #fff);
+  /* A very light orange; the orange border does most of the signalling. */
+  background: #fffaf3;
   border-color: var(--gaidet-warning);
 }

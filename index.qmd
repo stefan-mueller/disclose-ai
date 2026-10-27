@@ -37,7 +37,7 @@ If your assignment permits AI use but requires disclosure, this tool can help. I
 
 This tool is built specifically for student coursework. That said, if you're a researcher looking to document AI use in a publication or grant application, check out the [related literature and tools](lecturers.qmd#related-literature-and-advice) for options aimed at research rather than teaching.
 
-**Information for Lecturers:** you can [tailor this tool to your course/module](lecturers.qmd) or to individual assignments and share it with your students as a course link. The link fills in which categories and tasks of AI use are allowed, can show your course/module and assignment title, and locks those settings so students can't change them. It stays the same over time, so you can add it to your assignment brief or Learning Management System (LMS) course site once.
+**Information for lecturers:** you can [tailor this tool to your course/module](lecturers.qmd) or to individual assignments and share it with your students as a course link. The link fills in which categories and tasks of AI use are allowed, can show your course/module and assignment title, and locks those settings so students can't change them. It stays the same over time, so you can add it to your assignment brief or Learning Management System (LMS) course site once.
 
 
 ```{ojs}
@@ -1838,8 +1838,27 @@ outputBox = {
 
   const placeholderText = ["Your declaration will appear here once every ticked task has a tool and a short description.", "It should accurately reflect all uses of generative AI in preparing the assignment.", "If you didn't use AI at all, add: ‘No generative AI tools were used in the preparation of this assignment.’"];
 
+  // Asked before generating: a reminder about any description still under
+  // SHORT_DESCRIPTION_WORDS words, so students can go back and improve it.
+  // Small counts read better spelled out ("Three descriptions…").
+  const countInWords = n => ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"][n - 1] ?? String(n);
+  const shortTasks = Object.values(selections)
+    .filter(sel => countWords(sel.sentence) < SHORT_DESCRIPTION_WORDS)
+    .map(sel => (sel.customLabel && sel.customLabel.trim()) || sel.label);
+  const shortWarning = shortTasks.length
+    ? el("div", { class: "gaidet-category-gate-warning gaidet-short-warning", role: "status" }, [
+        el("strong", {}, shortTasks.length === 1 ? "One description is quite short. " : `${countInWords(shortTasks.length)} descriptions are quite short. `),
+        "Consider editing ",
+        shortTasks.length === 1 ? "it" : "them",
+        " to say more precisely what you asked the AI to do, how you used its output, and how you checked it: ",
+        shortTasks.join("; "),
+        ". Choose “No, let me edit” to go back."
+      ])
+    : null;
+
   const confirmBox = showConfirmPrompt ? el("div", { class: "gaidet-confirm" }, [
     el("p", {}, "Did you disclose all use of generative AI in this assignment?"),
+    shortWarning,
     el("div", { class: "gaidet-confirm-actions" }, [
       el("button", {
         class: "gaidet-btn-primary gaidet-btn-icon",
@@ -1856,24 +1875,6 @@ outputBox = {
       }, [formatIcon("edit"), "No, let me edit"])
     ])
   ]) : null;
-
-  // Once the declaration is generated, a reminder about any description
-  // still under SHORT_DESCRIPTION_WORDS words. It updates as they're edited.
-  // Small counts read better spelled out ("Three descriptions…").
-  const countInWords = n => ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"][n - 1] ?? String(n);
-  const shortTasks = Object.values(selections)
-    .filter(sel => countWords(sel.sentence) < SHORT_DESCRIPTION_WORDS)
-    .map(sel => (sel.customLabel && sel.customLabel.trim()) || sel.label);
-  const shortWarning = (showDeclaration && !showConfirmPrompt && shortTasks.length)
-    ? el("div", { class: "gaidet-category-gate-warning gaidet-short-warning", role: "status" }, [
-        el("strong", {}, shortTasks.length === 1 ? "One description is quite short. " : `${countInWords(shortTasks.length)} descriptions are quite short. `),
-        "Consider editing ",
-        shortTasks.length === 1 ? "it" : "them",
-        " in Step 2 to say more precisely what you asked the AI to do, how you used its output, and how you checked it: ",
-        shortTasks.join("; "),
-        ". Then click “Update declaration”."
-      ])
-    : null;
 
   function onCreateClick() {
     if (incomplete) {
@@ -1933,7 +1934,6 @@ outputBox = {
     ]),
     warning,
     confirmBox,
-    shortWarning,
     showConfirmPrompt
       ? null
       : showDeclaration
