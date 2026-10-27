@@ -212,36 +212,58 @@ data = FileAttachment("taxonomy.json").json()
 ```{ojs}
 //| echo: false
 // Settings from a lecturer's module link (built on lecturers.qmd), e.g.
-// ?module=Comparative+Politics&allow=lit-write&not=write.trans
+// ?module=Comparative+Politics&allow=lit-write&not=write.trans&v=1
 // `allow` lists category keys; `not` lists excluded tasks as category.task.
-// Keys are hyphen-separated (no commas) and come from taxonomy.json. Null
-// when there's no valid link, which leaves Step 1 to the student as usual.
+// Keys are hyphen-separated (no commas) and come from taxonomy.json, where
+// they must never change once published. Unknown keys (e.g. a removed
+// category) are ignored. `v` is the taxonomy version the link was made with
+// (links without one count as 1): categories and tasks whose `added` is
+// newer weren't there for the lecturer to decide on, so they are flagged as
+// new rather than treated as not allowed. Null when there's no valid link,
+// which leaves Step 1 to the student as usual.
 preset = {
   const params = new URLSearchParams(window.location.search);
   const moduleTitle = (params.get("module") ?? "").trim();
   if (!moduleTitle) return null;
+  const linkVersion = parseInt(params.get("v"), 10) || 1;
+  const isNew = entry => (entry.added ?? 1) > linkVersion;
   const allowKeys = (params.get("allow") ?? "").split("-");
   const excluded = new Set((params.get("not") ?? "").split("-"));
   const items = new Map();
+  const newCategories = new Set();
+  const newItems = new Set();
   for (const cat of data.categories) {
+    if (isNew(cat)) {
+      newCategories.add(cat.id);
+      continue;
+    }
     if (!allowKeys.includes(cat.key)) continue;
     const allowedItems = cat.items.filter(i => !excluded.has(`${cat.key}.${i.key}`));
     if (allowedItems.length > 0) items.set(cat.id, new Set(allowedItems.map(i => i.id)));
+    allowedItems.filter(isNew).forEach(i => newItems.add(`${cat.id}::${i.id}`));
   }
   if (items.size === 0) return null;
   return {
     module: moduleTitle,
     assignment: (params.get("assignment") ?? "").trim(),
     categories: new Set(items.keys()),
-    items
+    items,
+    newCategories,
+    newItems
   };
 }
 ```
 
 ```{ojs}
 //| echo: false
+// Categories added after the link was made are the student's call (see
+// `preset`), so all their tasks are available once ticked in Step 1.
 function itemAllowed(catId, itemId) {
-  return !preset || !!preset.items.get(catId)?.has(itemId);
+  return !preset || preset.newCategories.has(catId) || !!preset.items.get(catId)?.has(itemId);
+}
+
+function itemIsNew(catId, itemId) {
+  return !!preset?.newItems.has(`${catId}::${itemId}`);
 }
 
 // Drops tasks the lecturer's link doesn't allow, e.g. from a loaded progress file.
@@ -771,8 +793,9 @@ categoryGate = {
     checked ? `${base} gaidet-category-gate-option-checked` : base;
 
   // Opened from a lecturer's module link: show their settings, locked.
+  // Categories added to the tool since then stay open for the student.
   if (preset) {
-    const presetOptions = data.categories.map(cat => {
+    const presetOptions = data.categories.filter(cat => !preset.newCategories.has(cat.id)).map(cat => {
       const isAllowed = preset.categories.has(cat.id);
       const option = el("div", {
         class: optionClass("gaidet-category-gate-option gaidet-category-gate-option-locked", isAllowed)
@@ -786,11 +809,36 @@ categoryGate = {
         const ok = preset.items.get(cat.id).has(item.id);
         return el("li", { class: ok ? null : "gaidet-preset-task-excluded" }, [
           el("span", { class: "gaidet-preset-task-mark", "aria-hidden": "true" }, ok ? "✓" : "–"),
-          ok ? item.label : `${item.label} (not allowed)`
+          ok ? item.label : `${item.label} (not allowed)`,
+          ok && itemIsNew(cat.id, item.id) ? el("span", { class: "gaidet-preset-new" }, "New: check your assignment brief") : null
         ]);
       }));
       return el("div", {}, [option, tasks]);
     });
+
+    const newOptions = data.categories.filter(cat => preset.newCategories.has(cat.id)).map(cat => {
+      const isAllowed = allowedCategories.has(cat.id);
+      return el("label", { class: optionClass("gaidet-category-gate-option", isAllowed) }, [
+        el("input", {
+          type: "checkbox",
+          class: "gaidet-checkbox-input",
+          role: "switch",
+          checked: isAllowed,
+          onchange: (e) => {
+            const next = new Set(allowedCategories);
+            if (e.target.checked) next.add(cat.id); else next.delete(cat.id);
+            mutable allowedCategories = next;
+          }
+        }),
+        switchTrack(cat.id, isAllowed),
+        el("span", {}, cat.label)
+      ]);
+    });
+    const newSection = newOptions.length ? el("div", { class: "gaidet-preset-new-section" }, [
+      el("p", { class: "gaidet-preset-new-title" }, "Added to the tool after your lecturer created this link"),
+      el("p", { class: "gaidet-tool-instructions" }, "Your lecturer hasn’t decided on these. Tick one only if your assignment brief allows it, or ask your lecturer."),
+      el("div", { class: "gaidet-category-gate-list" }, newOptions)
+    ]) : null;
 
     gateSwitchState.prev = current;
 
@@ -803,6 +851,7 @@ categoryGate = {
       el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1 (What is allowed): Which categories of AI use does your assignment permit?"),
       el("p", { class: "gaidet-tool-instructions gaidet-gate-instructions" }, "Your lecturer has set which categories and tasks this assignment allows, so this step is filled in and locked. If it doesn’t match your assignment brief, ask your lecturer."),
       el("div", { class: "gaidet-category-gate-list" }, presetOptions),
+      newSection,
       el("p", { class: "gaidet-preset-reset" }, [
         "Not your module? ",
         el("a", { href: window.location.pathname }, "Open the tool without these settings"),
@@ -1210,7 +1259,9 @@ form = {
         }),
         el("span", { class: "gaidet-checkbox-box" + (checkToggled ? " is-toggled" : "") }, [checkMark()]),
         el("span", { class: "gaidet-item-label" }, item.label),
-        isComplete ? el("span", { class: "gaidet-item-complete", "aria-label": "Sentence and tool provided" }, " ✓") : null
+        isComplete ? el("span", { class: "gaidet-item-complete", "aria-label": "Sentence and tool provided" }, " ✓") : null,
+        // Added after the lecturer's link was made (see `preset`).
+        itemIsNew(cat.id, item.id) ? el("span", { class: "gaidet-item-new" }, "New: check your assignment brief") : null
       ]);
 
       const sentenceTextarea = el("textarea", {

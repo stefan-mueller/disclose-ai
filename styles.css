@@ -2637,6 +2637,46 @@ h3.gaidet-faq::before {
   color: #ffffff99;
 }
 
+/* Tasks and categories added to the tool after the lecturer's link was
+   made: flagged rather than locked, since the lecturer never saw them. */
+.gaidet-preset-new,
+.gaidet-item-new {
+  margin-left: 0.5rem;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  align-self: center;
+}
+
+.gaidet-preset-new {
+  background: var(--gaidet-warning-light);
+  color: var(--gaidet-accent-hover);
+}
+
+.gaidet-item-new {
+  background: var(--gaidet-warning-bg);
+  border: 1px solid var(--gaidet-warning-border);
+  color: var(--gaidet-warning-text);
+}
+
+.gaidet-preset-new-section {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid #ffffff33;
+}
+
+.gaidet-preset-new-title {
+  margin: 0 0 0.2rem;
+  font-weight: 700;
+  color: var(--gaidet-warning-light);
+}
+
+.gaidet-preset-new-section .gaidet-tool-instructions {
+  margin: 0;
+}
+
 .gaidet-preset-reset {
   margin: 1rem 0 0;
   font-size: var(--gaidet-fs-help);
@@ -2660,6 +2700,19 @@ h3.gaidet-faq::before {
   flex-direction: column;
   gap: 1.1rem;
   margin: 1.5rem 0 2rem;
+  /* One framed panel from the title fields to the finished link, so the
+     whole builder reads as a single tool rather than part of the text. */
+  padding: 1.4rem;
+  background: #fff;
+  border: 1px solid var(--gaidet-input-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 2px 8px rgba(16, 24, 40, 0.06);
+}
+
+@media (max-width: 576px) {
+  .gaidet-link-builder {
+    padding: 1rem;
+  }
 }
 
 .gaidet-link-field {
@@ -2743,22 +2796,37 @@ button.gaidet-link-quick:hover {
   text-underline-offset: 2px;
 }
 
-.gaidet-link-result .gaidet-tool-label {
-  font-weight: 600;
+/* The finished link is what lecturers came for, so it sits in its own
+   outlined panel with a larger link and Copy button. */
+.gaidet-link-result {
+  padding: 1.1rem 1.4rem 1.2rem;
+  border: 2px solid var(--gaidet-accent);
+  border-radius: 6px;
+  background: var(--gaidet-accent-tint);
 }
 
-.gaidet-link-url {
+.gaidet-link-result .gaidet-tool-instructions {
+  margin: 0 0 0.6rem;
+}
+
+.gaidet-link-result code.gaidet-link-url {
   display: block;
-  padding: 0.7rem 0.9rem;
-  margin-bottom: 0.7rem;
-  background: var(--gaidet-accent-tint);
-  border: 1px solid var(--gaidet-border);
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.9rem;
+  background: #fff;
+  border: 1px solid var(--gaidet-input-border);
   border-radius: 6px;
   color: var(--gaidet-accent-dark);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   line-height: 1.6;
   overflow-wrap: anywhere;
   white-space: normal;
+  user-select: all;
+}
+
+button.gaidet-link-copy {
+  padding: 0.7rem 1.6rem;
+  font-size: 1rem;
 }
 
 .gaidet-link-actions {

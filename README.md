@@ -37,6 +37,12 @@ This opens the form in your browser and rebuilds automatically as you edit.
 
 The categories and tasks live in `taxonomy.json`. Add, remove or reword items there; the form updates automatically, no changes to `index.qmd` are needed.
 
+Lecturers' module links (built on the "Information for lecturers" page) refer to categories and tasks by their short `key`, so:
+
+- **Never change or reuse a `key`** once it has been published, or existing links will stop recognising it. Labels can be reworded freely.
+- **Removing** a category or task is safe: links that mention it simply ignore it.
+- **Adding** a category or task: give it `"added"` set to one more than the highest `added` value currently in the file (all original entries are `1`). Links made before that version show the new entry as "added after your lecturer created this link" and let students decide, rather than marking it as not allowed. Bump the number once per release, not once per entry.
+
 ## Forking and reusing this tool
 
 This project is [MIT-licensed](https://opensource.org/license/mit), so you're free to fork it for your own institution, module, or purpose. To adapt it:

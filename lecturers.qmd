@@ -9,7 +9,7 @@ format:
 
 You can give your students a link to this tool that is set up for your module. Tick the categories of AI use your assignment allows, untick any tasks within them that are not allowed, and add your module title. Students who open the link see your module title, and Step 1 is filled in and locked to your selection. In Step 2 they can only describe the tasks you allowed.
 
-Share the link on your Learning Management System (LMS) course site or in your assignment brief. Anyone can still edit a URL by hand, so the link makes the tool easier to use but does not enforce your rules. Your assignment brief remains the authority.
+Share the link on your Learning Management System (LMS) course site or in your syllabus. Your assignment brief remains the authority.
 
 ```{ojs}
 //| echo: false
@@ -43,7 +43,7 @@ function el(tag, props = {}, children = []) {
 ```{ojs}
 //| echo: false
 // Builds the module link that index.qmd reads (see its `preset` cell), e.g.
-// ?module=Comparative+Politics&allow=lit-write&not=write.trans
+// ?module=Comparative+Politics&allow=lit-write&not=write.trans&v=1
 // All state lives inside this cell, so typing doesn't re-run anything else.
 linkBuilder = {
   // category id -> Set of allowed task ids. Absent means not allowed.
@@ -59,7 +59,7 @@ linkBuilder = {
   const status = el("span", { class: "gaidet-link-status", role: "status" }, []);
   const problemNote = el("p", { class: "gaidet-tool-instructions" }, []);
   const tryLink = el("a", { target: "_blank", rel: "noopener" }, "Open the link to check it");
-  const copyButton = el("button", { type: "button", class: "gaidet-btn-primary" }, "Copy link");
+  const copyButton = el("button", { type: "button", class: "gaidet-btn-primary gaidet-link-copy" }, "Copy link");
 
   function buildUrl() {
     const params = new URLSearchParams();
@@ -72,6 +72,9 @@ linkBuilder = {
     const excluded = cats.flatMap(cat =>
       cat.items.filter(i => !allowed.get(cat.id).has(i.id)).map(i => `${cat.key}.${i.key}`));
     if (excluded.length) params.set("not", excluded.join("-"));
+    // The taxonomy version, so categories and tasks added later can be
+    // flagged as new instead of read as not allowed (see index.qmd).
+    params.set("v", Math.max(...data.categories.flatMap(cat => [cat, ...cat.items]).map(e => e.added ?? 1)));
     return `${base}?${params}`;
   }
 
@@ -191,7 +194,8 @@ linkBuilder = {
       el("div", { class: "gaidet-link-quick-row" }, [selectAll, clearAll])
     ]),
     el("div", { class: "gaidet-link-result" }, [
-      el("p", { class: "gaidet-tool-label" }, "Your link"),
+      el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Your link"),
+      el("p", { class: "gaidet-tool-instructions" }, "Copy this link and share it with your students."),
       urlBox,
       el("div", { class: "gaidet-output-actions gaidet-link-actions" }, [copyButton, tryLink, status]),
       problemNote
