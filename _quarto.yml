@@ -20,11 +20,11 @@ website:
     background: "#134e4a"
     pinned: true
     right:
-      - href: "#about-this-tool"
+      - href: "index.qmd#about-this-tool"
         text: Overview
-      - href: "#generate-declaration"
+      - href: "index.qmd#generate-declaration"
         text: Generate Declaration
-      - href: "index.qmd#information-for-lecturers"
+      - href: lecturers.qmd
         text: Information for Lecturers
   page-footer:
     center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) and the [Artificial Intelligence Disclosure (AID) Framework](https://arxiv.org/pdf/2408.01904). [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net). [Privacy Policy](privacy.qmd)"

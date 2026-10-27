@@ -2535,7 +2535,7 @@ h3.gaidet-faq::before {
 
 /* Plain plus straight after the question, which turns into a cross with a
    small bounce when the answer opens (see the accordion script in
-   index.qmd). .is-closing turns it back as soon as the answer starts to
+   lecturers.qmd). .is-closing turns it back as soon as the answer starts to
    close, rather than when the closing animation ends. */
 .gaidet-faq-summary::after {
   content: "+";
@@ -2559,4 +2559,226 @@ h3.gaidet-faq::before {
 
 .gaidet-faq-answer {
   padding: 0 0 0.5rem 2.1rem;
+}
+
+/* Step 1 when opened from a lecturer's module link (see `preset` in
+   index.qmd): the module title on top, then the locked categories with the
+   tasks allowed in each. */
+.gaidet-preset-banner {
+  margin: -1.1rem -1.4rem 1rem;
+  padding: 1rem 1.4rem;
+  border-bottom: 1px solid #ffffff33;
+  border-radius: 6px 6px 0 0;
+  background: var(--gaidet-accent-hover);
+}
+
+.gaidet-preset-eyebrow {
+  margin: 0 0 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gaidet-accent-bright);
+}
+
+.gaidet-preset-module {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #fff;
+}
+
+.gaidet-preset-assignment {
+  margin: 0.1rem 0 0;
+  font-size: 1rem;
+  color: var(--gaidet-hero-lede);
+}
+
+.gaidet-category-gate-option-locked {
+  cursor: default;
+}
+
+.gaidet-category-gate-option-locked:not(.gaidet-category-gate-option-checked) {
+  opacity: 0.55;
+}
+
+.gaidet-category-gate-option-locked .gaidet-checkbox-input {
+  cursor: default;
+}
+
+.gaidet-preset-tasks {
+  list-style: none;
+  margin: 0.35rem 0 0.2rem;
+  padding: 0 0 0 3.4rem;
+  font-size: var(--gaidet-fs-field);
+  color: #ffffffdd;
+}
+
+.gaidet-preset-tasks li {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.1rem 0;
+}
+
+.gaidet-preset-task-mark {
+  flex: none;
+  width: 1rem;
+  text-align: center;
+  font-weight: 700;
+  color: var(--gaidet-accent-bright);
+}
+
+.gaidet-preset-task-excluded {
+  color: #ffffff99;
+}
+
+.gaidet-preset-task-excluded .gaidet-preset-task-mark {
+  color: #ffffff99;
+}
+
+.gaidet-preset-reset {
+  margin: 1rem 0 0;
+  font-size: var(--gaidet-fs-help);
+  color: #ffffffcc;
+}
+
+.gaidet-preset-reset a {
+  color: var(--gaidet-accent-bright);
+}
+
+/* Step 2: tasks a module link excludes are named under the category. */
+.gaidet-excluded-tasks {
+  margin-top: -0.3rem;
+  margin-bottom: 0.6rem;
+}
+
+/* Module link builder on lecturers.qmd. The categories reuse the dark Step 1
+   card, so lecturers see the same switches their students will. */
+.gaidet-link-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.gaidet-link-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.gaidet-link-field .gaidet-tool-label {
+  font-weight: 600;
+}
+
+.gaidet-link-field .gaidet-tool-instructions {
+  margin: 0;
+}
+
+.gaidet-link-input {
+  width: 100%;
+  max-width: 620px;
+  box-sizing: border-box;
+}
+
+.gaidet-link-required {
+  font-weight: 400;
+  color: var(--gaidet-accent);
+}
+
+.gaidet-link-optional {
+  font-weight: 400;
+  color: var(--gaidet-text-muted);
+}
+
+.gaidet-link-builder .gaidet-category-gate {
+  margin-bottom: 0;
+}
+
+.gaidet-link-count {
+  margin-left: auto;
+  font-size: var(--gaidet-fs-help);
+  font-weight: 400;
+  color: #ffffffcc;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.gaidet-link-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.45rem 0 0.35rem;
+  padding-left: 3.4rem;
+}
+
+.gaidet-link-task {
+  font-size: var(--gaidet-fs-field);
+  font-weight: 400;
+}
+
+.gaidet-link-task:has(.gaidet-checkbox-input:not(:checked)) {
+  color: #ffffff99;
+}
+
+.gaidet-link-quick-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.9rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid #ffffff33;
+}
+
+/* Text-style buttons on the dark card; the global button rule would
+   otherwise give them a filled background. */
+button.gaidet-link-quick,
+button.gaidet-link-quick:hover {
+  background: none;
+  border: none;
+  padding: 0;
+  font-weight: 400;
+  color: var(--gaidet-accent-bright);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.gaidet-link-result .gaidet-tool-label {
+  font-weight: 600;
+}
+
+.gaidet-link-url {
+  display: block;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.7rem;
+  background: var(--gaidet-accent-tint);
+  border: 1px solid var(--gaidet-border);
+  border-radius: 6px;
+  color: var(--gaidet-accent-dark);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.gaidet-link-actions {
+  align-items: center;
+}
+
+.gaidet-link-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.gaidet-link-status {
+  font-size: var(--gaidet-fs-help);
+  font-weight: 600;
+  color: var(--gaidet-accent);
+}
+
+@media (max-width: 576px) {
+  .gaidet-preset-tasks,
+  .gaidet-link-tasks {
+    padding-left: 1.2rem;
+  }
 }

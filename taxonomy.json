@@ -51,66 +51,73 @@
   "categories": [
     {
       "id": "conceptualisation",
+      "key": "con",
       "label": "Conceptualisation",
       "items": [
-        { "id": "brainstorming", "label": "Brainstorming and generating ideas" },
-        { "id": "defining_objectives", "label": "Defining the objective or question" },
-        { "id": "structuring_approach", "label": "Helping shape the overall approach or argument" },
-        { "id": "other", "label": "Other (please specify)", "openEnded": true }
+        { "id": "brainstorming", "key": "ideas", "label": "Brainstorming and generating ideas" },
+        { "id": "defining_objectives", "key": "aim", "label": "Defining the objective or question" },
+        { "id": "structuring_approach", "key": "plan", "label": "Helping shape the overall approach or argument" },
+        { "id": "other", "key": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
       "id": "literature_review",
+      "key": "lit",
       "label": "Initial literature screening",
       "items": [
-        { "id": "finding_sources", "label": "Finding potentially relevant literature and sources" },
-        { "id": "identifying_gaps", "label": "Identifying gaps in the argument or literature" },
-        { "id": "clarifying_definitions", "label": "Clarifying definitions or concepts" },
-        { "id": "other", "label": "Other (please specify)", "openEnded": true }
+        { "id": "finding_sources", "key": "find", "label": "Finding potentially relevant literature and sources" },
+        { "id": "identifying_gaps", "key": "gaps", "label": "Identifying gaps in the argument or literature" },
+        { "id": "clarifying_definitions", "key": "terms", "label": "Clarifying definitions or concepts" },
+        { "id": "other", "key": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
       "id": "data_management",
+      "key": "data",
       "label": "Data management",
       "items": [
-        { "id": "data_collection", "label": "Data collection" },
-        { "id": "data_visualisation", "label": "Data visualisation" },
-        { "id": "other", "label": "Other (please specify)", "openEnded": true }
+        { "id": "data_collection", "key": "collect", "label": "Data collection" },
+        { "id": "data_visualisation", "key": "viz", "label": "Data visualisation" },
+        { "id": "other", "key": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
       "id": "software_development",
+      "key": "code",
       "label": "Coding and automation",
       "items": [
-        { "id": "code_generation", "label": "Code generation" },
-        { "id": "code_review", "label": "Code review" },
-        { "id": "code_optimisation", "label": "Code optimisation or debugging" },
-        { "id": "other", "label": "Other (please specify)", "openEnded": true }
+        { "id": "code_generation", "key": "gen", "label": "Code generation" },
+        { "id": "code_review", "key": "review", "label": "Code review" },
+        { "id": "code_optimisation", "key": "debug", "label": "Code optimisation or debugging" },
+        { "id": "other", "key": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
       "id": "writing_editing",
+      "key": "write",
       "label": "Writing and editing",
       "items": [
-        { "id": "proofreading", "label": "Proofreading" },
-        { "id": "summarising_own_text", "label": "Summarising your own draft" },
-        { "id": "tone_adjustment", "label": "Tone or style adjustment" },
-        { "id": "translation", "label": "Translation" },
-        { "id": "other", "label": "Other (please specify)", "openEnded": true }
+        { "id": "proofreading", "key": "proof", "label": "Proofreading" },
+        { "id": "summarising_own_text", "key": "sum", "label": "Summarising your own draft" },
+        { "id": "tone_adjustment", "key": "tone", "label": "Tone or style adjustment" },
+        { "id": "translation", "key": "trans", "label": "Translation" },
+        { "id": "other", "key": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
       "id": "audiovisual",
+      "key": "media",
       "label": "Audiovisual and interactive components",
       "items": [
-        { "id": "ai_visuals", "label": "AI-generated images or videos" },
-        { "id": "ai_narration", "label": "AI-generated voice-over or narration" },
-        { "id": "ai_av_editing", "label": "AI-assisted video or audio editing" },
-        { "id": "other", "label": "Other (please specify)", "openEnded": true }
+        { "id": "ai_visuals", "key": "img", "label": "AI-generated images or videos" },
+        { "id": "ai_narration", "key": "voice", "label": "AI-generated voice-over or narration" },
+        { "id": "ai_av_editing", "key": "edit", "label": "AI-assisted video or audio editing" },
+        { "id": "other", "key": "other", "label": "Other (please specify)", "openEnded": true }
       ]
     },
     {
       "id": "additional_tasks",
+      "key": "other",
       "label": "Additional tasks",
       "items": [
         { "id": "additional_tasks", "label": "Not covered above (please describe)", "openEnded": true }
