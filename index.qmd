@@ -2163,6 +2163,49 @@ If you are using this tool in your teaching or research, you can cite it as:
 
 ```{=html}
 <script>
+// Home, Overview and Generate Declaration in the navbar all point at this
+// page, so Quarto marks only Home as current wherever the reader is. This
+// marks the one for the part of the page in view instead.
+document.addEventListener("DOMContentLoaded", () => {
+  // Matched by resolved address, since Quarto rewrites "./index.html" to "/".
+  const link = hash => [...document.querySelectorAll(".navbar .nav-link")].find(a => {
+    const url = new URL(a.href, location.href);
+    return url.origin === location.origin && /\/(index\.html)?$/.test(url.pathname) && url.hash === hash;
+  });
+  const items = [
+    { link: link(""), section: null },
+    { link: link("#about-this-tool"), section: document.getElementById("about-this-tool") },
+    { link: link("#generate-declaration"), section: document.getElementById("generate-declaration") }
+  ];
+  if (items.some(item => !item.link)) return;
+
+  let queued = false;
+  const update = () => {
+    queued = false;
+    // A section counts as current once its top passes just below the navbar.
+    const line = (document.getElementById("quarto-header")?.offsetHeight ?? 0) + 120;
+    let current = items[0];
+    for (const item of items.slice(1)) {
+      if (item.section && item.section.getBoundingClientRect().top <= line) current = item;
+    }
+    for (const item of items) {
+      item.link.classList.toggle("active", item === current);
+      if (item === current) item.link.setAttribute("aria-current", "page");
+      else item.link.removeAttribute("aria-current");
+    }
+  };
+  const queue = () => {
+    if (!queued) { queued = true; requestAnimationFrame(update); }
+  };
+  window.addEventListener("scroll", queue, { passive: true });
+  window.addEventListener("resize", queue);
+  update();
+});
+</script>
+```
+
+```{=html}
+<script>
 // "Information for lecturers" used to be a section of this page. Old links
 // to it, or to one of its questions, go to the lecturers page instead.
 (() => {

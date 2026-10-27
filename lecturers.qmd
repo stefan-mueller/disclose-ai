@@ -364,6 +364,9 @@ document.addEventListener("DOMContentLoaded", () => {
     answer.className = "gaidet-faq-answer";
     answer.append(...body);
     details.append(summary, answer);
+    // Quarto puts a question's id (e.g. #related-literature-and-advice) on
+    // its section, so keep it on the new item for links to still find it.
+    if (section?.id) details.id = section.id;
     section?.remove();
     summary.addEventListener("click", e => {
       if (reduceMotion.matches) return;
@@ -375,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Links to a question (e.g. #related-literature-and-advice from "About
   // this tool") open its answer rather than landing on a closed item.
   const openFromHash = () => {
-    const target = location.hash && root.querySelector(location.hash);
+    const target = location.hash ? root.querySelector(location.hash) : null;
     const details = target?.closest("details.gaidet-faq-item");
     if (details) {
       details.open = true;

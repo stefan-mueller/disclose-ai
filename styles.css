@@ -373,6 +373,16 @@ body.nav-fixed {
   color: var(--gaidet-accent-bright);
 }
 
+/* The current page or homepage section (see the navbar script in index.qmd):
+   full white with a bright underline, so it reads at a glance. */
+.navbar .nav-link.active,
+.navbar .nav-link.active:hover,
+.navbar .nav-link.active:focus {
+  color: #fff;
+  text-decoration: underline 3px var(--gaidet-accent-bright);
+  text-underline-offset: 0.55em;
+}
+
 .navbar-brand:hover,
 .navbar-brand:focus {
   color: var(--gaidet-accent-bright);
