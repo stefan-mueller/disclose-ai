@@ -2182,7 +2182,7 @@ button:active {
 }
 
 /* Segmented Text/Table control, after beUI's Tabs (segment variant,
-   https://beui.dev, MIT licence): both buttons sit in one outlined track
+   https://beui.dev, MIT licence): both buttons sit in one tinted track
    and a single accent highlight sits behind the selected one. Equal grid
    columns keep the two halves the same width, so the highlight only ever
    needs to move by its own width. */
@@ -2191,9 +2191,8 @@ button:active {
   display: inline-grid;
   grid-template-columns: 1fr 1fr;
   padding: 2px;
-  border: 1px solid var(--gaidet-accent);
   border-radius: 8px;
-  background: #fff;
+  background: var(--gaidet-accent-tint);
 }
 
 .gaidet-segment-indicator {
@@ -2239,6 +2238,7 @@ button:active {
   gap: 0.35rem;
   background: transparent;
   color: var(--gaidet-accent);
+  border: none;
   border-radius: 6px;
   font-size: 0.75rem;
   padding: 0.25rem 0.7rem;
@@ -2735,11 +2735,6 @@ h3.gaidet-faq::before {
   box-sizing: border-box;
 }
 
-.gaidet-link-required {
-  font-weight: 400;
-  color: var(--gaidet-accent);
-}
-
 .gaidet-link-optional {
   font-weight: 400;
   color: var(--gaidet-text-muted);
@@ -2849,4 +2844,123 @@ button.gaidet-link-copy {
   .gaidet-link-tasks {
     padding-left: 1.2rem;
   }
+}
+
+/* "Added by your lecturer" tag on a lecturer's own category in Step 1. */
+.gaidet-preset-custom {
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--gaidet-accent-bright);
+  color: var(--gaidet-accent-hover);
+}
+
+/* Nudge under a Step 2 description with fewer than 20 words. */
+.gaidet-short-note {
+  max-width: 620px;
+  margin: 0.4rem 0 0;
+  padding: 0.45rem 0.7rem;
+  border-left: 3px solid var(--gaidet-warning);
+  background: var(--gaidet-warning-bg);
+  font-size: var(--gaidet-fs-help);
+  line-height: 1.45;
+  color: var(--gaidet-warning-text);
+}
+
+/* The same reminder with the generated declaration in Step 3. */
+.gaidet-short-warning {
+  margin: 0 0 1rem;
+}
+
+/* Lecturers' own categories in the link builder, on the dark card. */
+.gaidet-link-custom-section {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid #ffffff33;
+}
+
+.gaidet-link-custom-section > .gaidet-tool-label {
+  color: #fff;
+  font-weight: 700;
+}
+
+.gaidet-link-custom-section > .gaidet-tool-instructions {
+  margin: 0 0 0.7rem;
+}
+
+.gaidet-link-custom-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+.gaidet-link-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.gaidet-link-custom-tasks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding-left: 1.6rem;
+}
+
+.gaidet-link-custom-tasks .gaidet-tool-instructions {
+  margin: 0;
+}
+
+.gaidet-link-custom-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 560px;
+}
+
+.gaidet-link-custom-input {
+  flex: 1;
+  min-width: 0;
+}
+
+button.gaidet-link-remove,
+button.gaidet-link-remove:hover {
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid #ffffff55;
+  background: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: #fff;
+}
+
+button.gaidet-link-remove:hover {
+  background: #ffffff1a;
+}
+
+button.gaidet-link-add,
+button.gaidet-link-add:hover {
+  border: 1px dashed var(--gaidet-accent-bright);
+  background: none;
+  color: var(--gaidet-accent-bright);
+}
+
+button.gaidet-link-add:hover {
+  background: #ffffff1a;
+}
+
+/* A saved description under 20 words (see shortNote in index.qmd). */
+.gaidet-sentence.is-short,
+.gaidet-sentence.is-short:focus {
+  /* A step stronger than the note below it, so the box itself stands out. */
+  background: color-mix(in srgb, var(--gaidet-warning-light) 35%, #fff);
+  border-color: var(--gaidet-warning);
 }

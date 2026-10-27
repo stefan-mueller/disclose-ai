@@ -7,7 +7,7 @@ format:
 
 ## Create a link for your module
 
-You can give your students a link to this tool that is set up for your module. Tick the categories of AI use your assignment allows, untick any tasks within them that are not allowed, and add your module title. Students who open the link see your module title, and Step 1 is filled in and locked to your selection. In Step 2 they can only describe the tasks you allowed.
+You can give your students a link to this tool that is set up for your module. Tick the categories of AI use your assignment allows, untick any tasks within them that are not allowed, and optionally add your module title. If a use of AI your assignment allows isn't covered, you can add your own categories and tasks. Students who open the link see your module title (if you added one), and Step 1 is filled in and locked to your selection. In Step 2 they can only describe the tasks you allowed.
 
 Share the link on your Learning Management System (LMS) course site or in your syllabus. Your assignment brief remains the authority.
 
@@ -43,18 +43,24 @@ function el(tag, props = {}, children = []) {
 ```{ojs}
 //| echo: false
 // Builds the module link that index.qmd reads (see its `preset` cell), e.g.
-// ?module=Comparative+Politics&allow=lit-write&not=write.trans&v=1
+// ?module=Comparative+Politics&allow=lit-write&not=write.trans&c1=Survey+design&c1=Wording+survey+questions&v=1
 // All state lives inside this cell, so typing doesn't re-run anything else.
 linkBuilder = {
   // category id -> Set of allowed task ids. Absent means not allowed.
   const allowed = new Map();
   const allItems = cat => new Set(cat.items.map(i => i.id));
+  // Categories the lecturer writes themselves: { name, tasks: [text] }.
+  const custom = [];
+  const MAX_CUSTOM = 5;
+  const MAX_TASKS = 10;
+  const namedCustom = () => custom.filter(c => c.name.trim());
   // The tool's own page, so the link also works on a local preview.
   const base = new URL("./", window.location.href).href;
 
-  const moduleInput = el("input", { type: "text", id: "gaidet-link-module", class: "gaidet-link-input", autocomplete: "off", required: "", "aria-required": "true", placeholder: "e.g., Comparative Politics 2026" });
+  const moduleInput = el("input", { type: "text", id: "gaidet-link-module", class: "gaidet-link-input", autocomplete: "off", placeholder: "e.g., Comparative Politics" });
   const assignmentInput = el("input", { type: "text", id: "gaidet-link-assignment", class: "gaidet-link-input", autocomplete: "off", placeholder: "e.g., Essay 1" });
   const catList = el("div", { class: "gaidet-category-gate-list" }, []);
+  const customList = el("div", { class: "gaidet-link-custom-list" }, []);
   const urlBox = el("code", { class: "gaidet-link-url" }, []);
   const status = el("span", { class: "gaidet-link-status", role: "status" }, []);
   const problemNote = el("p", { class: "gaidet-tool-instructions" }, []);
@@ -63,15 +69,21 @@ linkBuilder = {
 
   function buildUrl() {
     const params = new URLSearchParams();
-    params.set("module", moduleInput.value.trim());
+    const moduleTitle = moduleInput.value.trim();
+    if (moduleTitle) params.set("module", moduleTitle);
     const assignment = assignmentInput.value.trim();
     if (assignment) params.set("assignment", assignment);
     const cats = data.categories.filter(cat => allowed.has(cat.id));
-    params.set("allow", cats.map(cat => cat.key).join("-"));
+    if (cats.length) params.set("allow", cats.map(cat => cat.key).join("-"));
     // Excluded tasks only, as category.task, since there are usually few.
     const excluded = cats.flatMap(cat =>
       cat.items.filter(i => !allowed.get(cat.id).has(i.id)).map(i => `${cat.key}.${i.key}`));
     if (excluded.length) params.set("not", excluded.join("-"));
+    // Own categories as c1=Category&c1=Task&c1=Task (see index.qmd).
+    namedCustom().forEach((c, i) => {
+      params.append(`c${i + 1}`, c.name.trim());
+      c.tasks.map(t => t.trim()).filter(Boolean).forEach(t => params.append(`c${i + 1}`, t));
+    });
     // The taxonomy version, so categories and tasks added later can be
     // flagged as new instead of read as not allowed (see index.qmd).
     params.set("v", Math.max(...data.categories.flatMap(cat => [cat, ...cat.items]).map(e => e.added ?? 1)));
@@ -80,8 +92,7 @@ linkBuilder = {
 
   function renderLink() {
     const url = buildUrl();
-    const problem = !moduleInput.value.trim() ? "Enter a module title to create a link for your assignment."
-      : allowed.size === 0 ? "Select at least one category to create a link." : "";
+    const problem = allowed.size === 0 && namedCustom().length === 0 ? "Select at least one category to create a link." : "";
     urlBox.textContent = url;
     problemNote.textContent = problem;
     problemNote.hidden = !problem;
@@ -146,6 +157,43 @@ linkBuilder = {
     if (focusedId) document.getElementById(focusedId)?.focus();
   }
 
+  // Typing only refreshes the link; adding or removing a field rebuilds
+  // this list, then moves focus to the field just added (if any).
+  function renderCustom(focusId) {
+    const textInput = (id, value, placeholder, label, onInput) => el("input", {
+      type: "text", id, class: "gaidet-link-custom-input", value, placeholder, maxlength: "100",
+      autocomplete: "off", "aria-label": label,
+      oninput: (e) => { onInput(e.target.value); renderLink(); }
+    });
+    const removeButton = (label, onclick) =>
+      el("button", { type: "button", class: "gaidet-link-remove", "aria-label": label, onclick }, "×");
+
+    customList.replaceChildren(...custom.map((c, ci) => el("div", { class: "gaidet-link-custom" }, [
+      el("div", { class: "gaidet-link-custom-row" }, [
+        textInput(`gaidet-link-custom-${ci}`, c.name, "Category name, e.g., Survey design", `Name of your category ${ci + 1}`, v => { c.name = v; }),
+        removeButton(`Remove category ${ci + 1}`, () => { custom.splice(ci, 1); renderCustom(); renderLink(); })
+      ]),
+      el("div", { class: "gaidet-link-custom-tasks" }, [
+        ...c.tasks.map((t, ti) => el("div", { class: "gaidet-link-custom-row" }, [
+          textInput(`gaidet-link-custom-${ci}-${ti}`, t, "Task, e.g., Wording survey questions", `Task ${ti + 1} in category ${ci + 1}`, v => { c.tasks[ti] = v; }),
+          removeButton(`Remove task ${ti + 1}`, () => { c.tasks.splice(ti, 1); renderCustom(); renderLink(); })
+        ])),
+        c.tasks.length < MAX_TASKS ? el("button", {
+          type: "button", class: "gaidet-link-quick",
+          onclick: () => { c.tasks.push(""); renderCustom(`gaidet-link-custom-${ci}-${c.tasks.length - 1}`); }
+        }, "+ Add a task") : null,
+        el("p", { class: "gaidet-tool-instructions" }, "Optional. Without tasks, students tick the category itself.")
+      ])
+    ])));
+    if (custom.length < MAX_CUSTOM) {
+      customList.append(el("button", {
+        type: "button", class: "gaidet-link-add",
+        onclick: () => { custom.push({ name: "", tasks: [] }); renderCustom(`gaidet-link-custom-${custom.length - 1}`); }
+      }, "+ Add your own category"));
+    }
+    if (focusId) document.getElementById(focusId)?.focus();
+  }
+
   function render() {
     renderCategories();
     renderLink();
@@ -176,10 +224,11 @@ linkBuilder = {
   } }, "Clear");
 
   render();
+  renderCustom();
 
   return el("div", { class: "gaidet-link-builder" }, [
     el("div", { class: "gaidet-link-field" }, [
-      el("label", { class: "gaidet-tool-label", for: "gaidet-link-module" }, ["Module title ", el("span", { class: "gaidet-link-required" }, "(required)")]),
+      el("label", { class: "gaidet-tool-label", for: "gaidet-link-module" }, ["Module title ", el("span", { class: "gaidet-link-optional" }, "(optional)")]),
       moduleInput
     ]),
     el("div", { class: "gaidet-link-field" }, [
@@ -191,7 +240,12 @@ linkBuilder = {
       el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Which categories of AI use does the assignment allow?"),
       el("p", { class: "gaidet-tool-instructions" }, "All tasks in a category are allowed when you tick it. Untick any task you want to exclude."),
       catList,
-      el("div", { class: "gaidet-link-quick-row" }, [selectAll, clearAll])
+      el("div", { class: "gaidet-link-quick-row" }, [selectAll, clearAll]),
+      el("div", { class: "gaidet-link-custom-section" }, [
+        el("p", { class: "gaidet-tool-label" }, "Missing a category?"),
+        el("p", { class: "gaidet-tool-instructions" }, "Add up to five of your own, each with its own tasks if you like. Students see them as allowed, marked “Added by your lecturer”."),
+        customList
+      ])
     ]),
     el("div", { class: "gaidet-link-result" }, [
       el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Your link"),

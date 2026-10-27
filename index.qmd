@@ -37,7 +37,7 @@ If your assignment permits AI use but requires disclosure, this tool can help. I
 
 This tool is built specifically for student coursework. That said, if you're a researcher looking to document AI use in a publication or grant application, check out the [related literature and tools](lecturers.qmd#related-literature-and-advice) for options aimed at research rather than teaching.
 
-**Information for Lecturers:** you can [create a custom link](lecturers.qmd) to this tool for your module or for individual assignments. The link fills in which categories and tasks of AI use are allowed, shows your module and assignment title, and locks those settings so students can't change them. It stays the same over time, so you can add it to your assignment brief or Learning Management System (LMS) course site once.
+**Information for Lecturers:** you can [create a custom link](lecturers.qmd) to this tool for your module or for individual assignments. The link fills in which categories and tasks of AI use are allowed, can show your module and assignment title, and locks those settings so students can't change them. It stays the same over time, so you can add it to your assignment brief or Learning Management System (LMS) course site once.
 
 
 ```{ojs}
@@ -220,11 +220,10 @@ data = FileAttachment("taxonomy.json").json()
 // (links without one count as 1): categories and tasks whose `added` is
 // newer weren't there for the lecturer to decide on, so they are flagged as
 // new rather than treated as not allowed. Null when there's no valid link,
-// which leaves Step 1 to the student as usual.
+// which leaves Step 1 to the student as usual. The module and assignment
+// titles are optional; a valid category is what makes it a lecturer's link.
 preset = {
   const params = new URLSearchParams(window.location.search);
-  const moduleTitle = (params.get("module") ?? "").trim();
-  if (!moduleTitle) return null;
   const linkVersion = parseInt(params.get("v"), 10) || 1;
   const isNew = entry => (entry.added ?? 1) > linkVersion;
   const allowKeys = (params.get("allow") ?? "").split("-");
@@ -242,15 +241,39 @@ preset = {
     if (allowedItems.length > 0) items.set(cat.id, new Set(allowedItems.map(i => i.id)));
     allowedItems.filter(isNew).forEach(i => newItems.add(`${cat.id}::${i.id}`));
   }
+  // Categories the lecturer wrote themselves: c1=Category&c1=Task&c1=Task,
+  // up to c5. Without tasks, the category itself is the one task to tick.
+  const customCategories = [];
+  for (let n = 1; n <= 5; n++) {
+    const [label, ...tasks] = params.getAll(`c${n}`).map(s => s.trim().slice(0, 100)).filter(Boolean);
+    if (!label) continue;
+    const id = `custom${n}`;
+    const catItems = (tasks.length ? tasks.slice(0, 10) : [label]).map((task, i) => ({ id: `t${i + 1}`, label: task }));
+    customCategories.push({ id, label, custom: true, items: catItems });
+    items.set(id, new Set(catItems.map(i => i.id)));
+  }
   if (items.size === 0) return null;
   return {
-    module: moduleTitle,
+    module: (params.get("module") ?? "").trim(),
     assignment: (params.get("assignment") ?? "").trim(),
     categories: new Set(items.keys()),
     items,
     newCategories,
-    newItems
+    newItems,
+    customCategories
   };
+}
+```
+
+```{ojs}
+//| echo: false
+// The categories this visit works with: the taxonomy, plus any a lecturer's
+// link added, placed before "Additional tasks" so that stays last.
+categories = {
+  if (!preset?.customCategories.length) return data.categories;
+  const last = data.categories.findIndex(cat => cat.id === "additional_tasks");
+  const at = last === -1 ? data.categories.length : last;
+  return [...data.categories.slice(0, at), ...preset.customCategories, ...data.categories.slice(at)];
 }
 ```
 
@@ -323,6 +346,10 @@ function taskIsComplete(sentence, tools, openEnded, customLabel) {
 function countWords(text) {
   return (text || "").trim().split(/\s+/).filter(Boolean).length;
 }
+
+// Descriptions shorter than this get a nudge to be more specific, under the
+// box and again with the generated declaration. Never blocks anything.
+SHORT_DESCRIPTION_WORDS = 20
 
 nativeAutoGrow = typeof CSS !== "undefined" && CSS.supports?.("field-sizing", "content");
 
@@ -771,7 +798,7 @@ gateSwitchState = ({ prev: {} })
 ```{ojs}
 //| echo: false
 categoryGate = {
-  const allCatIds = data.categories.map(cat => cat.id);
+  const allCatIds = categories.map(cat => cat.id);
   const allSelected = allCatIds.every(id => allowedCategories.has(id));
 
   // Each option is a switch (after beUI's Switch, https://beui.dev, MIT
@@ -795,14 +822,15 @@ categoryGate = {
   // Opened from a lecturer's module link: show their settings, locked.
   // Categories added to the tool since then stay open for the student.
   if (preset) {
-    const presetOptions = data.categories.filter(cat => !preset.newCategories.has(cat.id)).map(cat => {
+    const presetOptions = categories.filter(cat => !preset.newCategories.has(cat.id)).map(cat => {
       const isAllowed = preset.categories.has(cat.id);
       const option = el("div", {
         class: optionClass("gaidet-category-gate-option gaidet-category-gate-option-locked", isAllowed)
       }, [
         el("input", { type: "checkbox", class: "gaidet-checkbox-input", role: "switch", checked: isAllowed, disabled: true, "aria-label": cat.label }),
         switchTrack(cat.id, isAllowed),
-        el("span", {}, isAllowed ? cat.label : `${cat.label} (not allowed)`)
+        el("span", {}, isAllowed ? cat.label : `${cat.label} (not allowed)`),
+        cat.custom ? el("span", { class: "gaidet-preset-custom" }, "Added by your lecturer") : null
       ]);
       if (!isAllowed || cat.items.length < 2) return option;
       const tasks = el("ul", { class: "gaidet-preset-tasks" }, cat.items.map(item => {
@@ -816,7 +844,7 @@ categoryGate = {
       return el("div", {}, [option, tasks]);
     });
 
-    const newOptions = data.categories.filter(cat => preset.newCategories.has(cat.id)).map(cat => {
+    const newOptions = categories.filter(cat => preset.newCategories.has(cat.id)).map(cat => {
       const isAllowed = allowedCategories.has(cat.id);
       return el("label", { class: optionClass("gaidet-category-gate-option", isAllowed) }, [
         el("input", {
@@ -845,7 +873,7 @@ categoryGate = {
     return el("div", { class: "gaidet-category-gate gaidet-category-gate-preset" }, [
       el("div", { class: "gaidet-preset-banner" }, [
         el("p", { class: "gaidet-preset-eyebrow" }, "Set up by your lecturer"),
-        el("p", { class: "gaidet-preset-module" }, preset.module),
+        preset.module ? el("p", { class: "gaidet-preset-module" }, preset.module) : null,
         preset.assignment ? el("p", { class: "gaidet-preset-assignment" }, preset.assignment) : null
       ]),
       el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1 (What is allowed): Which categories of AI use does your assignment permit?"),
@@ -860,7 +888,7 @@ categoryGate = {
     ]);
   }
 
-  const categoryOptions = data.categories.map(cat => {
+  const categoryOptions = categories.map(cat => {
     const isAllowed = allowedCategories.has(cat.id);
     return el("label", {
       class: optionClass(
@@ -999,7 +1027,7 @@ form = {
   const previousChecks = taskCheckState.prev;
   const currentChecks = {};
 
-  const built = preserveFocus(() => el("div", {}, data.categories.filter(cat => allowedCategories.has(cat.id)).map(cat => {
+  const built = preserveFocus(() => el("div", {}, categories.filter(cat => allowedCategories.has(cat.id)).map(cat => {
   // Tasks a lecturer's module link excludes are left out, and named below.
   const excludedItems = cat.items.filter(item => !itemAllowed(cat.id, item.id));
   const categoryEl = el("div", { class: "gaidet-category" }, [
@@ -1376,6 +1404,16 @@ form = {
 
       const sentenceWordCount = el("span", { class: "gaidet-sentence-wordcount" }, `${countWords(sel?.sentence)} words`);
 
+      // Shown once a description is saved (on leaving the box) with fewer
+      // than SHORT_DESCRIPTION_WORDS words; typing past that hides it again
+      // straight away, without waiting for a rebuild.
+      const savedWords = countWords(sel?.sentence);
+      const shortNote = el("p", { class: "gaidet-short-note" },
+        "This description is quite short. Say more specifically what you asked the AI to do, how you used its output, and how you checked it.");
+      shortNote.hidden = !(savedWords > 0 && savedWords < SHORT_DESCRIPTION_WORDS);
+      // The box itself turns light orange too, so it stands out in the list.
+      sentenceTextarea.classList.toggle("is-short", !shortNote.hidden);
+
       const detailsDiv = checked ? el("div", { class: "gaidet-item-details" }, [
         customLabelInput,
         buildToolPicker(),
@@ -1389,6 +1427,7 @@ form = {
             onclick: () => confirmAndAdvance()
           }, "→")
         ]),
+        shortNote,
         providePrompts ? promptsTextarea : null
       ]) : null;
 
@@ -1403,7 +1442,12 @@ form = {
           // Plain textContent update on an already-cheap, non-reactive
           // listener: no reflow, no `mutable` commit, so this doesn't
           // reintroduce the typing lag that was fixed earlier.
-          sentenceWordCount.textContent = `${countWords(e.target.value)} words`;
+          const words = countWords(e.target.value);
+          sentenceWordCount.textContent = `${words} words`;
+          if (words >= SHORT_DESCRIPTION_WORDS) {
+            shortNote.hidden = true;
+            e.target.classList.remove("is-short");
+          }
         });
         // Plain Enter acts like clicking the arrow (confirm + advance);
         // Shift+Enter still inserts a newline, as usual for a text box.
@@ -1500,7 +1544,7 @@ declarationClosingParas = [
 // and the example declaration at the top, so both lay out identically.
 function declarationTableRows(sels) {
   const rows = [];
-  for (const cat of data.categories) {
+  for (const cat of categories) {
     for (const item of cat.items) {
       const sel = sels[`${cat.id}::${item.id}`];
       if (!sel) continue;
@@ -1813,6 +1857,24 @@ outputBox = {
     ])
   ]) : null;
 
+  // Once the declaration is generated, a reminder about any description
+  // still under SHORT_DESCRIPTION_WORDS words. It updates as they're edited.
+  // Small counts read better spelled out ("Three descriptions…").
+  const countInWords = n => ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"][n - 1] ?? String(n);
+  const shortTasks = Object.values(selections)
+    .filter(sel => countWords(sel.sentence) < SHORT_DESCRIPTION_WORDS)
+    .map(sel => (sel.customLabel && sel.customLabel.trim()) || sel.label);
+  const shortWarning = (showDeclaration && !showConfirmPrompt && shortTasks.length)
+    ? el("div", { class: "gaidet-category-gate-warning gaidet-short-warning", role: "status" }, [
+        el("strong", {}, shortTasks.length === 1 ? "One description is quite short. " : `${countInWords(shortTasks.length)} descriptions are quite short. `),
+        "Consider editing ",
+        shortTasks.length === 1 ? "it" : "them",
+        " in Step 2 to say more precisely what you asked the AI to do, how you used its output, and how you checked it: ",
+        shortTasks.join("; "),
+        ". Then click “Update declaration”."
+      ])
+    : null;
+
   function onCreateClick() {
     if (incomplete) {
       mutable copyWarning = true;
@@ -1871,6 +1933,7 @@ outputBox = {
     ]),
     warning,
     confirmBox,
+    shortWarning,
     showConfirmPrompt
       ? null
       : showDeclaration
