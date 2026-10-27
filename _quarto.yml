@@ -25,7 +25,7 @@ website:
       - href: "index.qmd#generate-declaration"
         text: Generate Declaration
       - href: lecturers.qmd
-        text: Information for Lecturers
+        text: For Lecturers
   page-footer:
     center: "Inspired by the [GAIDeT Declaration Generator](https://panbibliotekar.github.io/gaidet-declaration/) and the [Artificial Intelligence Disclosure (AID) Framework](https://arxiv.org/pdf/2408.01904). [MIT Licence](https://opensource.org/license/mit). Built by [Stefan Müller](https://muellerstefan.net). [Privacy Policy](privacy.qmd)"
 

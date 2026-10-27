@@ -5,9 +5,9 @@ format:
     page-layout: article
 ---
 
-## Create a link for your module
+## Tailor the tool to your course/module {#tailor-the-tool}
 
-You can give your students a link to this tool that is set up for your module. Tick the categories of AI use your assignment allows, untick any tasks within them that are not allowed, and optionally add your module title. If a use of AI your assignment allows isn't covered, you can add your own categories and tasks. Students who open the link see your module title (if you added one), and Step 1 is filled in and locked to your selection. In Step 2 they can only describe the tasks you allowed.
+You can give your students a course link: a version of this tool that only offers the categories of AI use your course/module or assignment allows. Tick the allowed categories, untick any tasks within them that are not allowed, and optionally add your course/module title. If a use of AI your assignment allows isn't covered, you can add your own categories and tasks. Students who open the link see your course/module title (if you added one), and Step 1 is filled in and locked to your selection. In Step 2 they can only describe the tasks you allowed.
 
 Share the link on your Learning Management System (LMS) course site or in your syllabus. Your assignment brief remains the authority.
 
@@ -228,13 +228,13 @@ linkBuilder = {
 
   return el("div", { class: "gaidet-link-builder" }, [
     el("div", { class: "gaidet-link-field" }, [
-      el("label", { class: "gaidet-tool-label", for: "gaidet-link-module" }, ["Module title ", el("span", { class: "gaidet-link-optional" }, "(optional)")]),
+      el("label", { class: "gaidet-tool-label", for: "gaidet-link-module" }, ["Course/module title ", el("span", { class: "gaidet-link-optional" }, "(optional)")]),
       moduleInput
     ]),
     el("div", { class: "gaidet-link-field" }, [
       el("label", { class: "gaidet-tool-label", for: "gaidet-link-assignment" }, ["Assignment title ", el("span", { class: "gaidet-link-optional" }, "(optional)")]),
       assignmentInput,
-      el("p", { class: "gaidet-tool-instructions" }, "Add this if the rules differ between assignments in the same module.")
+      el("p", { class: "gaidet-tool-instructions" }, "Add this if the rules differ between assignments in the same course/module.")
     ]),
     el("div", { class: "gaidet-category-gate" }, [
       el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Which categories of AI use does the assignment allow?"),
@@ -248,8 +248,8 @@ linkBuilder = {
       ])
     ]),
     el("div", { class: "gaidet-link-result" }, [
-      el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Your link"),
-      el("p", { class: "gaidet-tool-instructions" }, "Copy this link and share it with your students."),
+      el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Your course link"),
+      el("p", { class: "gaidet-tool-instructions" }, "Students who open this link see the tool with the settings you chose above."),
       urlBox,
       el("div", { class: "gaidet-output-actions gaidet-link-actions" }, [copyButton, tryLink, status]),
       problemNote
@@ -279,7 +279,7 @@ One way this can look in an assignment brief:
 For this assignment, you may use AI for *Conceptualisation* and *Initial literature screening*, for instance to brainstorm ideas or locate relevant sources. AI must **not** be used for *Data management*, *Coding and automation*, *Writing and editing*, or *Audiovisual and interactive components*, as these should be your own unassisted work. Anything else can be recorded under *Additional tasks*. Please use the AI Disclosure Generator to record your AI use and attach the generated declaration to your assignment submission: [https://disclose-ai.app](https://disclose-ai.app).
 :::
 
-If you [created a link for your module](#create-a-link-for-your-module), share that link in place of the general address so that Step 1 is already filled in for your students.
+If you [tailored the tool to your course/module](#tailor-the-tool), share your course link in place of the general address so that Step 1 is already filled in for your students.
 
 ### What if my course/module has not settled on an AI policy yet? {.gaidet-faq}
 

@@ -37,7 +37,7 @@ If your assignment permits AI use but requires disclosure, this tool can help. I
 
 This tool is built specifically for student coursework. That said, if you're a researcher looking to document AI use in a publication or grant application, check out the [related literature and tools](lecturers.qmd#related-literature-and-advice) for options aimed at research rather than teaching.
 
-**Information for Lecturers:** you can [create a custom link](lecturers.qmd) to this tool for your module or for individual assignments. The link fills in which categories and tasks of AI use are allowed, can show your module and assignment title, and locks those settings so students can't change them. It stays the same over time, so you can add it to your assignment brief or Learning Management System (LMS) course site once.
+**Information for Lecturers:** you can [tailor this tool to your course/module](lecturers.qmd) or to individual assignments and share it with your students as a course link. The link fills in which categories and tasks of AI use are allowed, can show your course/module and assignment title, and locks those settings so students can't change them. It stays the same over time, so you can add it to your assignment brief or Learning Management System (LMS) course site once.
 
 
 ```{ojs}
@@ -199,7 +199,7 @@ function viewSwitch(current, onPick) {
 
 Rules on generative AI differ between programmes, courses/modules, and even individual assessments. Before using any AI tool, check your syllabus and Learning Management System (LMS) course site for information on AI use, and ask your lecturer whether (and how) it may be used. Some institutions also only allow specific, approved AI tools. Disclosing a task or tool here does not mean you are permitted to use AI, and you remain responsible for following your institution's and course/module's policies.
 
-Check whether your lecturer has shared a custom link to this tool for your module or assignment. If they have, use that link: it shows your module's title and fills in which categories of AI use are allowed.
+Check whether your lecturer has shared a course link to this tool for your course/module or assignment. If they have, use that link: it shows your course/module title and fills in which categories of AI use are allowed.
 
 AI can hallucinate, producing false information, fabricated references, or biased output, so verify anything you rely on against reliable sources before submitting. See the [full disclaimer](#disclaimer-of-responsibility) at the end of this page for details.
 :::
@@ -881,7 +881,7 @@ categoryGate = {
       el("div", { class: "gaidet-category-gate-list" }, presetOptions),
       newSection,
       el("p", { class: "gaidet-preset-reset" }, [
-        "Not your module? ",
+        "Not your course/module? ",
         el("a", { href: window.location.pathname }, "Open the tool without these settings"),
         "."
       ])
@@ -978,7 +978,7 @@ categoryGate = {
   return el("div", { class: "gaidet-category-gate" }, [
     el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Step 1 (What is allowed): Which categories of AI use does your assignment permit?"),
     el("p", { class: "gaidet-tool-instructions gaidet-gate-instructions" }, "Check all categories your assignment brief or course/module instructions allow. Everything else stays locked below until you check it here, so tick only what is permitted."),
-    el("p", { class: "gaidet-tool-instructions" }, "Check whether your lecturer shared a link to this tool for your module or assignment. If so, open that link instead: it fills in this step for you."),
+    el("p", { class: "gaidet-tool-instructions" }, "Check whether your lecturer shared a course link to this tool for your course/module or assignment. If so, open that link instead: it fills in this step for you."),
     el("div", { class: "gaidet-category-gate-list" }, [...categoryOptions, selectAllOption, noGuidanceOption]),
     noGuidanceWarning
   ]);
