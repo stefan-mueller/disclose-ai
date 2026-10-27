@@ -3,6 +3,8 @@ project:
   output-dir: docs
   resources:
     - "count/"
+  # Removes hidden copies of the code from the pages; see the script.
+  post-render: strip-hidden-source.ts
 
 lang: en-GB
 
@@ -12,6 +14,8 @@ website:
   site-url: "https://disclose-ai.app"
   favicon: favicon.svg
   back-to-top-navigation: true
+  # No site search, so its scripts aren't loaded on every page.
+  search: false
   navbar:
     title: false
     logo: favicon.svg
@@ -20,6 +24,8 @@ website:
     background: "#134e4a"
     pinned: true
     right:
+      - href: index.qmd
+        text: Home
       - href: "index.qmd#about-this-tool"
         text: Overview
       - href: "index.qmd#generate-declaration"

@@ -98,7 +98,8 @@ linkBuilder = {
     problemNote.hidden = !problem;
     copyButton.disabled = !!problem;
     tryLink.hidden = !!problem;
-    tryLink.href = url;
+    // Jumps straight to the generator, where the course settings show.
+    tryLink.href = `${url}#generate-declaration`;
     status.textContent = "";
   }
 
@@ -229,7 +230,8 @@ linkBuilder = {
   return el("div", { class: "gaidet-link-builder" }, [
     el("div", { class: "gaidet-link-field" }, [
       el("label", { class: "gaidet-tool-label", for: "gaidet-link-module" }, ["Course/module title ", el("span", { class: "gaidet-link-optional" }, "(optional)")]),
-      moduleInput
+      moduleInput,
+      el("p", { class: "gaidet-tool-instructions" }, "We recommend a specific title, such as the course/module code and year, so students can tell it apart from their other courses/modules. Nothing you enter here is stored: the title only becomes part of the link, which is created in your browser.")
     ]),
     el("div", { class: "gaidet-link-field" }, [
       el("label", { class: "gaidet-tool-label", for: "gaidet-link-assignment" }, ["Assignment title ", el("span", { class: "gaidet-link-optional" }, "(optional)")]),

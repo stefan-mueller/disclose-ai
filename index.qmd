@@ -872,7 +872,9 @@ categoryGate = {
 
     return el("div", { class: "gaidet-category-gate gaidet-category-gate-preset" }, [
       el("div", { class: "gaidet-preset-banner" }, [
-        el("p", { class: "gaidet-preset-eyebrow" }, "Set up by your lecturer"),
+        el("p", { class: "gaidet-preset-eyebrow" }, preset.module || preset.assignment
+          ? "AI use allowed by your lecturer for"
+          : "AI use allowed by your lecturer"),
         preset.module ? el("p", { class: "gaidet-preset-module" }, preset.module) : null,
         preset.assignment ? el("p", { class: "gaidet-preset-assignment" }, preset.assignment) : null
       ]),
