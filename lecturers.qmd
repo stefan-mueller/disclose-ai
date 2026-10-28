@@ -7,7 +7,7 @@ format:
 
 ## Tailor the tool to your course/module {#tailor-the-tool}
 
-You can give your students a course link: a version of this tool that only offers the categories of AI use your course/module or assignment allows. Tick the allowed categories, untick any tasks within them that are not allowed, and optionally add your course/module title. If a use of AI your assignment allows isn't covered, you can add your own categories and tasks. Students who open the link see your course/module title (if you added one), and Step 1 is filled in and locked to your selection. In Step 2 they can only describe the tasks you allowed.
+You can give your students a tailored link: a version of this tool that only offers the categories of AI use your course/module or assignment allows. Tick the allowed categories, untick any tasks within them that are not allowed, and optionally add your course/module title. If a use of AI your assignment allows isn't covered, you can add your own categories and tasks. Students who open the link see your course/module title (if you added one), and Step 1 is filled in and locked to your selection. In Step 2 they can only describe the tasks you allowed.
 
 Share the link on your Learning Management System (LMS) course site or in your syllabus. Your assignment brief remains the authority.
 
@@ -64,7 +64,22 @@ linkBuilder = {
   const urlBox = el("code", { class: "gaidet-link-url" }, []);
   const status = el("span", { class: "gaidet-link-status", role: "status" }, []);
   const problemNote = el("p", { class: "gaidet-tool-instructions" }, []);
-  const tryLink = el("a", { target: "_blank", rel: "noopener" }, "Open the link to check it");
+  // Opens in its own window (reused for later checks) next to the builder,
+  // rather than a tab; a plain new tab if the browser blocks the window.
+  const tryLink = el("a", {
+    target: "_blank",
+    rel: "noopener",
+    onclick: (e) => {
+      e.preventDefault();
+      const checkWindow = window.open(tryLink.href, "gaidet-link-check", "popup,width=1200,height=900");
+      if (checkWindow) {
+        checkWindow.opener = null;
+        checkWindow.focus();
+      } else {
+        window.open(tryLink.href, "_blank", "noopener");
+      }
+    }
+  }, "Open the link in a new window to check it");
   const copyButton = el("button", { type: "button", class: "gaidet-btn-primary gaidet-link-copy" }, "Copy link");
 
   function buildUrl() {
@@ -250,7 +265,7 @@ linkBuilder = {
       ])
     ]),
     el("div", { class: "gaidet-link-result" }, [
-      el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Your course link"),
+      el("p", { class: "gaidet-tool-label gaidet-step-label" }, "Your tailored link"),
       el("p", { class: "gaidet-tool-instructions" }, "Students who open this link see the tool with the settings you chose above."),
       urlBox,
       el("div", { class: "gaidet-output-actions gaidet-link-actions" }, [copyButton, tryLink, status]),
@@ -281,7 +296,7 @@ One way this can look in an assignment brief:
 For this assignment, you may use AI for *Conceptualisation* and *Initial literature screening*, for instance to brainstorm ideas or locate relevant sources. AI must **not** be used for *Data management*, *Coding and automation*, *Writing and editing*, or *Audiovisual and interactive components*, as these should be your own unassisted work. Anything else can be recorded under *Additional tasks*. Please use the AI Disclosure Generator to record your AI use and attach the generated declaration to your assignment submission: [https://disclose-ai.app](https://disclose-ai.app).
 :::
 
-If you [tailored the tool to your course/module](#tailor-the-tool), share your course link in place of the general address so that Step 1 is already filled in for your students.
+If you [tailored the tool to your course/module](#tailor-the-tool), share your tailored link in place of the general address so that Step 1 is already filled in for your students.
 
 ### What if my course/module has not settled on an AI policy yet? {.gaidet-faq}
 
