@@ -88,9 +88,7 @@ exampleDeclarationHtml = `<p><strong>Declaration on the Use of Artificial Intell
 <li><strong>Code review</strong><br>Tool: Claude Code (Sonnet 4.6)<br>Summary: I wrote the core analysis logic myself; Claude Code was used only to draft repetitive boilerplate (e.g. file-loading functions), which I reviewed, tested, and adapted to my dataset.</li>
 <li><strong>Proofreading</strong><br>Tool: Microsoft Copilot (GPT-5.5)<br>Summary: After completing my own final draft, I asked Copilot to flag grammar and punctuation issues, and manually reviewed and accepted only the suggestions I agreed with.</li>
 </ul>
-<p>The author confirms that this AI use falls within what was permitted for this assignment, and complies with any other applicable rules, such as their institution's Declaration of Authorship.</p>
-<p>Responsibility for the submitted assignment lies entirely with the author of this declaration.</p>
-<p>Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes.</p>`
+${declarationClosingParas.map(t => `<p>${t}</p>`).join("")}`
 ```
 
 ```{ojs}
@@ -1534,9 +1532,7 @@ Before you begin, please read the [privacy policy](privacy.qmd) and [disclaimer 
 // Closing statements shared by the text, rich-text and table versions of the
 // declaration, so the wording can't drift between them.
 declarationClosingParas = [
-  "The author confirms that this AI use falls within what was permitted for this assignment, and complies with any other applicable rules, such as their institution's Declaration of Authorship.",
-  "Responsibility for the submitted assignment lies entirely with the author of this declaration.",
-  "Generative AI tools cannot be listed as authors and do not bear responsibility for the final outcomes."
+  "I confirm that this AI use was permitted for this assignment and complies with any other applicable rules, such as my institution's Declaration of Authorship. I take full responsibility for the submitted work; AI tools are not authors and bear no responsibility for it."
 ]
 ```
 
